@@ -316,9 +316,9 @@ function	script	F_KafTele	{
 	else if (@wrpD$[.@j] == "Geffen") warp "geffen", 120, 39;
 	else if (@wrpD$[.@j] == "Izlude") {
 		if (checkre(0) == true)
-			warp "izlude", 128, 98;
-		else
 			warp "izlude", 91, 105;
+		else
+			warp "izlude", 128, 95;
 	}
 	else if (@wrpD$[.@j] == "Juno") warp "yuno", 158, 125;
 	else if (@wrpD$[.@j] == "Mjolnir Dead Pit") warp "mjolnir_02", 99, 351;
