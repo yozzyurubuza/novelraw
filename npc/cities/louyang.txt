@@ -112,7 +112,7 @@ lou_fild01,190,100,7	script	Girl#1lou	815,{
 		if (checkre(0))
 			warp "alberta",236,40;
 		else
-			warp "alberta",235,45;
+			warp "alberta",236,40;
 		end;
 	}
 	mes "[Girl]";
