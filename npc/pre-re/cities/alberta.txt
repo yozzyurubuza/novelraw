@@ -36,7 +36,7 @@ alberta,246,40,3	duplicate(Girl_louyang)	Girl#0lou	815
 // cities/moscovia.txt
 //============================================================
 //alberta,245,66,4	duplicate(PR_Officer_moscovia)	Moscovia P.R. Officer#1	960
-alberta,246,51,4	duplicate(PR_Officer_moscovia)	Moscovia P.R. Officer#1	960
+//alberta,246,51,4	duplicate(PR_Officer_moscovia)	Moscovia P.R. Officer#1	960
 
 // quests/quests_alberta.txt
 //============================================================

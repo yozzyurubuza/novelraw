@@ -52,46 +52,46 @@
 // Stop Post Quest
 // ============================================================
 -	script	William	89,{
-	//mes "[William]";
-	//mes "Welcome to";
-	//mes "MacMillan's ^3355FFPost^000000 Workshop.";
-	//next;
-	//mes "[William]";
-	//mes "My family, the MacMillan Clan, has been producing Professional Traffic Signal Posts for more than 250 years. Nowadays, we are booking Special Orders for our unique ornament, ^3355FFStop Post^000000.";
-	//next;
-	//switch(select("Could I order one ^3355FFStop Post^000000?:Nah...")) {
-	//case 1:
-//		mes "[William]";
-		//mes "This unique ornament, ^3355FFStop Post^000000, is a traffic signal on the road, and doubles as a hair ornament! This, we solemnly promise on the strength of a 100-year guarantee.";
-		//next;
-		//mes "[William]";
-		//mes "To produce a ^3355FFStop Post^000000, we need ^3355FF91100 Zeny^000000, ^3355FF50 Trunk^000000 and ^3355FF1 Black Dyestuffs^000000.";
-		//next;
-		//if ((countitem(1019) > 49) && (countitem(983) > 0) && (Zeny > 91099)) {
-//			delitem 1019,50;  //Wooden_Block
-			//delitem 983,1;  //Black_Dyestuffs
-			//set Zeny, Zeny-91100;
-			//mes "[William]";
-			//mes "Here you are~!";
-			//mes "This ^3355FFStop Post^000000 has";
-			//mes "been especially made";
-			//mes "just for you!";
-			//mes "Thank you for stopping by!";
-			//mes "...Get the joke?";
-			//getitem 2272,1; // Stop_Post
-			//close;
-		//}
-		//else {
-//			mes "[William]";
-			//mes "So...";
-			//mes "When you get those items, swing on by and we'll give you a Stop Post.";
-			//close;
-		//}
-	//case 2:
-//		mes "[William]";
-		//mes "Anyway, thank you for coming by 'MacMillan's Workshop.' But think about buying something next time, will ya?";
-		//close;
-	//}
+	mes "[William]";
+	mes "Welcome to";
+	mes "MacMillan's ^3355FFPost^000000 Workshop.";
+	next;
+	mes "[William]";
+	mes "My family, the MacMillan Clan, has been producing Professional Traffic Signal Posts for more than 250 years. Nowadays, we are booking Special Orders for our unique ornament, ^3355FFStop Post^000000.";
+	next;
+	switch(select("Could I order one ^3355FFStop Post^000000?:Nah...")) {
+	case 1:
+		mes "[William]";
+		mes "This unique ornament, ^3355FFStop Post^000000, is a traffic signal on the road, and doubles as a hair ornament! This, we solemnly promise on the strength of a 100-year guarantee.";
+		next;
+		mes "[William]";
+		mes "To produce a ^3355FFStop Post^000000, we need ^3355FF91100 Zeny^000000, ^3355FF50 Trunk^000000 and ^3355FF1 Black Dyestuffs^000000.";
+		next;
+		if ((countitem(1019) > 49) && (countitem(983) > 0) && (Zeny > 91099)) {
+			delitem 1019,50;  //Wooden_Block
+			delitem 983,1;  //Black_Dyestuffs
+			set Zeny, Zeny-91100;
+			mes "[William]";
+			mes "Here you are~!";
+			mes "This ^3355FFStop Post^000000 has";
+			mes "been especially made";
+			mes "just for you!";
+			mes "Thank you for stopping by!";
+			mes "...Get the joke?";
+			getitem 2272,1; // Stop_Post
+			close;
+		}
+		else {
+			mes "[William]";
+			mes "So...";
+			mes "When you get those items, swing on by and we'll give you a Stop Post.";
+			close;
+		}
+	case 2:
+		mes "[William]";
+		mes "Anyway, thank you for coming by 'MacMillan's Workshop.' But think about buying something next time, will ya?";
+		close;
+	}
 }
 
 // Binoculars Quest

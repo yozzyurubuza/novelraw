@@ -1246,7 +1246,7 @@ tur_dun01,165,29,4	script	Sailor#tur2	709,{
 		if (checkre(0))
 			warp "alberta",238,112;
 		else
-			warp "alberta",241,115;
+			warp "alberta",238,112;
 	}
 	close;
 }
