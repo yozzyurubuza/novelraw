@@ -316,7 +316,7 @@ function	script	F_KafTele	{
 	else if (@wrpD$[.@j] == "Geffen") warp "geffen", 120, 39;
 	else if (@wrpD$[.@j] == "Izlude") {
 		if (checkre(0) == true)
-			warp "izlude", 91, 105;
+			warp "izlude", 128, 95;
 		else
 			warp "izlude", 128, 95;
 	}

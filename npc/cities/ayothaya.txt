@@ -89,7 +89,7 @@ ayothaya,152,68,1	script	Aibakthing#ayo2	843,{
 		if (checkre(0))
 			warp "alberta",235,45;
 		else
-			warp "alberta",238,22;
+			warp "alberta",235,45;
 		end;
 	}
 	mes "[Aibakthing]";
