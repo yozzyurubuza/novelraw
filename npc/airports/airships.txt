@@ -18,8 +18,7 @@
 //= -> Juno -> Hugel -> ...
 //============================================================
 
-airplane, 243, 73, 0 script #AirshipWarp - 1 45, 1, 1,
-{
+airplane, 243, 73, 0 script #AirshipWarp - 1 45, 1, 1,{
 	end;
 
 OnInit:
