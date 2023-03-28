@@ -15,7 +15,8 @@
 y_airport,143,43,5	script	Airport Staff#y_air1a::y_airport1	90,{
 	mes "[Airport Staff]";
 	mes "Welcome to Juno Airport where we offer domestic flights to Einbroch, Lighthalzen and Hugel,";
-	mes "and international flights to Izlude and Rachel.";
+	//mes "and international flights to Izlude and Rachel.";
+	mes "and international flights to Izlude.";
 	mes "How may I be of service?";
 	next;
 	if (select("Board the Airship.:Cancel.") == 1) {
