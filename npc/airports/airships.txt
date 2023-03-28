@@ -657,7 +657,7 @@ airplane_01,243,73,0	script	#AirshipWarp-3	45,1,1,{
 	
 OnTouch_:
 	switch ($@airplanelocation2) {
-	case 0: warp "ra_fild12",292,204; end;
+	// case 0: warp "ra_fild12",292,204; end;
 	case 1: 
 		if(checkre(0))
 			warp "izlude",200,75;
@@ -725,24 +725,24 @@ OnTimer150000:
 OnTimer160000:
 	donpcevent "#AirshipWarp-3::OnHide";
 	donpcevent "#AirshipWarp-4::OnHide";
-	mapannounce "airplane_01","The Airship is leaving the ground. Our next destination is Rachel.",bc_map,"0xFF8200";
+	mapannounce "airplane_01","The Airship is leaving the ground. Our next destination is Izlude.",bc_map,"0x00ff00";
 	end;
+// OnTimer185000:
+// 	mapannounce "airplane_01","We are heading to Rachel.",bc_map,"0xFF8200";
+// 	end;
+// OnTimer210000:
+// 	mapannounce "airplane_01","We will arrive in Rachel shortly.",bc_map,"0xFF8200";
+// 	end;
+// OnTimer220000:
+// 	set $@airplanelocation2,0;
+// 	donpcevent "#AirshipWarp-3::OnUnhide";
+// 	donpcevent "#AirshipWarp-4::OnUnhide";
+// 	mapannounce "airplane_01","Welcome to Rachel. Have a safe trip.",bc_map,"0xFF8200";
+// 	end;
+// OnTimer230000:
+// 	mapannounce "airplane_01","We are currently in Rachel. The Airship will take off shortly.",bc_map,"0xFF8200";
+// 	end;
 OnTimer185000:
-	mapannounce "airplane_01","We are heading to Rachel.",bc_map,"0xFF8200";
-	end;
-OnTimer210000:
-	mapannounce "airplane_01","We will arrive in Rachel shortly.",bc_map,"0xFF8200";
-	end;
-OnTimer220000:
-	set $@airplanelocation2,0;
-	donpcevent "#AirshipWarp-3::OnUnhide";
-	donpcevent "#AirshipWarp-4::OnUnhide";
-	mapannounce "airplane_01","Welcome to Rachel. Have a safe trip.",bc_map,"0xFF8200";
-	end;
-OnTimer230000:
-	mapannounce "airplane_01","We are currently in Rachel. The Airship will take off shortly.",bc_map,"0xFF8200";
-	end;
-OnTimer240000:
 	donpcevent "#AirshipWarp-3::OnHide";
 	donpcevent "#AirshipWarp-4::OnHide";
 	mapannounce "airplane_01","The Airship is now taking off. Our next destination is Izlude.",bc_map,"0x00ff00";
