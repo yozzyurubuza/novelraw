@@ -750,7 +750,7 @@ OnTimer160000:
 	stopnpctimer;
 	set .moninv, .moninv + 1;
 	if (.moninv == 7) {
-		if (rand(1,3) == 3) {
+		if (rand(1,2) == 2) {
 			donpcevent "Airship#airplane02::OnEnable";
 			end;
 		}
