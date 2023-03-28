@@ -15,7 +15,8 @@
 y_airport,143,43,5	script	Airport Staff#y_air1a::y_airport1	90,{
 	mes "[Airport Staff]";
 	mes "Welcome to Juno Airport where we offer domestic flights to Einbroch, Lighthalzen and Hugel,";
-	mes "and international flights to Izlude and Rachel.";
+	//mes "and international flights to Izlude and Rachel.";
+	mes "and international flights to Izlude.";
 	mes "How may I be of service?";
 	next;
 	if (select("Board the Airship.:Cancel.") == 1) {
@@ -105,7 +106,8 @@ y_airport,140,63,5	script	International Boarding	91,{
 	mes "[Boarding Staff]";
 	mes "Would you like to board";
 	mes "the Airship which flies to";
-	mes "Juno, Izlude and Rachel?";
+	//mes "Juno, Izlude and Rachel?";
+	mes "Juno, and Izlude?";
 	mes "If so, let me guide";
 	mes "you to the boarding area.";
 	next;
@@ -129,8 +131,8 @@ yuno,14,262,5	script	Airship Staff#yuno01	91,{
 	mes "board the Airship that will";
 	mes "be flying all the way to Izlude";
 	mes "in the Rune-Midgarts Kingdom,";
-	mes "and to Rachel in the Arunafeltz";
-	mes "Republic.";
+	// mes "and to Rachel in the Arunafeltz";
+	// mes "Republic.";
 	next;
 	mes "[Airship Staff]";
 	mes "Otherwise, if Juno is";
