@@ -105,8 +105,7 @@
 
 }
 
--	script	Mad Scientist::MadScientist 865,{
-
+-	script	Mad Scientist::MadScientist	865,{
 	if (BaseLevel < 50) {
 		mes "The Mad Scientist doesn't seem to notice you and keeps mumbling to himself...";
 		close;
