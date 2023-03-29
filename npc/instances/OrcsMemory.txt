@@ -35,7 +35,7 @@
 
 // Entrance
 //============================================================
--	script	::	Dimensional_Gorge_Piece	406,{
+-	script	Dimensional Gorge Piece::DimensionalGorgePiece	406,{
 
 	set .@party_id,getcharid(1);
 	set .@md_name$,"Orc's Memory";
@@ -105,7 +105,7 @@
 
 }
 
--	script	::	Mad_Scientist#orc 865,{
+-	script	Mad Scientist#orc::MadScientist 865,{
 	if (BaseLevel < 50) {
 		mes "The Mad Scientist doesn't seem to notice you and keeps mumbling to himself...";
 		close;
@@ -164,8 +164,8 @@
 	}
 }
 
-gef_fild10,242,202,0 duplicate(Dimensional_Gorge_Piece)	Dimensional Gorge Piece 406
-gef_fild10,238,202,6 duplicate(Mad_Scientist#orc)	Mad Scientist#orc 865
+gef_fild10,242,202,0 duplicate(DimensionalGorgePiece)	Dimensional Gorge Piece 406
+gef_fild10,238,202,6 duplicate(MadScientist)	Mad Scientist#orc 865
 
 // Orc's Memory Floor 1
 //============================================================
