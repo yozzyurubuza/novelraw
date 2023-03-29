@@ -1,0 +1,4 @@
+// DUPLICATES NPC
+
+// NPC/SealedShrine.txt
+monk_test,309,146,3	duplicate(FriarPatrick)	Friar Patrick#edq	412
