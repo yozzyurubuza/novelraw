@@ -164,10 +164,9 @@
 	}
 }
 
-//gef_fild10,242,202,0 duplicate(DimensionalGorgePiece)	Dimensional Gorge Piece#orc 406
-//gef_fild10,238,202,6 duplicate(MadScientist)	Mad Scientist#orc 865
-gef_fild10,242,202,0	Dimensional Gorge Piece 406
-gef_fild10,238,202,6	Mad Scientist#orc 865
+gef_fild10,242,202,0	duplicate(DimensionalGorgePiece)	Dimensional Gorge Piece	406
+gef_fild10,238,202,6	duplicate(MadScientist)	Mad Scientist#orc	865
+
 // Orc's Memory Floor 1
 //============================================================
 1@orcs,180,30,0	script	#Resurrect Monsters1	844,{
