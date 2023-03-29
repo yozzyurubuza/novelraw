@@ -201,9 +201,7 @@
 	end;
 }
 
-//monk_test,309,146,3	duplicate(FriarPatrick)	Friar Patrick#edq	412
-
-monk_test,306,151,3	script	Grave of Baphomet#edq	111,{
+-	script	Grave of Baphomet#edq::GraveofBaphomet	111,{
 	if (countitem(6002)) delitem 6002,countitem(6002); //Token_Of_Apostle
 	mes "This gravestone has a carving of a wicked devil with large horns. It arouses an ominous feeling.";
 	next;
