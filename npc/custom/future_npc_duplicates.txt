@@ -1,5 +1,5 @@
 // DUPLICATES NPC
 
-// NPC/SealedShrine.txt
+// npc/instances/SealedShrine.txt
 //monk_test,309,146,3	duplicate(FriarPatrick)	Friar Patrick#edq	412
 //monk_test,306,151,3 duplicate(GraveofBaphomet)  Grave of Baphomet#edq   111
