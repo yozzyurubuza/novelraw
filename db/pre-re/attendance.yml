@@ -38,55 +38,61 @@ Body:
     End: 20230420
     Rewards:
       - Day: 1
-        ItemId: 22979
+        ItemId: 6269
+        Amount: 1
       - Day: 2
-        ItemId: 6316
+        ItemId: 501
+        Amount: 1
       - Day: 3
-        ItemId: 12265
+        ItemId: 501
         Amount: 5
       - Day: 4
-        ItemId: 23047
+        ItemId: 501
         Amount: 5
       - Day: 5
-        ItemId: 23038
+        ItemId: 501
+        Amount: 1
       - Day: 6
-        ItemId: 23043
+        ItemId: 501
       - Day: 7
-        ItemId: 23340
+        ItemId: 501
         Amount: 3
       - Day: 8
-        ItemId: 12516
+        ItemId: 501
         Amount: 5
       - Day: 9
-        ItemId: 23307
+        ItemId: 6269
         Amount: 5
       - Day: 10
-        ItemId: 12610
+        ItemId: 6269
+        Amount: 1
       - Day: 11
-        ItemId: 14533
+        ItemId: 6269
         Amount: 2
       - Day: 12
-        ItemId: 23012
+        ItemId: 6269
         Amount: 3
       - Day: 13
-        ItemId: 23048
+        ItemId: 6269
         Amount: 5
       - Day: 14
-        ItemId: 12264
+        ItemId: 6269
         Amount: 5
       - Day: 15
-        ItemId: 23046
+        ItemId: 6269
         Amount: 5
       - Day: 16
-        ItemId: 12515
+        ItemId: 6269
         Amount: 5
       - Day: 17
-        ItemId: 12522
+        ItemId: 6269
         Amount: 5
       - Day: 18
-        ItemId: 12523
+        ItemId: 6269
         Amount: 5
       - Day: 19
-        ItemId: 6234
+        ItemId: 6269
+        Amount: 
       - Day: 20
-        ItemId: 22845
+        ItemId: 12103
+        Amount: 1
