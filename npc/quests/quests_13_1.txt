@@ -33,7 +33,7 @@
 
 // Onward to the New World :: ep13_gogo
 //============================================================ 
--	script	Promotional Staff#prt::PromotionalStaff	100,{
+-	script	Promotional Staff#prt::Promotional Staff_prt	100,{
 	mes "[Promotional Staff]";
 	mes "We are looking for adventurers who are super curious and extremely brave.";
 	mes "Join us for a wonderful adventure!";
