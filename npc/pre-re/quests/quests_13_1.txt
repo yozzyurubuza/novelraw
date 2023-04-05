@@ -12,9 +12,9 @@
 //= 1.0 Moved Izlude NPC to pre-re/re paths. [Euphy]
 //= 1.1 Renewal script update for ep16.1 [Capuche]
 //============================================================ 
-prontera,163,53,3	duplicate(Promotional Staff_prt)	Promotional Staff#prt	100
-aldebaran,122,138,3	duplicate(Promotional Staff_alde)	Promotional Staff#alde	100
-geffen,90,67,3	duplicate(Promotional Staff_gef)	Promotional Staff#gef	100
+//prontera,163,53,3	duplicate(Promotional Staff_prt)	Promotional Staff#prt	100
+//aldebaran,122,138,3	duplicate(Promotional Staff_alde)	Promotional Staff#alde	100
+//geffen,90,67,3	duplicate(Promotional Staff_gef)	Promotional Staff#gef	100
 //izlude,102,171,6	duplicate(PromotionalStaff_izlude)	Promotional Staff#iz	100
 prt_castle,121,51,3	duplicate(Alliance Manager#prt_)	Alliance Manager#prt	4_M_CRU_OLD
 prt_castle,117,51,5	duplicate(Member of Alliance#prt_)	Member of Alliance#prt	4_M_SAGE_A
