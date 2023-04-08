@@ -4483,7 +4483,7 @@ uint64 MobDatabase::parseBodyNode(const ryml::NodeRef& node) {
 	if (this->nodeExists(node, "MvpExp")) {
 		t_exp exp;
 
-		if (!this->asUInt64(node, "MvpExp", exp)){
+		if (!this->asUInt64(node, "MvpExp", exp))
 			return 0;
 
 		mob->mexp = static_cast<t_exp>(cap_value((double)exp * (double)battle_config.mvp_exp_rate / 100., 0, MAX_EXP));
@@ -4491,15 +4491,15 @@ uint64 MobDatabase::parseBodyNode(const ryml::NodeRef& node) {
 			if (!this->asUInt64(node, "JobExp", exp))
 				return 0;
 
-				mob->job_exp = static_cast<t_exp>(cap_value((double)exp * (double)battle_config.job_exp_rate*battle_config.mvp_exp_rate/ battle_config.job_exp_rate*100., 0, MAX_EXP));
+				mob->job_exp = static_cast<t_exp>(cap_value(((double)exp * (double)battle_config.job_exp_rate*battle_config.mvp_exp_rate/ battle_config.job_exp_rate*100.), 0, MAX_EXP));
 
 			if (!this->asUInt64(node, "BaseExp", exp))
 				return 0;
 					
-				mob->base_exp = static_cast<t_exp>(cap_value((double)exp * (double)battle_config.base_exp_rate*battle_config.mvp_exp_rate/ battle_config.base_exp_rate*100., 0, MAX_EXP));
+				mob->base_exp = static_cast<t_exp>(cap_value(((double)exp * (double)battle_config.base_exp_rate*battle_config.mvp_exp_rate/ battle_config.base_exp_rate*100.), 0, MAX_EXP));
 
 
-		}
+		
 	} else {
 		if (!exists)
 			mob->mexp = 0;
