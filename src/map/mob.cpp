@@ -4497,8 +4497,6 @@ uint64 MobDatabase::parseBodyNode(const ryml::NodeRef& node) {
 				return 0;
 					
 				mob->base_exp = static_cast<t_exp>(cap_value(((double)exp * (double)battle_config.base_exp_rate*battle_config.mvp_exp_rate/ (battle_config.base_exp_rate*100.)), 0, MAX_EXP));
-
-
 		
 	} else {
 		if (!exists)
