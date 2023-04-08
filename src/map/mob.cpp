@@ -4635,6 +4635,20 @@ uint64 MobDatabase::parseBodyNode(const ryml::NodeRef& node) {
 			return 0;
 
 		mob->mexp = static_cast<t_exp>(cap_value((double)exp * (double)battle_config.mvp_exp_rate / 100., 0, MAX_EXP));
+
+		if (!this->asUInt64(node, "JobExp", exp))
+			return 0;
+
+		mob->job_exp = static_cast<t_exp>(cap_value((double)exp * (double)battle_config.mvp_exp_rate/ 100., 0, MAX_EXP));
+
+		if (!this->asUInt64(node, "BaseExp", exp))
+			return 0;
+					
+		mob->base_exp = static_cast<t_exp>(cap_value((double)exp * (double)battle_config.mvp_exp_rate/ 100., 0, MAX_EXP));
+			
+	} else {
+		if (!exists)
+			mob->mexp = 0;
 	}
 
 	if (this->nodeExists(node, "Attack")) {
