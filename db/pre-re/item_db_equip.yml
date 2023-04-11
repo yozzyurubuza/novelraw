@@ -41084,3 +41084,160 @@ Body:
     ArmorLevel: 1
     EquipLevelMin: 1
     View: 654
+  - Id: 5909
+    AegisName: C_Valkyrie_Circlet
+    Name: C Valkyrie Circlet
+    Type: Armor
+    Locations:
+      Costume_Head_Top: true
+    ArmorLevel: 1
+    EquipLevelMin: 1
+    View: 940
+  - Id: 5911
+    AegisName: C_Imperial_Feather
+    Name: C Imperial Feather
+    Type: Armor
+    Locations:
+      Costume_Head_Middle: true
+    ArmorLevel: 1
+    EquipLevelMin: 1
+    View: 935
+  - Id: 5912
+    AegisName: C_Minions_Of_Devil
+    Name: Costume Servant Deviling
+    Type: Armor
+    Buy: 20
+    Locations:
+      Costume_Head_Mid: true
+    ArmorLevel: 1
+    View: 1036
+  - Id: 5913
+    AegisName: C_Anemos_Mask
+    Name: Costume Anemos Mask
+    Type: Armor
+    Locations:
+      Costume_Head_Mid: true
+    ArmorLevel: 1
+    View: 906
+  - Id: 5914
+    AegisName: C_Flutter_Butterfly
+    Name: C Flutter Butterfly
+    Type: Armor
+    Locations:
+      Costume_Head_Low: true
+    ArmorLevel: 1
+    EquipLevelMin: 1
+    View: 1378
+    Script: |
+      hateffect HAT_EF_FLUTTER_BUTTERFLY,true;
+    UnEquipScript: |
+      hateffect HAT_EF_FLUTTER_BUTTERFLY,false;
+  - Id: 5915
+    AegisName: C_Angel_Veil
+    Name: Costume Angel Veil
+    Type: Armor
+    View: 1379
+    Buy: 20
+    Weight: 300
+    Defense: 10
+    Slots: 1
+    Locations:
+      Costume_Head_Top: true
+    ArmorLevel: 1
+    Refineable: true
+  - Id: 5977
+    AegisName: C_Poker_Card_In_Mouth
+    Name: "Costume: Poker Card In Mouth"
+    Type: Armor
+    Locations:
+      Costume_Head_Low: true
+    ArmorLevel: 1
+    View: 889
+  - Id: 5979
+    AegisName: C_Angel_Fluttering
+    Name: C Angel Fluttering
+    Type: Armor
+    Locations:
+      Costume_Head_Low: true
+    ArmorLevel: 1
+    EquipLevelMin: 1
+    View: 1380
+    Script: |
+      hateffect HAT_EF_ANGEL_FLUTTERING,true;
+    UnEquipScript: |
+      hateffect HAT_EF_ANGEL_FLUTTERING,false;
+  - Id: 5980
+    AegisName: C_Classical_Fhat
+    Name: C Classical Fhat
+    Type: Armor
+    Locations:
+      Costume_Head_Top: true
+    ArmorLevel: 1
+    EquipLevelMin: 1
+    View: 1381
+  - Id: 5981
+    AegisName: C_Flapping_Devil_Wings
+    Name: C Flapping Devil Wings
+    Type: Armor
+    Locations:
+      Costume_Head_Top: true
+    ArmorLevel: 1
+    EquipLevelMin: 1
+    View: 382
+  - Id: 5983
+    AegisName: C_FLoki_Assassin_Mask
+    Name: Costume Loki Assassin Mask
+    Type: Armor
+    Locations:
+      Costume_Head_Low: true
+    ArmorLevel: 1
+    EquipLevelMin: 1
+    View: 1345
+  - Id: 15843
+    AegisName: C_Hunters_Dinner
+    Name: Costume Hunter's Feast    
+    Type: Armor
+    Locations:
+      Costume_Head_Top: true
+    ArmorLevel: 1
+    View: 2024
+  - Id: 15858
+    AegisName: C_Choco_Banana
+    Name: Costume Choco Banana Bonnet
+    Type: Armor
+    Locations:
+      Costume_Head_Top: true
+    ArmorLevel: 1
+    View: 2087
+  - Id: 15881
+    AegisName: C_Rose_Crispinette
+    Name: Costume Rose Crispinette
+    Type: Armor
+    Locations:
+      Costume_Head_Top: true
+    ArmorLevel: 1
+    View: 2091
+  - Id: 15882
+    AegisName: C_Rhythm_Hairband
+    Name: Rhythm Hairband
+    Type: Armor
+    Locations:
+      Costume_Head_Top: true
+    ArmorLevel: 1
+    View: 1180
+  - Id: 15888
+    AegisName: C_Hand_Of_Devil
+    Name: Costume Dragon Claw Helm
+    Type: Armor
+    Locations:
+      Costume_Head_Top: true
+    ArmorLevel: 1
+    View: 1018
+  - Id: 15889
+    AegisName: C_Boitata_Hat_J
+    Name: Costume Boitata Hat
+    Type: Armor
+    Locations:
+      Costume_Head_Top: true
+    ArmorLevel: 1
+    View: 808
