@@ -41098,7 +41098,7 @@ Body:
     Name: C Imperial Feather
     Type: Armor
     Locations:
-      Costume_Head_Middle: true
+      Costume_Head_Mid: true
     ArmorLevel: 1
     EquipLevelMin: 1
     View: 935
