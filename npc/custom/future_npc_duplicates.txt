@@ -27,3 +27,6 @@
 // npc/instances/SealedShrine.txt
 //monk_test,309,146,3	duplicate(FriarPatrick)	Friar Patrick#edq	412
 //monk_test,306,151,3 duplicate(GraveofBaphomet)  Grave of Baphomet#edq   111
+
+// npc/other/poring_war.txt
+prt_fild08,159,371,3    duplicate(PoringWarRecruiter)    Poring War Recruited#wop    909
