@@ -282,7 +282,7 @@ CREATE TABLE IF NOT EXISTS `char` (
   `last_login` datetime DEFAULT NULL,
   `title_id` INT(11) unsigned NOT NULL default '0',
   `show_equip` tinyint(3) unsigned NOT NULL default '0',
-  `inventory_slots` smallint(6) NOT NULL default '250',
+  `inventory_slots` smallint(6) NOT NULL default '100',
   `body_direction` tinyint(1) unsigned NOT NULL default '0',
   `disable_call` tinyint(3) unsigned NOT NULL default '0',
   PRIMARY KEY  (`char_id`),
