@@ -52,7 +52,7 @@
 		#define INVENTORY_EXPANSION_SIZE 0
 	#endif
 #endif
-#define MAX_INVENTORY 5000
+#define MAX_INVENTORY 1200
 #ifndef MAX_INVENTORY
 	#define MAX_INVENTORY ( INVENTORY_BASE_SIZE + INVENTORY_EXPANSION_SIZE ) // Maximum items in player inventory (in total)
 #else
