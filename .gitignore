@@ -149,3 +149,6 @@ Thumbs.db
 
 # generated files
 generated
+
+# Config files
+conf/char_athena.conf
