@@ -19,7 +19,7 @@
 
 // Poring War Recruiter
 //============================================================
-prt_fild08,159,371,3	script	Poring War Recruiter#wop	909,{
+-	script	Poring War Recruiter#wop::PoringWarRecruiter	909,{
 	mes "[Poring]";
 	mes "!!!!!";
 	mes "Whoa-! Humans, ring~!!";
