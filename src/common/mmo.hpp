@@ -52,7 +52,7 @@
 		#define INVENTORY_EXPANSION_SIZE 0
 	#endif
 #endif
-
+#define MAX_INVENTORY 250
 #ifndef MAX_INVENTORY
 	#define MAX_INVENTORY ( INVENTORY_BASE_SIZE + INVENTORY_EXPANSION_SIZE ) // Maximum items in player inventory (in total)
 #else
@@ -187,7 +187,7 @@ const t_itemid WEDDING_RING_F = 2635;
 #define MAX_HOMUNCULUS_CLASS	52	//[orn], Increased to 60 from 16 to allow new Homun-S.
 #define HM_CLASS_BASE 6001
 #define HM_CLASS_MAX (HM_CLASS_BASE+MAX_HOMUNCULUS_CLASS-1)
-
+		
 //Mail System
 #define MAIL_MAX_INBOX 30
 #define MAIL_TITLE_LENGTH 40
