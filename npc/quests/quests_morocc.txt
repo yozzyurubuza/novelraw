@@ -1838,10 +1838,10 @@ OnTouch_:
 }
 
 -	script	Morocc Timer#edq::MoroccTimer	-1,6,6,{
-//OnInit:
-//	set $@re_moc,0;
-//	set $@re_moc_time$,"";
-//	end;
+OnInit:
+	set $@re_moc,0;
+	set $@re_moc_time$,"";
+	end;
 
 OnTouch_:
 	if ($@re_moc == 0) {
@@ -1851,34 +1851,34 @@ OnTouch_:
 	end;
 }
 
-// -	script	Satan Broadcast#edq::SatanBroadcast	844,{
-// OnInit:
-// 	disablenpc "Satan Broadcast#edq";
-// 	end;
+-	script	Satan Broadcast#edq::SatanBroadcast	844,{
+OnInit:
+	// disablenpc "Satan Broadcast#edq";
+	end;
 
-// OnEnable:
-// 	enablenpc "Satan Broadcast#edq";
-// 	initnpctimer;
-// 	end;
+OnEnable:
+	enablenpc "Satan Broadcast#edq";
+	initnpctimer;
+	end;
 
-// OnTimer5000:
-// 	mapannounce "moc_fild21","Satan Morocc: I'm very impressed by you weaklings.",bc_map,"0xFFFF00";
-// 	end;
+OnTimer5000:
+	mapannounce "moc_fild21","Satan Morocc: I'm very impressed by you weaklings.",bc_map,"0xFFFF00";
+	end;
 
-// OnTimer15000:
-// 	mapannounce "moc_fild21","Satan Morocc: You may as well deal with all your regrets now. I shall snuff out your life soon!",bc_map,"0xFFFF00";
-// 	end;
+OnTimer15000:
+	mapannounce "moc_fild21","Satan Morocc: You may as well deal with all your regrets now. I shall snuff out your life soon!",bc_map,"0xFFFF00";
+	end;
 
-// OnTimer25000:
-// 	mapannounce "moc_fild21","Satan Morocc: It's only a matter of time until I get you, you worthless insects. Just a little while longer...",bc_map,"0xFFFF00";
-// 	stopnpctimer;
-// 	end;
+OnTimer25000:
+	mapannounce "moc_fild21","Satan Morocc: It's only a matter of time until I get you, you worthless insects. Just a little while longer...",bc_map,"0xFFFF00";
+	stopnpctimer;
+	end;
 
-// OnDisable:
-// 	stopnpctimer;
-// 	disablenpc "Satan Broadcast#edq";
-// 	end;
-// }
+OnDisable:
+	stopnpctimer;
+	// disablenpc "Satan Broadcast#edq";
+	end;
+}
 
 -	script	Group of Evil#edq::GroupEvil	844,1,1,{
 	if (((rebirth_moc_edq == 4) || (rebirth_moc_edq == 7)) && ($@re_moc == 1)) {
