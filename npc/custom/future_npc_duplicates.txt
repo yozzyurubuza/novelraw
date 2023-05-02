@@ -17,6 +17,9 @@
 // lighthalzen,153,86,5	duplicate(BatRecruit)	Maroll Battle Recruiter::BatRecruit6	728
 // rachel,149,138,3	duplicate(BatRecruit)	Maroll Battle Recruiter::BatRecruit7	728
 
+// npc/other/poring_war.txt
+//prt_fild08,159,371,3	duplicate(PoringWarRecruiter)	Poring War Recruiter#wop	909
+
 // npc/pre-re/quests/quests_13_1.txt
 //prontera,163,53,3	duplicate(Promotional Staff_prt)	Promotional Staff#prt	100
 //aldebaran,122,138,3	duplicate(Promotional Staff_alde)	Promotional Staff#alde	100
