@@ -69,3 +69,4 @@ moc_fild21,1,1,0	duplicate(SatanBroadcast)	Satan Broadcast#edq	844
 // moc_fild22b,37,196,5	duplicate(RiftG2)	Rift Guard#2	707
 // moc_fild22b,330,154,3	duplicate(RiftG3)	Rift Guard#3	707
 // mid_camp,213,286,3	duplicate(RiftG4)	Rift Guard#4	707
+
