@@ -55,7 +55,10 @@
 // aldebaran,135,128,3	duplicate(ConMessenger)	Continental Messenger#05	998,3,3
 // morocc,159,113,3	duplicate(ChiefBalrog)	Chief Balrog	752
 // moc_fild21,38,193,0	duplicate(MoroccTimer)	Morocc Timer#edq	-1,6,6
-moc_fild21,1,1,0	duplicate(SatanBroadcast)	Satan Broadcast#edq	844
+
+// NOTE: Enable line 1856 and 1879 in npc/quests/quests_morocc.txt
+// moc_fild21,1,1,0	duplicate(SatanBroadcast)	Satan Broadcast#edq	844
+
 // moc_fild21,178,239,0	duplicate(GroupEvil)	Group of Evil#edq	844,1,1
 // sec_in02,14,43,5	duplicate(MoroccAdmin_sec)	Morocc GlobalVar Admin#sec	971
 // moc_fild21,5,5,5	duplicate(MoroccAdmin_sec)	Morocc GlobalVar Admin::MoroccAdmin_moc	971
