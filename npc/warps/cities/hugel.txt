@@ -109,7 +109,7 @@ hugel,80,230,0	warp	hugel59	1,1,hu_in01,24,363
 hu_in01,24,361,0	warp	hugel60	1,1,hugel,82,230
 
 //Bingo
-hugel,55,208,0	warp	hugelwarp1051	1,1,que_bingo,49,9
+// hugel,55,208,0	warp	hugelwarp1051	1,1,que_bingo,49,9
 que_bingo,49,7,0	warp	hugelwarp1052	1,1,hugel,57,207
 que_bingo,39,34,0	warp	hugelwarp1053	1,1,que_bingo,34,109
 que_bingo,34,105,0	warp	hugelwarp1054	1,1,que_bingo,38,28
