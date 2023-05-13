@@ -1587,7 +1587,7 @@ lhz_in01,30,24,5	script	Officer B	109,{
 	close;
 }
 
-moc_fild20,349,179,3	script	Rift Guard#1	707,{
+-	script	Rift Guard#1::RiftG	707,{
 	if (ep13_ryu > 19) {
 		mes "[Guard]";
 		mes "Ah, you are a member of the alliance that discovered the dimensional rift? Welcome. Everything is prepared. Just enter and find the camp when you pass through the rift.";
@@ -1618,7 +1618,7 @@ moc_fild20,349,179,3	script	Rift Guard#1	707,{
 	close;
 }
 
-moc_fild22b,37,196,5	script	Rift Guard#2	707,{
+-	script	Rift Guard#2::RiftG2	707,{
 	mes "[Guard]";
 	mes "Are you the new adventurer?";
 	mes "If you're going to the other side of the rift, the head of the alliance will guide you there.";
@@ -1644,7 +1644,7 @@ moc_fild22b,37,196,5	script	Rift Guard#2	707,{
 	}
 }
 
-moc_fild22b,330,154,3	script	Rift Guard#3	707,{
+-	script	Rift Guard#3::RiftG3	707,{
 	mes "[Guard]";
 	mes "Are you new here?";
 	mes "You look like you need to find the head of the alliance. You can find him near the center of the dimensional rift.";
@@ -1833,7 +1833,7 @@ OnTimer900000:
 	end;
 }
 
-mid_camp,213,286,3	script	Rift Guard#4	707,{
+-	script	Rift Guard#4::RiftG4	707,{
 	mes "[Guard]";
 	mes "Are you the new adventurer?";
 	mes "If you're going to the other side of the rift, the head of the alliance will guide you there.";
