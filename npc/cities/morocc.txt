@@ -29,22 +29,22 @@
 
 // Morocc
 //============================================================
-// morocc,150,120,5	script	Soldier - Morocc#01::MocSoldier	707,3,3,{
-// 	mes "[Morocc Soldier]";
-// 	mes "Hey, you! Stop there.";
-// 	next;
-// 	mes "[Morocc Soldier]";
-// 	mes "This is a restricted area. You can't come any further!";
-// 	close;
+-	script	Soldier - Morocc#01::MocSoldier	707,3,3,{
+	mes "[Morocc Soldier]";
+	mes "Hey, you! Stop there.";
+	next;
+	mes "[Morocc Soldier]";
+	mes "This is a restricted area. You can't come any further!";
+	close;
 
-// OnTouch_:
-// 	mes "[Morocc Soldier]";
-// 	mes "Hey, you! Stop there.";
-// 	next;
-// 	mes "[Morocc Soldier]";
-// 	mes "This is a restricted area. You can't come any further!";
-// 	close;
-// }
+OnTouch_:
+	mes "[Morocc Soldier]";
+	mes "Hey, you! Stop there.";
+	next;
+	mes "[Morocc Soldier]";
+	mes "This is a restricted area. You can't come any further!";
+	close;
+}
 
 morocc,202,244,0	script	Volunteer - Morocc#01	745,{
 	mes "[Morocc Volunteer]";
