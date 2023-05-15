@@ -2,7 +2,7 @@
 Cooking Shop NPC that will only sell items after you complete cooking quest
 */
 
-prt_castle,55,35,3	script	Premium Cooking Shop#cookshop	4259,{
+prt_castle,55,35,3	script	Premium Cooking Shop#cookshop	-1,{
 	if (cooking_q != 11){
 		cutin "2020ver_shiki01",1;
 		mes "[Premium Cooking Shop]";
@@ -17,8 +17,19 @@ prt_castle,55,35,3	script	Premium Cooking Shop#cookshop	4259,{
 		goto L_End;
 	}
 
-L_End:
-	close2;
-	cutin "", 255;
-	end;
+	L_End:
+		close2;
+		cutin "", 255;
+		end;
+
+	OnInit:
+		setunitdata getnpcid(0), UNPC_CLASS, JOB_BIOLO;
+		setunitdata getnpcid(0), UNPC_SEX, SEX_FEMALE;
+		setunitdata getnpcid(0), UNPC_HAIRCOLOR, 6;
+		setunitdata getnpcid(0), UNPC_HAIRSTYLE, 27;
+		setunitdata getnpcid(0), UNPC_HEADTOP, 1769;
+		setunitdata getnpcid(0), UNPC_HEADMIDDLE, 1717; 
+		setunitdata getnpcid(0), UNPC_HEADBOTTOM, 1926;
+		setunitdata getnpcid(0), UNPC_ROBE, 9;
+		end;
 }
