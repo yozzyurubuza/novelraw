@@ -1,0 +1,32 @@
+/*
+Cooking Shop NPC that will only sell items after you complete cooking quest
+*/
+
+prt_castle,55,35,3	script	Premium Cooking Shop#cookshop	-1,{
+	callsub OnClick;
+	end;
+	
+	OnInit:
+		callfunc("customizeNPCSprite", JOB_BIOLO, SEX_FEMALE, 6, 27, 1769, 1717, 1926, 9);
+		end;
+
+	OnClick:
+		if (cooking_q != 11){
+			cutin "2020ver_shiki01",1;
+			mes "[Premium Cooking Shop]";
+			mes "You haven't completed Cooking Quest.";
+			mes "You need to do the quest to access my wares.";
+			goto L_End;
+		}
+		else if (cooking_q == 11){
+			cutin "2020ver_shiki01",1;
+			mes "[Premium Cooking Shop]";
+			mes "You have finished the cooking quest!";
+			goto L_End;
+		}
+
+		L_End:
+			close2;
+			cutin "", 255;
+			end;
+}
