@@ -1724,7 +1724,7 @@ Body:
     AegisName: OSIRIS
     Name: Osiris
     Level: 78
-    Hp: 415400
+    Hp: 830800
     BaseExp: 71500
     JobExp: 28600
     MvpExp: 35750
@@ -1782,7 +1782,7 @@ Body:
     AegisName: BAPHOMET
     Name: Baphomet
     Level: 81
-    Hp: 668000
+    Hp: 1336000
     BaseExp: 107250
     JobExp: 37895
     MvpExp: 53625
@@ -2102,7 +2102,7 @@ Body:
     AegisName: DOPPELGANGER
     Name: Doppelganger
     Level: 72
-    Hp: 249000
+    Hp: 498000
     BaseExp: 51480
     JobExp: 10725
     MvpExp: 25740
@@ -2717,7 +2717,7 @@ Body:
     AegisName: MISTRESS
     Name: Mistress
     Level: 74
-    Hp: 212000
+    Hp: 424000
     BaseExp: 39325
     JobExp: 27170
     MvpExp: 19662
@@ -3975,7 +3975,7 @@ Body:
     AegisName: GOLDEN_BUG
     Name: Golden Thief Bug
     Level: 64
-    Hp: 126000
+    Hp: 252000
     BaseExp: 14300
     JobExp: 7150
     MvpExp: 7150
@@ -4032,7 +4032,7 @@ Body:
     AegisName: ORK_HERO
     Name: Orc Hero
     Level: 77
-    Hp: 585700
+    Hp: 1171400
     BaseExp: 58630
     JobExp: 32890
     MvpExp: 29315
@@ -5217,7 +5217,7 @@ Body:
     AegisName: DRAKE
     Name: Drake
     Level: 70
-    Hp: 326666
+    Hp: 653332
     BaseExp: 28600
     JobExp: 22880
     MvpExp: 14300
@@ -5365,7 +5365,7 @@ Body:
     AegisName: EDDGA
     Name: Eddga
     Level: 65
-    Hp: 152000
+    Hp: 304000
     BaseExp: 25025
     JobExp: 12870
     MvpExp: 12512
@@ -6886,7 +6886,7 @@ Body:
     AegisName: MAYA
     Name: Maya
     Level: 81
-    Hp: 169000
+    Hp: 338000
     BaseExp: 42900
     JobExp: 17875
     MvpExp: 21450
@@ -7042,7 +7042,7 @@ Body:
     AegisName: MOONLIGHT
     Name: Moonlight Flower
     Level: 67
-    Hp: 120000
+    Hp: 240000
     BaseExp: 27500
     JobExp: 14300
     MvpExp: 13750
@@ -7374,7 +7374,7 @@ Body:
     AegisName: PHARAOH
     Name: Pharaoh
     Level: 93
-    Hp: 445997
+    Hp: 891994
     BaseExp: 114990
     JobExp: 41899
     MvpExp: 57495
@@ -7476,7 +7476,7 @@ Body:
     AegisName: PHREEONI
     Name: Phreeoni
     Level: 69
-    Hp: 188000
+    Hp: 376000
     BaseExp: 32175
     JobExp: 16445
     MvpExp: 16087
@@ -8839,7 +8839,7 @@ Body:
     AegisName: ORC_LORD
     Name: Orc Lord
     Level: 74
-    Hp: 783000
+    Hp: 1566000
     BaseExp: 62205
     JobExp: 8580
     MvpExp: 31102
@@ -11594,7 +11594,7 @@ Body:
     Name: Stormy Knight
     JapaneseName: Knight of Windstorm
     Level: 77
-    Hp: 240000
+    Hp: 480000
     BaseExp: 64350
     JobExp: 21450
     MvpExp: 32175
@@ -11654,7 +11654,7 @@ Body:
     Name: Hatii
     JapaneseName: Garm
     Level: 73
-    Hp: 197000
+    Hp: 394000
     BaseExp: 50050
     JobExp: 20020
     MvpExp: 25025
@@ -12595,7 +12595,7 @@ Body:
     AegisName: DARK_LORD
     Name: Dark Lord
     Level: 80
-    Hp: 720000
+    Hp: 1440000
     BaseExp: 65780
     JobExp: 45045
     MvpExp: 32890
@@ -14483,7 +14483,7 @@ Body:
     AegisName: TURTLE_GENERAL
     Name: Turtle General
     Level: 97
-    Hp: 320700
+    Hp: 641400
     BaseExp: 18202
     JobExp: 9800
     MvpExp: 9101
@@ -16873,7 +16873,7 @@ Body:
     Name: Lord of the Dead
     JapaneseName: Lord of Death
     Level: 94
-    Hp: 603383
+    Hp: 1206766
     BaseExp: 131343
     JobExp: 43345
     MvpExp: 65671
@@ -17596,7 +17596,7 @@ Body:
     AegisName: DRACULA
     Name: Dracula
     Level: 85
-    Hp: 320096
+    Hp: 640192
     BaseExp: 120157
     JobExp: 38870
     MvpExp: 60078
@@ -18799,7 +18799,7 @@ Body:
     AegisName: DARK_SNAKE_LORD
     Name: Evil Snake Lord
     Level: 73
-    Hp: 254993
+    Hp: 509986
     BaseExp: 34288
     JobExp: 17950
     MvpExp: 17144
@@ -20868,7 +20868,7 @@ Body:
     Name: Samurai Specter
     JapaneseName: Incantation Samurai
     Level: 71
-    Hp: 218652
+    Hp: 437304
     BaseExp: 33095
     JobExp: 18214
     MvpExp: 16547
@@ -21708,7 +21708,7 @@ Body:
     AegisName: AMON_RA
     Name: Amon Ra
     Level: 88
-    Hp: 1214138
+    Hp: 2428276
     BaseExp: 87264
     JobExp: 35891
     MvpExp: 43632
@@ -23901,7 +23901,7 @@ Body:
     AegisName: TAO_GUNKA
     Name: Tao Gunka
     Level: 70
-    Hp: 193000
+    Hp: 386000
     BaseExp: 59175
     JobExp: 10445
     MvpExp: 29587
@@ -25401,7 +25401,7 @@ Body:
     Name: RSX-0806
     JapaneseName: RSX 0806
     Level: 86
-    Hp: 560733
+    Hp: 1121466
     BaseExp: 31010
     JobExp: 32011
     MvpExp: 15505
@@ -25682,7 +25682,7 @@ Body:
     Name: White Lady
     JapaneseName: Bacsojin
     Level: 85
-    Hp: 253221
+    Hp: 506442
     BaseExp: 45250
     JobExp: 16445
     MvpExp: 22625
@@ -27033,7 +27033,7 @@ Body:
     Name: Egnigem Cenia
     JapaneseName: Ygnizem
     Level: 79
-    Hp: 214200
+    Hp: 428400
     BaseExp: 258760
     JobExp: 86000
     MvpExp: 129380
@@ -28116,7 +28116,7 @@ Body:
     AegisName: APOCALIPS_H
     Name: Vesper
     Level: 97
-    Hp: 640700
+    Hp: 1281400
     BaseExp: 200000
     JobExp: 100000
     MvpExp: 100000
@@ -28268,7 +28268,7 @@ Body:
     AegisName: LADY_TANEE
     Name: Lady Tanee
     Level: 89
-    Hp: 493000
+    Hp: 986000
     BaseExp: 64995
     JobExp: 43222
     MvpExp: 32497
@@ -29179,7 +29179,7 @@ Body:
     Name: Memory of Thanatos
     JapaneseName: Thanatos
     Level: 99
-    Hp: 445660
+    Hp: 891320
     BaseExp: 3666000
     JobExp: 2145060
     MvpExp: 1833000
@@ -29659,7 +29659,7 @@ Body:
     Name: Detardeurus
     JapaneseName: Detale
     Level: 90
-    Hp: 960000
+    Hp: 1920000
     BaseExp: 291850
     JobExp: 123304
     MvpExp: 145925
@@ -30145,7 +30145,7 @@ Body:
     AegisName: KIEL_
     Name: Kiel D-01
     Level: 90
-    Hp: 1523000
+    Hp: 3046000
     BaseExp: 2356200
     JobExp: 512602
     MvpExp: 1178100
@@ -31376,7 +31376,7 @@ Body:
     AegisName: GLOOMUNDERNIGHT
     Name: Gloom Under Night
     Level: 89
-    Hp: 2298000
+    Hp: 4596000
     BaseExp: 962175
     JobExp: 276445
     MvpExp: 481087
@@ -32168,7 +32168,7 @@ Body:
     AegisName: ATROCE
     Name: Atroce
     Level: 82
-    Hp: 1008420
+    Hp: 2016840
     BaseExp: 295550
     JobExp: 118895
     MvpExp: 147775
@@ -35933,7 +35933,7 @@ Body:
     AegisName: GOPINICH
     Name: Gopinich
     Level: 85
-    Hp: 299321
+    Hp: 598642
     BaseExp: 45250
     JobExp: 16445
     MvpExp: 22625
@@ -42032,7 +42032,7 @@ Body:
     AegisName: BOITATA
     Name: Boitata
     Level: 93
-    Hp: 1283990
+    Hp: 2567980
     BaseExp: 74288
     JobExp: 77950
     MvpExp: 37144
