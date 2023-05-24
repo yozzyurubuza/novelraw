@@ -1,0 +1,170 @@
+/*
+This script creates an instanced map for player to use to spawn black and red mushrooms
+The skill Plant Cultivation usage is disabled, but this NPC will require a Creator to have the skill to use its service
+*/
+
+//Instance Generator
+izlude,109,140,5	script	Shiitake	-1,{
+	callsub OnClick;
+	end;
+
+	OnInit:
+		callfunc("customizeNPCSprite", 4304, SEX_MALE, 0, 26, 1730, 1116, 1729, 0);
+		end;
+
+	OnClick:
+		set .@party_id,getcharid(1);
+		set .@md_name$,"Planting Area";
+
+		set .@plantArea_timer,checkquest(690000,PLAYTIME); // 2 days
+		set .@plantArea_timer2,checkquest(690001,PLAYTIME); // 2 hours
+
+		if (!instance_check_party(.@party_id,2)) {
+			mes "[Shiitake]";
+			mes "Make or join a party with more than 1 member and try again.";
+			close;
+		}
+
+		switch(.@plantArea_timer) {
+		case -1:
+			if (is_party_leader() == true) {
+				mes "[Shiitake]";
+				mes "Confirmed the party has been made. Would you like to reserve entrance to the ^32CD32"+.@md_name$+"^000000?";
+				next;
+				switch(select("Generate dungeon ^32CD32"+.@md_name$+"^000000:Enter the dungeon:Return to Izlude:Cancel")) {
+				case 1:
+					if (instance_create(.@md_name$) < 0) {
+						mes "Party Name: "+ getpartyname(.@party_id);
+						mes "Party Leader: "+strcharinfo(0);
+						mes "^32CD32"+.@md_name$+"^000000- Reservation Failed!";
+						close;
+					}
+					mes "^32CD32"+.@md_name$+"^000000 - Try to reserve";
+					mes "After making a reservation, you have to talk to NPC behind and select the menu 'Enter the Dungeon' to enter the dungeon.";
+					close;
+				case 2:
+					callsub L_Enter,0,1;
+				case 3:
+					mes "[Shiitake]";
+					mes "I will move you to Izlude.";
+					close2;
+					warp "izlude",127,143;
+					end;
+				case 4:
+					close;
+				}
+			}
+			mes "[Shiitake]";
+			mes "If you have the dungeon generated already, you can enter it. ";
+			next;
+			switch(select("Enter the ^32CD32"+.@md_name$+"^000000:Return to Izlude:Cancel")) {
+			case 1:
+				callsub L_Enter,1,1;
+			case 2:
+				mes "[Shiitake]";
+				mes "I will move you to Izlude.";
+				close2;
+				warp "izlude",127,143;
+				end;
+			case 3:
+				end;
+			}
+		case 0:
+		case 1:
+			if (.@plantArea_timer2 < 2 && getcharid(1) == plantArea_partyid) {
+				mes "[Shiitake]";
+				mes "If you have the dungeon generated already, you can enter it. ";
+				next;
+				switch(select("Enter the ^32CD32"+.@md_name$+"^000000:Return to Izlude:Cancel")) {
+				case 1:
+					callsub L_Enter,0,0;
+				case 2:
+					mes "[Shiitake]";
+					mes "I will move you to Izlude.";
+					close2;
+					warp "izlude",127,143;
+					end;
+				case 3:
+					close;
+				}
+			} else {
+
+				set .@dun_lim_time,plantArea_timer+172800; // 2 days
+				set .@dun_cur_time,gettimetick(2);
+				set .@dun_ent_t,(.@dun_lim_time - .@dun_cur_time);
+				set .@dun_h,(.@dun_ent_t / 3600);
+				set .@dun_m,(.@dun_ent_t - (.@dun_h * 3600)) / 60;
+				set .@dun_s,.@dun_ent_t - ((.@dun_h * 3600) + (.@dun_m * 60));
+
+				mes "[Shiitake]";
+				mes "Due to the ^32CD32Planting Area's^000000 aftereffects, you cannot enter the dungeon right now, " + .@dun_h + "hours " + .@dun_m + "minutes " + .@dun_s + "seconds left to enter the next dungeon.";
+				close;
+			}
+		case 2:
+			set plantArea_timer,0;
+			erasequest 690000;
+			erasequest 690001;
+			mes "[Shiitake]";
+			mes "^0000ffThe records and after effects related to the "+.@md_name$+" have been removed. You can generate and enter the "+.@md_name$+" again.^000000";
+			close;
+		}
+
+	L_Enter:
+		set .@md_name$,"Planting Area";
+		switch(instance_enter(.@md_name$)) {
+		case IE_OTHER:
+			mes "An unknown error has occurred.";
+			close;
+		case IE_NOINSTANCE:
+			mes "The memorial dungeon "+.@md_name$+" does not exist.";
+			mes "The party leader did not generate the dungeon yet.";
+			close;
+		case IE_NOMEMBER:
+			mes "You can enter the dungeon after making the party.";
+			close;
+		case IE_OK:
+			mapannounce "izlude", strcharinfo(0) +" of the party, "+ getpartyname( getcharid(1) ) +", is entering the dungeon, "+.@md_name$+".",bc_map,"0x00ff99",FW_NORMAL,12;
+			if (getarg(1)) {
+				set plantArea_timer,gettimetick(2);
+				set plantArea_partyid, getcharid(1);
+				setquest 690000;
+				setquest 690001;
+			}
+			if (getarg(0) == 0) close;
+			else end;
+		}		
+
+}
+
+
+//Inside the Instance:
+//NPC that will spawn mushroom or plant
+1@exds,135,166,4	script	Sepia Enoki#	-1,{
+	callsub OnClick;
+	end;
+
+	OnInstanceInit:
+		callfunc("customizeNPCSprite", JOB_BIOLO, SEX_MALE, 6, 27, 1727, 1747, 2022, 138);
+		end;
+
+	OnClick:
+		mes "[Sepia Enoki]";
+		mes "Welcome to Planting Area!";
+		close;
+
+}
+
+//NPC that will spawn mushroom or plant
+1@exds,128,168,5	script	Sapphire Enoki#	-1,{
+	callsub OnClick;
+	end;
+
+	OnInstanceInit:
+		callfunc("customizeNPCSprite", JOB_BIOLO, SEX_FEMALE, 0, 0, 2108, 1818, 1817, 19);
+		end;
+
+	OnClick:
+		mes "[Sapphire Enoki]";
+		mes "Welcome to Planting Area!";
+		close;
+}
