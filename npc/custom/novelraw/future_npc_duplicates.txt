@@ -34,6 +34,7 @@
 // alberta,214,77,6	duplicate(CaptainJanssenEndless)	Captain Janssen	709
 
 // //Resurrection of Satan Morocc-----npc/pre-re/quests/quests_morocc.txt
+// //NOTE: Enable moc_fild20-22 in maps_athena.conf
 // morocc,176,103,3	duplicate(Continental Official)	Continental Official#mor	754
 
 // //Morocc - Soldier- Morocc npc/cities/morocc.txt
@@ -62,6 +63,8 @@
 // moc_fild21,178,239,0	duplicate(GroupEvil)	Group of Evil#edq	844,1,1
 // sec_in02,14,43,5	duplicate(MoroccAdmin_sec)	Morocc GlobalVar Admin#sec	971
 // moc_fild21,5,5,5	duplicate(MoroccAdmin_sec)	Morocc GlobalVar Admin::MoroccAdmin_moc	971
+
+// //----------------------------------------------------------------------
 
 
 // //npc/quests/quests_13_1.txt----RIFT GUARDS
