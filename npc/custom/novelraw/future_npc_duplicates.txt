@@ -41,7 +41,9 @@
 
 
 // //Resurrection of Satan Morocc-----npc/pre-re/quests/quests_morocc.txt
-// //NOTE: Enable moc_fild20-22 in maps_athena.conf
+// //NOTES: 
+// //Enable moc_fild20-22 in maps_athena.conf
+// //Enable mobs in moc_fild20-22 in npc/pre-re/mobs/fields/morocc.txt
 // morocc,176,103,3	duplicate(Continental Official)	Continental Official#mor	754
 
 // //Morocc - Soldier- Morocc npc/cities/morocc.txt
