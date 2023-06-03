@@ -7102,3 +7102,12 @@ Body:
   - Id: 62238
     Title: Midgardian Mercenary timer
     TimeLimit: +1h
+
+  # Custom Quests here.
+
+  - Id: 690000
+    Title: Planting Area Access
+    TimeLimit: +5mn # Currently set to 5 mins for debugging
+  - Id: 690001
+    Title: Planting Area time limit
+    TimeLimit: +2h
