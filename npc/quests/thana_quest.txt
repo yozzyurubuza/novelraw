@@ -15,7 +15,7 @@
 //= 1.1 Kagerou/Oboro support (Class -> BaseClass) [Euphy]
 //============================================================
 
-hu_fild01,140,163,5	script	Tower Keeper	852,3,3,{
+-	script	Tower Keeper::TowerKeeperThana	852,3,3,{
 	mes "[Gatei]";
 	mes "Greetings, adventurer.";
 	mes "I am Gatei Knumm, keeper";
