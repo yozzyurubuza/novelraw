@@ -2648,7 +2648,7 @@ Body:
           - Item: Owl_Baron_Card
             Rate: 1
           - Item: Iron_Fist_Card
-            Rate: 1000
+            Rate: 1
           - Item: Arclouse_Card
             Rate: 1
           - Item: Apocalips_Card
@@ -2976,7 +2976,7 @@ Body:
           # - Item: Flame_Skull_Card
           #   Rate: 1
           - Item: Necromancer_Card
-            Rate: 1000
+            Rate: 1
           # - Item: Tatacho_Card
           #   Rate: 1
           # - Item: Aqua_Elemental_Card
@@ -2992,7 +2992,7 @@ Body:
           # - Item: Dark_Shadow_Card
           #   Rate: 1
           - Item: Banshee_Master_Card
-            Rate: 1000
+            Rate: 1
           # - Item: Centipede_Larva_Card
           #   Rate: 2
           # - Item: Hilsrion_Card
