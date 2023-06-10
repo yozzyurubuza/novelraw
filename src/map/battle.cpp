@@ -1989,6 +1989,7 @@ int64 battle_calc_damage(struct block_list *src,struct block_list *bl,struct Dam
 		if ((flag&BF_WEAPON && battle_config.skill_min_damage&1)
 			|| (flag&BF_MAGIC && battle_config.skill_min_damage&2)
 			|| (flag&BF_MISC && battle_config.skill_min_damage&4)
+			|| (flag&BF_WEAPON && flag&BF_MAGIC && flag&BF_MISC && battle_config.skill_min_damage&3)
 		)
 			damage = div_;
 	}
@@ -11019,7 +11020,7 @@ static const struct _battle_data {
 	{ "pet_max_atk2",                       &battle_config.pet_max_atk2,                    1000,   0,      INT_MAX,        },
 	{ "pet_disable_in_gvg",                 &battle_config.pet_no_gvg,                      0,      0,      1,              },
 	{ "pet_master_dead",                    &battle_config.pet_master_dead,                 0,      0,      1,              },
-	{ "skill_min_damage",                   &battle_config.skill_min_damage,                2|4,    0,      1|2|4,          },
+	{ "skill_min_damage",                   &battle_config.skill_min_damage,                2|3|4,  0,      1|2|3|4,        },
 	{ "finger_offensive_type",              &battle_config.finger_offensive_type,           0,      0,      1,              },
 	{ "heal_exp",                           &battle_config.heal_exp,                        0,      0,      INT_MAX,        },
 	{ "resurrection_exp",                   &battle_config.resurrection_exp,                0,      0,      INT_MAX,        },
