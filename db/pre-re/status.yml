@@ -2131,7 +2131,8 @@ Body:
     CalcFlags:
       Str: true
     Flags:
-      NoClearbuff: true
+      NoRemoveOnDead: true
+      NoClearbuff: false
       NoDispell: true
       NoBanishingBuster: true
       NoClearance: true
@@ -2142,7 +2143,8 @@ Body:
     CalcFlags:
       Agi: true
     Flags:
-      NoClearbuff: true
+      NoRemoveOnDead: true
+      NoClearbuff: false
       NoDispell: true
       NoBanishingBuster: true
       NoClearance: true
@@ -2153,7 +2155,8 @@ Body:
     CalcFlags:
       Vit: true
     Flags:
-      NoClearbuff: true
+      NoRemoveOnDead: true
+      NoClearbuff: false
       NoDispell: true
       NoBanishingBuster: true
       NoClearance: true
@@ -2164,7 +2167,8 @@ Body:
     CalcFlags:
       Int: true
     Flags:
-      NoClearbuff: true
+      NoRemoveOnDead: true
+      NoClearbuff: false
       NoDispell: true
       NoBanishingBuster: true
       NoClearance: true
@@ -2175,7 +2179,8 @@ Body:
     CalcFlags:
       Dex: true
     Flags:
-      NoClearbuff: true
+      NoRemoveOnDead: true
+      NoClearbuff: false
       NoDispell: true
       NoBanishingBuster: true
       NoClearance: true
@@ -2186,7 +2191,8 @@ Body:
     CalcFlags:
       Luk: true
     Flags:
-      NoClearbuff: true
+      NoRemoveOnDead: true
+      NoClearbuff: false
       NoDispell: true
       NoBanishingBuster: true
       NoClearance: true
