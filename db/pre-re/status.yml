@@ -2131,7 +2131,8 @@ Body:
     CalcFlags:
       Str: true
     Flags:
-      NoClearbuff: true
+      NoRemoveOnDead: true
+      NoClearbuff: false
       NoDispell: true
       NoBanishingBuster: true
       NoClearance: true
