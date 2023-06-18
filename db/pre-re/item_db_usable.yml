@@ -3801,7 +3801,8 @@ Body:
     AegisName: Fantastic_Cooking_Kits
     Name: Fantastic Cooking Kit
     Type: Usable
-    Buy: 10000
+    Buy: 1000
+    Sell: 500
     Weight: 70
     Flags:
       BuyingStore: true
