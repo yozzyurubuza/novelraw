@@ -1,2 +1,0 @@
-//	Gordon NPC is used by the 'Premium Cooking Shop' located in 'npc/custom/novelraw/cooking_shop.txt'
-prt_castle,55,35,3	shop	Gordon	-1,12129:-1,7476:2000000,7477:3000000,7478:4000000,7479:6000000,7480:8000000,7481:15000000
