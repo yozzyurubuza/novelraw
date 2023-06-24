@@ -3,23 +3,11 @@
 //==============================================
 
 izlude,127,168,4	script	Porjer#1	-1,{
-	callfunc "craft";
+	doevent "trig_craft::OnMenu";
 	
 	OnInit:
 		callfunc("customizeNPCSprite", JOB_MEISTER, SEX_MALE, 6, 27, 1760, 1715, 1920, 7);
 		end;
-	}
-
-//=================================
-// TRIGGER PORJER NPC WHEN CLICKED
-//=================================
-function	script	craft	{
-	mes "[Porjer]";
-	mes "Welcome!";
-	close2;
-
-	doevent "trig_craft::OnMenu";
-	end;
 }
 
 //========================
@@ -31,41 +19,41 @@ function Chk;
 function Slot;
 OnInit:
 
-//==========================
-// MODIFY SHOP SETTINGS HERE
-//==========================
-	set .Announce,0;	// Announce quest completion? (1: yes / 0: no)
+	//==========================
+	// MODIFY SHOP SETTINGS HERE
+	//==========================
+	set .Announce,1;	// Announce quest completion? (1: yes / 0: no)
 	set .ShowSlot,1;	// Show item slots? (2: all equipment / 1: if slots > 0 / 0: never)
 	set .ShowID,1;  	// Show item IDs? (1: yes / 0: no)
 	set .ShowZeny,0;	// Show Zeny cost, if any? (1: yes / 0: no)
 	set .MaxStack,1;	// Max number of quest items purchased at one time.
 
-//==============================
-// ADD THE SHOP SELECTIONS HERE
-//==============================
-// When adding new shop options go to the bottom of this file and follow the format.
-
+	//==============================
+	// ADD THE SHOP SELECTIONS HERE
+	//==============================
+	// When adding new shop options go to the bottom of this file and follow the format.
 	setarray .Shops$[1],
 		"Headgears",	// Shop Named 1
 		"Weapons";		// Shop Named 2
 
 
-//==============================
-// ADD THE CRAFTABLE ITEMS HERE 
-//==============================
-// Warning: Do not add dupplicated item ID or IT WILL NOT WORK!
-// Syntax: Add(<shop ID>,<reward ID>,<reward amount>,<Zeny cost>,<point cost>,<required item ID>,<required item amount>{,...});
+	//==============================
+	// ADD THE CRAFTABLE ITEMS HERE 
+	//==============================
+	// Warning: Do not add dupplicated item ID or IT WILL NOT WORK!
+	// Syntax: Add(<shop ID>,<reward ID>,<reward amount>,<Zeny cost>,<point cost>,<required item ID>,<required item amount>{,...});
 
-// Shop 1
+	// Shop 1
 	Add(1,5389,1,0,0,2226,1,984,10,985,40,4081,1,732,2);
+	Add(1,5078,1,0,0,909,1);
 
-// Shop 2
+	// Shop 2
 	Add(2,1599,1,0,0,7086,1,969,10,999,40,1003,50,984,2);
 
 
-//================================================================
-// 	BELOW ARE CODES HANDLING THE LOGIC OF CUSTOM CRAFTING SYSTEM
-//================================================================
+	//================================================================
+	// 	BELOW ARE CODES HANDLING THE LOGIC OF CUSTOM CRAFTING SYSTEM
+	//================================================================
 
 	set .menu$,"";
 	//i = indicate where where to start reading the array
@@ -80,6 +68,10 @@ OnInit:
 	end;
 
 OnMenu:
+	mes "[Porjer]";
+	mes "Welcome!";
+	next;
+
 	//This part of code is responsible for the arrangement of items inside the shop
 	set .@size, getarraysize(@i);
 	if (!.@size) set @shop_index, select(.menu$);
@@ -94,6 +86,9 @@ OnMenu:
 		message strcharinfo(0),"An error has occurred.";
 		end;
 	}
+	mes "[Porjer]";
+	mes "Loading the list of items (~¢¨¢£¢¨)~";
+	close2;
 	//If player add morethan 1 item to craft
 	dispbottom "Select one item at a time.";
 	//Display the list of items in the Shop
