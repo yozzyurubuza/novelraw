@@ -20,7 +20,7 @@ izlude,125,148,6	script	Bronya#iz	696,{
 
 	getitem 14003, 10; // Gives 10 Elite Siege Supply Boxes
 	mes "[Bronya Giveaway NPC]";
-	mes "There you go! Enjoy your Elite Siege Supply Boxes! ^¤µ^";
+	mes "There you go! Enjoy your Elite Siege Supply Boxes! ^_^";
 	set #Bronya, gettime(DT_YYYYMMDD);
 
 	close;
