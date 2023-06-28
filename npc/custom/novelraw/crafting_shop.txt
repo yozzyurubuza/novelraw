@@ -87,7 +87,7 @@ OnMenu:
 		end;
 	}
 	mes "[Porjer]";
-	mes "Loading the list of items (~¢¨¢£¢¨)~";
+	mes "Loading the list of items...";
 	close2;
 	//If player add morethan 1 item to craft
 	dispbottom "Select one item at a time.";
