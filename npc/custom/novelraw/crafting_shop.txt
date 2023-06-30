@@ -1,180 +1,168 @@
-//==============================================
-// Based on the existing Quest_shop edited by J
+//===== rAthena Script =======================================
+//= Euphy's Quest Shop
+//===== By: ==================================================
+//= Euphy
+//===== Current Version: =====================================
+//= 1.6c
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= A dynamic quest shop based on Lunar's, with easier config.
+//= Includes support for multiple shops & cashpoints.
+//= Item Preview script by ToastOfDoom.
+//===== Additional Comments: =================================
+//= 1.0 Initial script.
+//= 1.2 Added category support.
+//= 1.3 More options and fixes.
+//= 1.4 Added debug settings.
+//= 1.5 Replaced categories with shop IDs.
+//= 1.6 Added support for purchasing stackables.
+//= 1.6a Added support for previewing costumes and robes.
+//= 1.6b Added 'disable_items' command.
+//= 1.6c Replaced function 'A_An' with "F_InsertArticle".
+//= 1.7 Modified by j
+//= 1.7a Removed some lines of code
 //==============================================
 
-izlude,127,168,4	script	Porjer#1	-1,{
-	doevent "trig_craft::OnMenu";
+izlude,127,168,4	script	Sindri#1	-1,{
+	callfunc "craft";
 	
 	OnInit:
 		callfunc("customizeNPCSprite", JOB_MEISTER, SEX_MALE, 6, 27, 1760, 1715, 1920, 7);
 		end;
+	}
+
+//=================================
+// TRIGGER Sindri NPC WHEN CLICKED;
+//=================================
+function	script	craft	{
+	doevent "trig_craft::OnMenu";
+	end;
 }
-
-//========================
-// HANDLES THE WHOLE CODE
-//========================
+	// Core code
 -	script	trig_craft	-1,{
-function Add;
-function Chk;
-function Slot;
-OnInit:
+	function Add;
+	function Chk;
+	function Slot;
 
-	//==========================
-	// MODIFY SHOP SETTINGS HERE
-	//==========================
-	set .Announce,1;	// Announce quest completion? (1: yes / 0: no)
-	set .ShowSlot,1;	// Show item slots? (2: all equipment / 1: if slots > 0 / 0: never)
-	set .ShowID,1;  	// Show item IDs? (1: yes / 0: no)
-	set .ShowZeny,0;	// Show Zeny cost, if any? (1: yes / 0: no)
-	set .MaxStack,1;	// Max number of quest items purchased at one time.
+	OnInit:
+		set .Announce,1;	// Announce quest completion? (1: yes / 0: no)
+		set .ShowSlot,1;	// Show item slots? (2: all equipment / 1: if slots > 0 / 0: never)
+		set .ShowID,1;  	// Show item IDs? (1: yes / 0: no)
+		set .ShowZeny,0;	// Show Zeny cost, if any? (1: yes / 0: no)
+		set .MaxStack,1;	// Max number of quest items purchased at one time.
 
-	//==============================
-	// ADD THE SHOP SELECTIONS HERE
-	//==============================
-	// When adding new shop options go to the bottom of this file and follow the format.
-	setarray .Shops$[1],
+		// When adding new shop options go to the bottom of this file and follow the format.
+		setarray .Shops$[1],
 		"Headgears",	// Shop Named 1
 		"Weapons";		// Shop Named 2
 
+		// Go to the bottom of the code to add the items
+		callsub ItemList;
 
-	//==============================
-	// ADD THE CRAFTABLE ITEMS HERE 
-	//==============================
-	// Warning: Do not add dupplicated item ID or IT WILL NOT WORK!
-	// Syntax: Add(<shop ID>,<reward ID>,<reward amount>,<Zeny cost>,<point cost>,<required item ID>,<required item amount>{,...});
-
-	// Shop 1
-	Add(1,5389,1,0,0,2226,1,984,10,985,40,4081,1,732,2);
-	Add(1,5078,1,0,0,909,1);
-
-	// Shop 2
-	Add(2,1599,1,0,0,7086,1,969,10,999,40,1003,50,984,2);
-
-
-	//================================================================
-	// 	BELOW ARE CODES HANDLING THE LOGIC OF CUSTOM CRAFTING SYSTEM
-	//================================================================
-
-	set .menu$,"";
-	//i = indicate where where to start reading the array
-	for(set .@i,1; .@i<=getarraysize(.Shops$); set .@i,.@i+1) {
-		//set .menu = create a window
-		//.menu$+.Shops$[.@i] = display the Shops (Headgear, Weapon, Others) inside the created window
-		set .menu$, .menu$+.Shops$[.@i]+":";
-		//By default there's placeholder (jellopy) inside the shop to be able to call it, see the bottom of this code.
-		//This code deletes the jellopy
-		npcshopdelitem "craft"+.@i,909;
-	}
-	end;
-
-OnMenu:
-	mes "[Porjer]";
-	mes "Welcome!";
-	next;
-
-	//This part of code is responsible for the arrangement of items inside the shop
-	set .@size, getarraysize(@i);
-	if (!.@size) set @shop_index, select(.menu$);
-	else if (.@size == 1) set @shop_index, @i[0];
-	else {
-		for(set .@j,0; .@j<.@size; set .@j,.@j+1)
-			set .@menu$, .@menu$+.Shops$[@i[.@j]]+":";
-		set @shop_index, @i[select(.@menu$)-1];
-	}
-	deletearray @i[0],getarraysize(@i);
-	if (.Shops$[@shop_index] == "") {
-		message strcharinfo(0),"An error has occurred.";
-		end;
-	}
-	mes "[Porjer]";
-	mes "Loading the list of items...";
-	close2;
-	//If player add morethan 1 item to craft
-	dispbottom "Select one item at a time.";
-	//Display the list of items in the Shop
-	callshop "craft"+@shop_index,1;
-	//Responsible for displaying and required items
-	npcshopattach "craft"+@shop_index;
-	end;
-
-OnBuyItem:
-	// .@q[] : RewardID, BoughtAmt, RewardAmt, BaseAmt, ReqZeny, ReqPts, { ReqItem, ReqAmt, ... }
-	// Checks and copy the requiments
-	setarray .@q[0],@bought_nameid[0],((@bought_quantity[0] > .MaxStack)?.MaxStack:@bought_quantity[0]);
-	copyarray .@q[3],getd(".q_"+@shop_index+"_"+.@q[0]+"[0]"),getarraysize(getd(".q_"+@shop_index+"_"+.@q[0]));
-	set .@q[2],.@q[1]*.@q[3];
-	// Display this error when player craft an item greater than the maximum storage limit
-	if (!.@q[2] || .@q[2] > 30000) {
-		message strcharinfo(0),"You can't purchase that many "+getitemname(.@q[0])+".";
-		end;
-	}
-	mes "[Porjer]";
-	// Display Selected item
-	mes "Selected Item: ^0055FF"+((.@q[2] > 1)?.@q[2]+"x ":"")+Slot(.@q[0])+"^000000";
-	mes "Requirements:";
-	// Display Requirements
-	if (.@q[4]) mes " > "+Chk(Zeny,.@q[4]*.@q[1])+(.@q[4]*.@q[1])+" Zeny^000000";
-	if (.@q[6]) for(set .@i,6; .@i<getarraysize(.@q); set .@i,.@i+2)
-		mes " > "+Slot(.@q[.@i])+Chk(countitem(.@q[.@i]),.@q[.@i+1]*.@q[1])+((.ShowID)?" [ "+.@q[.@i]+" ] ":"")+" ("+countitem(.@q[.@i])+"/"+(.@q[.@i+1]*.@q[1])+")^000000";
-	next;
-	// Get the item info an set it inside the array .@q[0]
-	setarray @qe[1], getiteminfo(.@q[0], ITEMINFO_LOCATIONS), getiteminfo(.@q[0], ITEMINFO_VIEW);
-	// Check the array .@q[0] where the item should be equipped when preview is selected
-	if (@qe[2] > 0 && ((@qe[1] & EQP_HEAD_LOW) || (@qe[1] & EQP_HEAD_TOP) || (@qe[1] & EQP_HEAD_MID) || (@qe[1] & EQP_COSTUME_HEAD_TOP) || (@qe[1] & EQP_COSTUME_HEAD_MID) || (@qe[1] & EQP_COSTUME_HEAD_LOW) || (@qe[1] & EQP_GARMENT) || (@qe[1] & EQP_COSTUME_GARMENT)))
-		set .@preview,1;
-	// Timer how long player can interact with the NPC. When the timer ends the conversation will be canceled.
-	addtimer 1000, strnpcinfo(0)+"::OnEnd";
-	while(1) {
-		// Create a navi buttons (purchase, preview, cancel)
-		switch(select(" ~ Purchase ^0055FF"+getitemname(.@q[0])+"^000000:"+((.@preview && !@qe[7])?" ~ Preview...":"")+": ~ ^777777Cancel^000000")) {
-		case 1:
-			// Check if the items required are complete
-			if (@qe[0]) {
-				mes "[Porjer]";
-				mes "You're missing one or more quest requirements.";
-				close;
-			}
-			// Display when the player overweight
-			if (!checkweight(.@q[0],.@q[2])) {
-				mes "[Porjer]";
-				mes "^FF0000You need "+(((.@q[2]*getiteminfo(.@q[0], ITEMINFO_WEIGHT))+Weight-MaxWeight)/10)+" additional weight capacity to complete this trade.^000000";
-				close;
-			}
-			// If the item required is complete
-			if (.@q[4]) set Zeny, Zeny-(.@q[4]*.@q[1]);
-			if (.@q[6]) for(set .@i,6; .@i<getarraysize(.@q); set .@i,.@i+2)
-				// Delete the required items
-				delitem .@q[.@i],.@q[.@i+1]*.@q[1];
-			// Player gets the selected item
-			getitem .@q[0],.@q[2];
-			// Display a message the craft is complete
-			if (.Announce) announce strcharinfo(0)+" has created "+((.@q[2] > 1)?.@q[2]+"x "+getitemname(.@q[0]):callfunc("F_InsertArticle",getitemname(.@q[0])))+"!",0;
-			specialeffect2 EF_FLOWERLEAF;
-			close;
-		// Display a preview of the item in-game
-		case 2:
-			setarray @qe[3], getlook(LOOK_HEAD_BOTTOM), getlook(LOOK_HEAD_TOP), getlook(LOOK_HEAD_MID), getlook(LOOK_ROBE), 1;
-			if ((@qe[1] & 1) || (@qe[1] & 4096)) changelook LOOK_HEAD_BOTTOM, @qe[2];
-			else if ((@qe[1] & 256) || (@qe[1] & 1024)) changelook LOOK_HEAD_TOP, @qe[2];
-			else if ((@qe[1] & 512) || (@qe[1] & 2048)) changelook LOOK_HEAD_MID, @qe[2];
-			else if ((@qe[1] & 4) || (@qe[1] & 8192)) changelook LOOK_ROBE, @qe[2];
-			break;
-		// Close all conversation 
-		case 3:
-			close;
+		set .menu$,"";
+		//.@shopCount = indicate where where to start reading the array
+		for(.@shopCount = 1; .@shopCount<=getarraysize(.Shops$); .@shopCount++) {
+			//set .menu = create a window
+			//.menu$+.Shops$[.@shopCount] = display the Shops (Headgear, Weapon, Others) inside the created window
+			set .menu$, .menu$+.Shops$[.@shopCount]+":";
+			//By default there's placeholder (jellopy) inside the shop to be able to call it, see the bottom of this code.
+			//This code deletes the jellopy
+			npcshopdelitem "craft"+.@shopCount,909;
 		}
-	}
+		end;
 
-OnEnd:
-	// Will revert the character looks to original
-	if (@qe[7]) {
-		changelook LOOK_HEAD_BOTTOM, @qe[3];
-		changelook LOOK_HEAD_TOP, @qe[4];
-		changelook LOOK_HEAD_MID, @qe[5];
-		changelook LOOK_ROBE, @qe[6];
-	}
-	deletearray @qe[0],8;
-	end;
+	OnMenu:
+		//This part of code is responsible for the arrangement of items inside the shop
+		set .@size, getarraysize(@itemCount);
+		if (!.@size){
+			set @shop_index, select(.menu$);
+		}
+		else if (.@size == 1){
+			set @shop_index, @itemCount[0];
+		} 
+		else if (.Shops$[@shop_index] == "") {
+			message strcharinfo(0),"An error has occurred.";
+			end;
+		}
+		dispbottom "Select one item at a time.";
+		//Display the list of items in the Shop
+		callshop "craft"+@shop_index,1;
+		//Responsible for displaying and getting the required items
+		npcshopattach "craft"+@shop_index;
+		end;
+
+	OnBuyItem:
+		// .@q[] : RewardID, BoughtAmt, RewardAmt, BaseAmt, ReqZeny, ReqPts, { ReqItem, ReqAmt, ... }
+		// Checks and copy the requiments
+		setarray .@requiredItem[0],@bought_nameid[0],((@bought_quantity[0] > .MaxStack)?.MaxStack:@bought_quantity[0]);
+		copyarray .@requiredItem[3],getd(".q_"+@shop_index+"_"+.@requiredItem[0]+"[0]"),getarraysize(getd(".q_"+@shop_index+"_"+.@requiredItem[0]));
+		//Number of selected items
+		set .@requiredItem[2],.@requiredItem[1];
+		// Display this error when player craft an item greater than the maximum storage limit
+		if (!.@requiredItem[2] || .@requiredItem[2] > 30000) {
+			message strcharinfo(0),"You can't purchase that many "+getitemname(.@requiredItem[0])+".";
+			end;
+		}
+		mes "[Sindri]";
+		// Display Selected item
+		mes "Selected Item: ^0055FF"+Slot(.@requiredItem[0])+"^000000";
+		mes "Requirements:";
+		//Display Requirements
+		if (.@requiredItem[4]){
+			mes " > Zenny: "+Chk(Zeny,.@requiredItem[4]*.@requiredItem[1])+(.@requiredItem[4]*.@requiredItem[1]);
+		}
+		if (.@requiredItem[5]){
+			for(.@reqList = 5; .@reqList<getarraysize(.@requiredItem); .@reqList += 2){
+				mes " > ^000000"+Slot(.@requiredItem[.@reqList])+"^000000"+((.ShowID)?" [ ^0055FF"+.@requiredItem[.@reqList]+"^000000 ] ":"")+
+				" ("+Chk(countitem(.@requiredItem[.@reqList]),.@requiredItem[.@reqList+1]*.@requiredItem[1])+countitem(.@requiredItem[.@reqList])+"/"+
+				(.@requiredItem[.@reqList+1]*.@requiredItem[1])+")^000000";
+			}
+		}
+		next;
+		setarray @reqCheck[1], getiteminfo(.@requiredItem[0], ITEMINFO_LOCATIONS), getiteminfo(.@requiredItem[0], ITEMINFO_VIEW);
+		while(1) {
+			// Create a navi buttons (purchase, cancel)
+			switch(select(" ~ Purchase ^0055FF"+getitemname(.@requiredItem[0])+": ~ ^777777Cancel^000000")) {
+			case 1:
+				// Check if the items required are incomplete
+				if (@reqCheck[0]) {
+					mes "[Sindri]";
+					mes "You're missing one or more quest requirements.";
+					close;
+				}
+				// Display when the player overweight
+				if (!checkweight(.@requiredItem[0],.@requiredItem[2])) {
+					mes "[Sindri]";
+					mes "^FF0000You need "+(((.@requiredItem[2]*getiteminfo(.@requiredItem[0], ITEMINFO_WEIGHT))+Weight-MaxWeight)/10)+" additional weight capacity to complete this trade.^000000";
+					close;
+				}
+				// If the item required is complete
+				if (.@requiredItem[3]){
+					set Zeny, Zeny-(.@requiredItem[3]*.@requiredItem[1]);
+				}
+				if (.@requiredItem[5]){
+					for(.@numReq = 5; .@numReq<getarraysize(.@requiredItem); .@numReq += 2){
+					// Delete the required items
+					delitem .@requiredItem[.@numReq],.@requiredItem[.@numReq+1]*.@requiredItem[1];
+					}
+					// Player gets the selected item
+					getitem .@requiredItem[0],.@requiredItem[2];
+					// Display a message the craft is complete
+					if (.Announce){
+						announce strcharinfo(0)+" has created "+((.@requiredItem[2] > 1)?.@requiredItem[2]+"x "+getitemname(.@requiredItem[0]):callfunc("F_InsertArticle",getitemname(.@requiredItem[0])))+"!",0;
+						specialeffect2 EF_FLOWERLEAF;
+					}
+					close;
+				}
+				
+			case 2:
+				close;
+			}
+		}
+
+	OnEnd:
+		end;
 
 // Adding custom items
 function Add {
@@ -183,16 +171,17 @@ function Add {
 		debugmes "Quest reward #"+getarg(1)+" invalid (skipped).";
 		return;
 	}
-	setarray .@j[0],getarg(2),getarg(3),getarg(4);
-	for(set .@i,5; .@i<getargcount(); set .@i,.@i+2) {
+	//setarray .@itemOtherReqs[0],getarg(2),getarg(3),getarg(4);
+	setarray .@itemOtherReqs[0],getarg(2),getarg(3);
+	for(.@argCount = 4; .@argCount<getargcount(); .@argCount += 2) {
 		// Check if the requirement IDs are valid
-		if (getitemname(getarg(.@i)) == "null") {
-			debugmes "Quest requirement #"+getarg(.@i)+" invalid (skipped).";
+		if (getitemname(getarg(.@argCount)) == "null") {
+			debugmes "Quest requirement #"+getarg(.@argCount)+" invalid (skipped).";
 			return;
 		} else
-			setarray .@j[.@i-2],getarg(.@i),getarg(.@i+1);
+			setarray .@itemOtherReqs[.@argCount-2],getarg(.@argCount),getarg(.@argCount+1);
 	}
-	copyarray getd(".q_"+getarg(0)+"_"+getarg(1)+"[0]"),.@j[0],getarraysize(.@j);
+	copyarray getd(".q_"+getarg(0)+"_"+getarg(1)+"[0]"),.@itemOtherReqs[0],getarraysize(.@itemOtherReqs);
 	npcshopadditem "craft"+getarg(0),getarg(1),((.ShowZeny)?getarg(3):0);
 	return;
 }
@@ -200,25 +189,48 @@ function Add {
 // Change color of Requirement
 function Chk {
 	if (getarg(0) < getarg(1)) {
-		set @qe[0],1;
+		set @reqCheck[0],1;
 		// Color of requirement when incomplete.
 		return "^FF0000";
 	} else
 		// Color of requirement when completed
-		return "^0055ff";
+		return "^008000";
 }
 
 // Check item slot
 function Slot {
-	set .@s$,getitemname(getarg(0));
+	set .@slotCount$,getitemname(getarg(0));
 	switch(.ShowSlot) {
-		// If item has no slot
-		case 1: if (!getitemslots(getarg(0))) return .@s$;
-		// If item has slot(s)
-		case 2: if (getiteminfo(getarg(0), ITEMINFO_TYPE) == 4 || getiteminfo(getarg(0), ITEMINFO_TYPE) == 5) return .@s$+" ["+getitemslots(getarg(0))+"]";
-		default: return .@s$;
+		case 1:
+			if (!getitemslots(getarg(0))){
+				return .@slotCount$;
+			}
+
+		case 2:
+			if (getiteminfo(getarg(0), ITEMINFO_TYPE) == 4 || getiteminfo(getarg(0), ITEMINFO_TYPE) == 5){
+				return .@slotCount$+" ["+getitemslots(getarg(0))+"]";
+			}
+
+		default:
+			return .@slotCount$;
 	}
 }
+
+ItemList:
+	//==============================
+	// ADD THE CRAFTABLE ITEMS HERE 
+	//==============================
+	// Warning: Do not add dupplicated item ID or IT WILL NOT WORK!
+	//				0			1			2				3					4			5
+	// Syntax: Add(<shop ID>,<reward ID>,<reward amount>,<Zeny cost>,<required item ID>,<required item amount>{,...});
+
+	// Shop 1
+	Add(1,5389,1,999,2226,1,984,10,985,40,4081,1,732,2);
+
+	// Shop 2
+	Add(2,1599,1,0,7086,1,969,10,999,40,1003,50,984,2);
+
+	return;
  }
 
 // Placeholder shop data
