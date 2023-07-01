@@ -136,26 +136,8 @@ izlude,109,140,5	script	Shiitake	-1,{
 
 }
 
-
-//Inside the Instance:
-//NPC that will spawn mushroom or plant
-1@exds,135,166,4	script	Sepia Enoki#	-1,{
-	callsub OnClick;
-	end;
-
-	OnInstanceInit:
-		callfunc("customizeNPCSprite", JOB_BIOLO, SEX_MALE, 6, 27, 1727, 1747, 2022, 138);
-		end;
-
-	OnClick:
-		mes "[Sepia Enoki]";
-		mes "Welcome to Planting Area!";
-		close;
-
-}
-
-//NPC that will spawn mushroom or plant
-1@exds,128,168,5	script	Sapphire Enoki#	-1,{
+//NPC that will dictate Sapphire Enoki whether mushroom or plant
+1@exds,128,168,5	script	Sapphire Enoki	-1,{
 	callsub OnClick;
 	end;
 
@@ -166,5 +148,150 @@ izlude,109,140,5	script	Shiitake	-1,{
 	OnClick:
 		mes "[Sapphire Enoki]";
 		mes "Welcome to Planting Area!";
-		close;
+		next;
+		
+		if (Class != JOB_CREATOR || getskilllv(491) != 2){
+			mes "[Sapphire Enoki]";
+			mes "Only Creator touches my skin";
+			mes "And you need Level 2 Plant Cultivation";
+			close;
+			return;
+		}
+
+		set .quantity, 20;
+		switch(select("Mushrooms", "Plants")) {
+			case 1:
+				// List of requirements:
+				set .@itemid, 921;
+				// Count of the item in the player's inventory
+				set .count, countitem(.@itemId);
+				// Set a variable for Sepia Enoki to read
+				set pc_choice, 1;
+				mes "[Sapphire Enoki]";
+				mes "Mushrooms, huh? Interesting!";
+				mes "Brace yourself for the colors";
+				mes "To proceed, you need the following:";
+				mes "";
+				callsub Reqs, .@itemid;
+				close;
+				break;
+
+			case 2:
+				// List of requirements:
+				set .@itemid, 712;
+				// Count of the item in the player's inventory
+				set .count, countitem(.@itemId);
+				// Set a variable for Sepia Enoki to read
+				set pc_choice, 2;
+				mes "[Sapphire Enoki]";
+				mes "Ah, plants! Excellent choice.";
+				mes "Don't forget your foods";
+				callsub Reqs, .@itemid;
+				close;
+				break;
+
+			default:
+				close;
+				break;
+		}
+		
+	
+	Reqs:
+		// Diplay the item requirement BLUE when >= and RED when <
+		mes "> " + mesitemlink(getarg(0)) + "\t" + " " + (.count >= .quantity ? "(^0000FF" : "(^FF0000") + .count + "/" + .quantity + "^000000)";
+		return;
+
 }
+
+//Inside the Instance:
+// //NPC that will spawn mushroom or plant
+1@exds,135,166,4	script	Sepia Enoki	-1,{
+	callsub OnClick;
+	end;
+
+	OnInstanceInit:
+		callfunc("customizeNPCSprite", JOB_BIOLO, SEX_MALE, 6, 27, 1727, 1747, 2022, 138);
+		end;
+
+	OnClick:
+		set .quantity, 20;
+		//Get player ID
+		set .@accountId, getcharid(3);
+		// List of mobs
+		setarray .mob_ids[0], 1084, 1085,	// Mushroom 
+		1080, 1078, 1080, 1078, 1080,  // 5 elements
+		1081, 1078, 1083, 1082, 1080,  // 10 elements
+		1079, 1081, 1078, 1082, 1080,  // 15 elements
+		1081, 1079, 1082, 1080, 1081;  // 20 elements
+
+		// Check if player selected a mushroom
+		if (pc_choice == 1){
+			if (countitem(921) < .quantity) {		
+				// Player does not have enough Mushroom Spores
+        		mes "You don't have enough Mushroom Spores.";
+				close;
+				return;		
+		    }
+
+			//Function to summon mushroom
+			callsub SummonPlants, 0, 1, 921, .quantity, .@accountId;
+		}
+
+		else if (pc_choice == 2){
+			if (countitem(712) < .quantity){
+				// Player does not have enough Flower
+        		mes "You don't have enough Flower.";
+				close;
+				return;
+			}
+			
+			//Function to summon plants
+			callsub SummonPlants, 2, getarraysize(.mob_ids)-1, 712, .quantity, .@accountId;
+		}
+		
+		else {
+			mes "Talk to Sapphire Enoki first and select a plant.";
+			close;
+		}
+
+SummonPlants:
+	// Get the map name where Sepia Enoki is
+	// Count the mobs in the map based on the Event Label
+	.map$ = strnpcinfo(4); 
+	set .total_monsters, mobcount(.map$, "Sepia Enoki::OnSummonedMobs");
+
+	if (.total_monsters != 0){
+		showscript "Kill all summoned monters first!", getnpcid(0);
+		return;
+	}
+
+	// Set random mushroom count
+	set .numSummonMobs, rand(7, 15);
+	// 3 seconds before summon
+	progressbar "ffff00",3;
+
+	for (.@mobCount = 0; .@mobCount < .numSummonMobs; .@mobCount++) {
+		//Get Random Index based from .mob_ids[]
+		set .@randomIndex, rand(getarg(0), getarg(1));
+		//Set Random Generated Number
+		set .@randomID, .mob_ids[.@randomIndex];
+		areamonster "this", 132, 164, 138, 159, getmonsterinfo(.@randomID, MOB_NAME), .@randomID, 1, "Sepia Enoki::OnSummonedMobs";
+	}
+
+	delitem getarg(2), getarg(3), getarg(4);
+	
+OnSummonedMobs:
+	// Check and get the current summoned mobs
+	set .total_monsters, mobcount(.map$, "Sepia Enoki::OnSummonedMobs");
+
+	// Uses if else to display blank message to avoid triggering the value of "else" when clicking the NPC
+	if (.numSummonMobs == .total_monsters){
+		dispbottom "Mushroom spawned: " + .numSummonMobs;
+	} 
+	
+	else {
+		dispbottom "Remaning Monsters: " + .total_monsters;
+		.total_monsters--;
+	}
+}
+
