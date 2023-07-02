@@ -25,9 +25,15 @@ izlude,109,140,5	script	Shiitake	-1,{
 			close;
 		}
 
+		if (Class != JOB_CREATOR) {
+			mes "[Shiitake]";
+			mes "The party leader should be a Creator / Biochemist to access the Planting Area.";
+			close;
+		}
+
 		switch(.@plantArea_timer) {
 		case -1:
-			if (is_party_leader() == true) {
+			if (is_party_leader() == true && Class == JOB_CREATOR) {
 				mes "[Shiitake]";
 				mes "Confirmed the party has been made. Would you like to reserve entrance to the ^32CD32"+.@md_name$+"^000000?";
 				next;
@@ -146,12 +152,24 @@ izlude,109,140,5	script	Shiitake	-1,{
 		end;
 
 	OnClick:
-		if (Class != JOB_CREATOR || getskilllv(491) != 2){
+		//Certain restrictions needed to talk to Sapphire Enoki
+		if (Class != JOB_CREATOR){
 			mes "[Sapphire Enoki]";
-			mes "Only Creator touches my skin and you need Level 2 Plant Cultivation";
-			//mes "";
+			mes "Only a Creator touches my skin (>w<)";
 			close;
-			return;
+		}
+
+		if (getskilllv(491) != 2){
+			mes "[Sapphire Enoki]";
+			mes "Oh dear, you need to study harder for ^32CD32Level 2 Plant Cultivation.^000000";
+			close;
+		}
+
+		if (!is_party_leader()){
+			mes "[Sapphire Enoki]";
+			mes "You need to be the party leader to select what to plant and summon.";
+			mes "(^  v  ^)";
+			close;
 		}
 
 		mes "[Sapphire Enoki]";
@@ -167,13 +185,14 @@ izlude,109,140,5	script	Shiitake	-1,{
 				// Count of the item in the player's inventory
 				set .count, countitem(.@itemId);
 				// Set a variable for Sepia Enoki to read
-				set pc_choice, 1;
+				set planting_choice, 1;
 				mes "[Sapphire Enoki]";
 				mes "Mushrooms, huh? Interesting!";
 				mes "";
 				mes "";
 				mes "To proceed, you need the following:";
 				callsub Reqs, .@itemid;
+				callsub SummonerMes;
 				close;
 				break;
 
@@ -183,13 +202,14 @@ izlude,109,140,5	script	Shiitake	-1,{
 				// Count of the item in the player's inventory
 				set .count, countitem(.@itemId);
 				// Set a variable for Sepia Enoki to read
-				set pc_choice, 2;
+				set planting_choice, 2;
 				mes "[Sapphire Enoki]";
 				mes "Ah, plants! Excellent choice.";
 				mes "";
 				mes "";
 				mes "To proceed, you need the following:";
 				callsub Reqs, .@itemid;
+				callsub SummonerMes;
 				close;
 				break;
 
@@ -201,7 +221,16 @@ izlude,109,140,5	script	Shiitake	-1,{
 	
 	Reqs:
 		// Diplay the item requirement BLUE when >= and RED when <
-		mes "> " + mesitemlink(getarg(0)) + "\t" + " " + (.count >= .quantity ? "(^0000FF" : "(^FF0000") + .count + "/" + .quantity + "^000000)";
+		mes "> " + mesitemlink(getarg(0)) + "\t" + " " 
+		+ (.count >= .quantity ? "(^0000FF" : "(^FF0000") + .count + "/" + .quantity + "^000000)";
+		return;
+
+	SummonerMes:
+		set .charSummoner$, strcharinfo(0); // Only this player will be allowed to summon
+		next;
+		mes "[Sapphire Enoki]";
+		mes "Then, I'll register you ^0000FF" + .charSummoner$ + "^000000 as the plant summoner.";
+		mes "Only you will be allowed to talk to ^B75000Sepia Enoki^000000.";
 		return;
 
 }
@@ -217,9 +246,13 @@ izlude,109,140,5	script	Shiitake	-1,{
 		end;
 
 	OnClick:
-		set .quantity, 20;
+		//Set variables for item and amount needed
+		set .@catalyst_id, (planting_choice == 1 ? 921 : 712);
+		set .@quantity, 20;
 		//Get player ID
-		set .@accountId, getcharid(3);
+		set .@playerID, getcharid(3);
+		//Get the Name of the party leader
+		set .@partyLeadName$, strcharinfo(0, getpartyleader(getcharid(1), 2));
 		// List of mobs
 		setarray .mob_ids[0], 1084, 1085,	// Mushroom 
 		1080, 1078, 1080, 1078, 1080,  // 5 elements
@@ -227,36 +260,37 @@ izlude,109,140,5	script	Shiitake	-1,{
 		1079, 1081, 1078, 1082, 1080,  // 15 elements
 		1081, 1079, 1082, 1080, 1081;  // 20 elements
 
-		// Check if player selected a mushroom
-		if (pc_choice == 1){
-			if (countitem(921) < .quantity) {		
-				// Player does not have enough Mushroom Spores
-        		mes "You don't have enough Mushroom Spores.";
-				close;
-				return;		
-		    }
-
-			//Function to summon mushroom
-			callsub SummonPlants, 0, 1, 921, .quantity, .@accountId;
-		}
-
-		else if (pc_choice == 2){
-			if (countitem(712) < .quantity){
-				// Player does not have enough Flower
-        		mes "You don't have enough Flower.";
-				close;
-				return;
-			}
-			
-			//Function to summon plants
-			callsub SummonPlants, 2, getarraysize(.mob_ids)-1, 712, .quantity, .@accountId;
-		}
-		
-		else {
-			mes "Talk to Sapphire Enoki first and select a plant.";
+		// Player talking to the NPC is not the party leader
+		if (!is_party_leader()){
+			mes "[Sepia Enoki]";
+			mes "Only ^0000FF" + .@partyLeadName$ + "^000000 can initiate the summoning of Plants.";
 			close;
 		}
 
+		// Player hasn't selected plant/mushroom
+		if (!planting_choice) {
+			mes "[Sepia Enoki]";
+			mes "Talk to Sapphire Enoki first and select what to plant.";
+			close;
+		}
+
+		// Player does not have enough items
+		if (countitem(.@catalyst_id) < .@quantity){
+			mes "[Sepia Enoki]";
+        	mes "You don't have enough: ";
+			mes " > " + mesitemlink(.@catalyst_id);
+			close;
+		}
+
+		// Check if player selected mushrooms or plants, then call the function SummonPlants
+		if (planting_choice == 1 && countitem(.@catalyst_id) >= .@quantity){
+			callsub SummonPlants, 0, 1, .@catalyst_id, .@quantity, .@playerID;
+		}
+
+		if (planting_choice == 2 && countitem(.@catalyst_id) >= .@quantity){
+			callsub SummonPlants, 2, getarraysize(.mob_ids)-1, .@catalyst_id, .@quantity, .@playerID;
+		}
+		
 SummonPlants:
 	// Get the map name where Sepia Enoki is
 	// Count the mobs in the map based on the Event Label
@@ -270,8 +304,8 @@ SummonPlants:
 
 	// Set random mushroom count
 	set .numSummonMobs, rand(7, 15);
-	// 3 seconds before summon
-	progressbar "ffff00",3;
+	// 2 seconds before summon
+	progressbar "ffff00", 2;
 
 	for (.@mobCount = 0; .@mobCount < .numSummonMobs; .@mobCount++) {
 		//Get Random Index based from .mob_ids[]
@@ -287,14 +321,12 @@ OnSummonedMobs:
 	// Check and get the current summoned mobs
 	set .total_monsters, mobcount(.map$, "Sepia Enoki::OnSummonedMobs");
 
-	// Uses if else to display blank message to avoid triggering the value of "else" when clicking the NPC
-	if (.numSummonMobs == .total_monsters){
+	if (.total_monsters == .numSummonMobs){
 		dispbottom "Monster spawned: " + .numSummonMobs;
-	} 
-	
-	else {
-		dispbottom "Remaning Monsters: " + .total_monsters;
-		.total_monsters--;
+		end;
 	}
+
+	dispbottom "Remaning Monsters: " + .total_monsters;
+	.total_monsters--;
 }
 
