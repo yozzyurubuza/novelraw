@@ -22,6 +22,7 @@
 //= 1.6c Replaced function 'A_An' with "F_InsertArticle".
 //= 1.7 Modified by j
 //= 1.7a Removed some lines of code
+//= 1.7b Change the variable naming for clarity
 //==============================================
 
 izlude,127,168,4	script	Sindri#1	-1,{
@@ -55,13 +56,13 @@ izlude,127,168,4	script	Sindri#1	-1,{
 
 		set .menu$,"";
 		//.@shopCount = indicate where where to start reading the array
-		for(.@shopCount = 1; .@shopCount <= getarraysize(.Shops$); .@shopCount++) {
+		for (.@shopCount = 1; .@shopCount <= getarraysize(.Shops$); .@shopCount++) {
 			//set .menu = create a window
 			//.menu$+.Shops$[.@shopCount] = display the Shops (Headgear, Weapon, Others) inside the created window
-			set .menu$, .menu$+.Shops$[.@shopCount]+":";
+			set .menu$, .menu$ + .Shops$[.@shopCount] + ":";
 			//By default there's placeholder (jellopy) inside the shop to be able to call it, see the bottom of this code.
 			//This code deletes the jellopy
-			npcshopdelitem "craft"+.@shopCount,909;
+			npcshopdelitem "craft" + .@shopCount,909;
 		}
 		end;
 
@@ -84,46 +85,50 @@ izlude,127,168,4	script	Sindri#1	-1,{
 		close2;
 		dispbottom "Select one item at a time.";
 		//Display the list of items in the Shop
-		callshop "craft"+@shop_index,1;
+		callshop "craft" + @shop_index, 1;
 		//Responsible for displaying and getting the required items
-		npcshopattach "craft"+@shop_index;
+		npcshopattach "craft" + @shop_index;
 		end;
 
 	OnBuyItem:
 		// .@q[] : RewardID, BoughtAmt, RewardAmt, BaseAmt, ReqZeny, ReqPts, { ReqItem, ReqAmt, ... }
 		// Checks and copy the requiments
-		setarray .@requiredItem[0],@bought_nameid[0],((@bought_quantity[0] > .MaxStack) ? .MaxStack : @bought_quantity[0]);
-	 	copyarray .@requiredItem[3],getd(".q_"+@shop_index+"_"+.@requiredItem[0]+"[0]"),getarraysize(getd(".q_"+@shop_index+"_"+.@requiredItem[0]));
+		setarray .@requiredItem[0], @bought_nameid[0], ((@bought_quantity[0] > .MaxStack) ? .MaxStack : @bought_quantity[0]);
+	 	copyarray .@requiredItem[3], getd(".q_" + @shop_index + "_"+.@requiredItem[0] + "[0]"), getarraysize(getd(".q_" + @shop_index + "_" + @requiredItem[0]));
 		//Number of selected items
-
 		set .@requiredItem[2],.@requiredItem[1];
+
 		// Display this error when player craft an item greater than the maximum storage limit
 		if (!.@requiredItem[2] || .@requiredItem[2] > 30000) {
-			message strcharinfo(0),"You can't purchase that many "+getitemname(.@requiredItem[0])+".";
+			message strcharinfo(0), "You can't purchase that many " + getitemname(.@requiredItem[0]) + ".";
 			end;
 		}
+
 		mes "[Sindri]";
 		// Display Selected item
 		mes "Selected Item: ^0055FF" + Slot(.@requiredItem[0]) + "^000000";
 		mes "Requirements:";
+
 		//Display Requirements
 		if (.@requiredItem[4]){
-			mes " > Zeny: "+Chk(Zeny, .@requiredItem[4] * .@requiredItem[1])+(.@requiredItem[4] * .@requiredItem[1]);
+			mes " > Zeny: " + Chk(Zeny, .@requiredItem[4] * .@requiredItem[1]) + (.@requiredItem[4] * .@requiredItem[1]);
 		}
+
 		if (.@requiredItem[5]){
 			for(.@reqList = 5; .@reqList < getarraysize(.@requiredItem); .@reqList += 2){
 				mes " > ^000000"
-				+Slot(.@requiredItem[.@reqList])+"^000000"	//Item Name
-				+((.ShowID)?" : [ ^0055FF "+.@requiredItem[.@reqList]+"^000000 ] ":"")	//ItemID
-				+" ("+Chk(countitem(.@requiredItem[.@reqList]),.@requiredItem[.@reqList+1]*.@requiredItem[1])+countitem(.@requiredItem[.@reqList]) // Item you have
-				+"/"
-				+(.@requiredItem[.@reqList+1]*.@requiredItem[1])+")^000000";	//Item Required
+				+ Slot(.@requiredItem[.@reqList]) + "^000000"	//Item Name
+				+ ((.ShowID)?" : [ ^0055FF " + .@requiredItem[.@reqList] + "^000000 ] ":"")	//ItemID
+				+ " (" + Chk(countitem(.@requiredItem[.@reqList]), .@requiredItem[.@reqList+1] * .@requiredItem[1]) + countitem(.@requiredItem[.@reqList]) // Item you have
+				+ "/"
+				+ (.@requiredItem[.@reqList+1] * .@requiredItem[1]) + ")^000000";	//Item Required
 			}
 		}
 		next;
+
 		while(1) {
 			// Create a navi buttons (purchase, cancel)
-			switch(select(" ~ Purchase ^0055FF"+getitemname(.@requiredItem[0])+": ~ ^777777Cancel^000000")) {
+			switch(select(" ~ Purchase ^0055FF" + getitemname(.@requiredItem[0]) + ": ~ ^777777Cancel^000000")) {
 			case 1:
 				// Check if the items required are incomplete
 				if (@reqCheck[0]) {
@@ -131,28 +136,32 @@ izlude,127,168,4	script	Sindri#1	-1,{
 					mes "You're missing one or more quest requirements.";
 					close;
 				}
+
 				// Display when the player overweight
 				if (!checkweight(.@requiredItem[0],.@requiredItem[2])) {
 					mes "[Sindri]";
-					mes "^FF0000You need "+(((.@requiredItem[2]*getiteminfo(.@requiredItem[0], ITEMINFO_WEIGHT))+Weight-MaxWeight)/10)+
-					" additional weight capacity to complete this trade.^000000";
+					mes "^FF0000You need " + (((.@requiredItem[2] * getiteminfo(.@requiredItem[0], ITEMINFO_WEIGHT)) + Weight - MaxWeight) / 10)
+					+ " additional weight capacity to complete this trade.^000000";
 					close;
 				}
+
 				// If the item required is complete
 				if (.@requiredItem[4]){
-					set Zeny, Zeny-(.@requiredItem[4]*.@requiredItem[1]);
+					set Zeny, Zeny - (.@requiredItem[4] * .@requiredItem[1]);
 				}
+
 				if (.@requiredItem[5]){
 					for(.@numReq = 5; .@numReq < getarraysize(.@requiredItem); .@numReq += 2){
 						// Delete the required items
-						delitem .@requiredItem[.@numReq],.@requiredItem[.@numReq+1]*.@requiredItem[1];
+						delitem .@requiredItem[.@numReq], .@requiredItem[.@numReq+1] * .@requiredItem[1];
 					}
 					// Player gets the selected item
-					getitem .@requiredItem[0],.@requiredItem[2];
+					getitem .@requiredItem[0], .@requiredItem[2];
+
 					// Display a message the craft is complete
 					if (.Announce){
-						announce strcharinfo(0) + " has created " + ((.@requiredItem[2] > 1) ? .@requiredItem[2]+
-						"x "+getitemname(.@requiredItem[0]) : callfunc("F_InsertArticle",getitemname(.@requiredItem[0])))+"!",0;
+						announce strcharinfo(0) + " has created " + ((.@requiredItem[2] > 1) ? .@requiredItem[2]
+						+ "x " + getitemname(.@requiredItem[0]) : callfunc("F_InsertArticle", getitemname(.@requiredItem[0]))) + "!",0;
 						specialeffect2 EF_FLOWERLEAF;
 					}
 					close;
@@ -168,20 +177,20 @@ izlude,127,168,4	script	Sindri#1	-1,{
 function Add {
 	// Check if the item ID is valid
 	if (getitemname(getarg(1)) == "null") {
-		debugmes "Quest reward #"+getarg(1)+" invalid (skipped).";
+		debugmes "Quest reward #" + getarg(1) + " invalid (skipped).";
 		return;
 	}
-	setarray .@itemOtherReqs[0],getarg(2),getarg(3);
+	setarray .@itemOtherReqs[0], getarg(2), getarg(3);
 	for(.@argCount = 4; .@argCount < getargcount(); .@argCount += 2) {
 		// Check if the requirement IDs are valid
 		if (getitemname(getarg(.@argCount)) == "null") {
-			debugmes "Quest requirement #"+getarg(.@argCount)+" invalid (skipped).";
+			debugmes "Quest requirement #" + getarg(.@argCount) + " invalid (skipped).";
 			return;
 		} else
-			setarray .@itemOtherReqs[.@argCount-2],getarg(.@argCount),getarg(.@argCount+1);
+			setarray .@itemOtherReqs[.@argCount - 2], getarg(.@argCount), getarg(.@argCount + 1);
 	}
-	copyarray getd(".q_"+getarg(0)+"_"+getarg(1)+"[0]"),.@itemOtherReqs[0],getarraysize(.@itemOtherReqs);
-	npcshopadditem "craft"+getarg(0), getarg(1), ((.ShowZeny) ? getarg(3) : 0);
+	copyarray getd(".q_" + getarg(0) + "_"+getarg(1) + "[0]"), .@itemOtherReqs[0], getarraysize(.@itemOtherReqs);
+	npcshopadditem "craft" + getarg(0), getarg(1), ((.ShowZeny) ? getarg(3) : 0);
 	return;
 }
 
@@ -211,7 +220,7 @@ function Slot {
 			IT_PETARMOR = 8	IT_UNKNOWN2 = 9	IT_AMMO = 10	IT_DELAYCONSUME = 11		IT_SHADOWGEAR = 12	IT_CASH = 18	IT_MAX = N/A
 			*/
 			if (getiteminfo(getarg(0), ITEMINFO_TYPE) == IT_ARMOR || getiteminfo(getarg(0), ITEMINFO_TYPE) == IT_WEAPON){
-				return .@slotCount$+" ["+getitemslots(getarg(0))+"]";
+				return .@slotCount$+" [" + getitemslots(getarg(0))+"]";
 			}
 
 		default:
