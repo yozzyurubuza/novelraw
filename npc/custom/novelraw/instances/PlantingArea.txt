@@ -146,17 +146,18 @@ izlude,109,140,5	script	Shiitake	-1,{
 		end;
 
 	OnClick:
-		mes "[Sapphire Enoki]";
-		mes "Welcome to Planting Area!";
-		next;
-		
 		if (Class != JOB_CREATOR || getskilllv(491) != 2){
 			mes "[Sapphire Enoki]";
-			mes "Only Creator touches my skin";
-			mes "And you need Level 2 Plant Cultivation";
+			mes "Only Creator touches my skin and you need Level 2 Plant Cultivation";
+			//mes "";
 			close;
 			return;
 		}
+
+		mes "[Sapphire Enoki]";
+		mes "Welcome to Planting Area!";
+		mes "What would you like to plant?";
+		next;
 
 		set .quantity, 20;
 		switch(select("Mushrooms", "Plants")) {
@@ -169,9 +170,9 @@ izlude,109,140,5	script	Shiitake	-1,{
 				set pc_choice, 1;
 				mes "[Sapphire Enoki]";
 				mes "Mushrooms, huh? Interesting!";
-				mes "Brace yourself for the colors";
-				mes "To proceed, you need the following:";
 				mes "";
+				mes "";
+				mes "To proceed, you need the following:";
 				callsub Reqs, .@itemid;
 				close;
 				break;
@@ -185,7 +186,9 @@ izlude,109,140,5	script	Shiitake	-1,{
 				set pc_choice, 2;
 				mes "[Sapphire Enoki]";
 				mes "Ah, plants! Excellent choice.";
-				mes "Don't forget your foods";
+				mes "";
+				mes "";
+				mes "To proceed, you need the following:";
 				callsub Reqs, .@itemid;
 				close;
 				break;
@@ -286,7 +289,7 @@ OnSummonedMobs:
 
 	// Uses if else to display blank message to avoid triggering the value of "else" when clicking the NPC
 	if (.numSummonMobs == .total_monsters){
-		dispbottom "Mushroom spawned: " + .numSummonMobs;
+		dispbottom "Monster spawned: " + .numSummonMobs;
 	} 
 	
 	else {
