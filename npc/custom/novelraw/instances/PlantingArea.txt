@@ -278,7 +278,7 @@ izlude,109,140,5	script	Shiitake	-1,{
 		// Player does not have enough items
 		if (countitem(.@catalyst_id) < .@quantity){
 			mes "[Sepia Enoki]";
-        	mes "You don't have enough: ";
+			mes "You don't have enough: ";
 			mes " > " + mesitemlink(.@catalyst_id);
 			close;
 		}
