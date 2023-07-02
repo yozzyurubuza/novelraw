@@ -25,9 +25,10 @@ izlude,109,140,5	script	Shiitake	-1,{
 			close;
 		}
 
-		if (Class != JOB_CREATOR) {
+		if (is_party_leader() && Class != JOB_CREATOR) {
 			mes "[Shiitake]";
-			mes "The party leader should be a Creator / Biochemist to access the Planting Area.";
+			mes "The party leader should be a ";
+			mes "^FF0000Creator / Biochemist^000000 to access the Planting Area.";
 			close;
 		}
 
