@@ -249,6 +249,7 @@ izlude,109,140,5	script	Shiitake	-1,{
 	OnClick:
 		//Set variables for item and amount needed
 		set .@catalyst_id, (planting_choice == 1 ? 921 : 712);
+		set .@catalyst_count, countitem((planting_choice == 1 ? 921 : 712));
 		set .@quantity, 20;
 		//Get player ID
 		set .@playerID, getcharid(3);
@@ -261,10 +262,17 @@ izlude,109,140,5	script	Shiitake	-1,{
 		1079, 1081, 1078, 1082, 1080,  // 15 elements
 		1081, 1079, 1082, 1080, 1081;  // 20 elements
 
+		// Party leader is offline
+		if (!is_party_leader() && .@partyLeadName$ == ""){
+			mes "[Sepia Enoki]";
+			mes "Your party leader is offline.";
+			close;
+		}
+
 		// Player talking to the NPC is not the party leader
 		if (!is_party_leader()){
 			mes "[Sepia Enoki]";
-			mes "Only ^0000FF" + .@partyLeadName$ + "^000000 can initiate the summoning of Plants.";
+			mes "Only ^0000FF" + .@partyLeadName$ + "^000000 can initiate the summoning of plants.";
 			close;
 		}
 
@@ -279,7 +287,8 @@ izlude,109,140,5	script	Shiitake	-1,{
 		if (countitem(.@catalyst_id) < .@quantity){
 			mes "[Sepia Enoki]";
 			mes "You don't have enough: ";
-			mes " > " + mesitemlink(.@catalyst_id);
+			mes "> " + mesitemlink(.@catalyst_id, false, getitemname(.@catalyst_id) + " " 
+			+"(" + .@catalyst_count + "/" + .@quantity + ")");
 			close;
 		}
 
