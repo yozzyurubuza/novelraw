@@ -41118,7 +41118,6 @@ Body:
       Costume_Head_Low: true
     ArmorLevel: 1
     EquipLevelMin: 1
-    View: 1378
     Script: |
       hateffect HAT_EF_FLUTTER_BUTTERFLY,true;
     UnEquipScript: |
@@ -41152,7 +41151,6 @@ Body:
       Costume_Head_Low: true
     ArmorLevel: 1
     EquipLevelMin: 1
-    View: 1380
     Script: |
       hateffect HAT_EF_ANGEL_FLUTTERING,true;
     UnEquipScript: |
