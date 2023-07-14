@@ -81,7 +81,7 @@ izlude,127,168,4	script	Sindri#1	-1,{
 		}
 		
 		mes "[Sindri]";
-		mes "Step forward, seeker of power, as I wield the flames that shapes the unrivavled strength you crave.";
+		mes "Step forward, seeker of power, as I wield the flames that shapes the unrivaled strength you crave.";
 		close2;
 		dispbottom "Select one item at a time.";
 		//Display the list of items in the Shop
@@ -180,6 +180,7 @@ function Add {
 		debugmes "Quest reward #" + getarg(1) + " invalid (skipped).";
 		return;
 	}
+	//The value of .@itemOtherReqs[0] will be the Reward amount and Zeny cost
 	setarray .@itemOtherReqs[0], getarg(2), getarg(3);
 	for(.@argCount = 4; .@argCount < getargcount(); .@argCount += 2) {
 		// Check if the requirement IDs are valid
@@ -189,7 +190,9 @@ function Add {
 		} else
 			setarray .@itemOtherReqs[.@argCount - 2], getarg(.@argCount), getarg(.@argCount + 1);
 	}
+	//Will shuffle a lot of data between arrays. Ex. .q_1_5389[0], .@itemOtherReqs[0], getarraysize(.@itemOtherReqs)
 	copyarray getd(".q_" + getarg(0) + "_"+getarg(1) + "[0]"), .@itemOtherReqs[0], getarraysize(.@itemOtherReqs);
+	//Will add the item inside the shop craft#
 	npcshopadditem "craft" + getarg(0), getarg(1), ((.ShowZeny) ? getarg(3) : 0);
 	return;
 }
@@ -210,6 +213,7 @@ function Slot {
 	set .@slotCount$, getitemname(getarg(0));
 	switch(.ShowSlot) {
 		case 1:
+			//Item with 0 slot
 			if (!getitemslots(getarg(0))){
 				return .@slotCount$;
 			}
@@ -247,7 +251,9 @@ ItemList:
 //=========
 // WARNING
 //=========
-// The following shop holds the UI of declared ".Shops$" name
-// Deleting this will break the shop UI
+//Shop tells the system that this is a shop
+//craft1 is the name of the shop
+//-1 the shop will have an invisible sprite
+//909:-1 this is required to display the shop properly. (Jellopy with -1 selling price)
 -	shop	craft1	-1,909:-1
 -	shop	craft2	-1,909:-1
