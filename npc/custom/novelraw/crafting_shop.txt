@@ -118,10 +118,10 @@ izlude,127,168,4	script	Sindri#1	-1,{
 			for(.@reqList = 5; .@reqList < getarraysize(.@requiredItem); .@reqList += 2){
 				mes " > ^000000"
 				+ Slot(.@requiredItem[.@reqList]) + "^000000"	//Item Name
-				+ ((.ShowID)?" : [ ^0055FF " + .@requiredItem[.@reqList] + "^000000 ] ":"")	//ItemID
-				+ " (" + Chk(countitem(.@requiredItem[.@reqList]), .@requiredItem[.@reqList+1] * .@requiredItem[1]) + countitem(.@requiredItem[.@reqList]) // Item you have
+				+ ((.ShowID)?" : [^0055FF" + .@requiredItem[.@reqList] + "^000000]":"")	//ItemID
+				+ " ^000000(" + Chk(countitem(.@requiredItem[.@reqList]), .@requiredItem[.@reqList+1] * .@requiredItem[1]) + countitem(.@requiredItem[.@reqList]) // Item you have
 				+ "/"
-				+ (.@requiredItem[.@reqList+1] * .@requiredItem[1]) + ")^000000";	//Item Required
+				+ (.@requiredItem[.@reqList+1] * .@requiredItem[1]) + "^000000)";	//Item Required
 			}
 		}
 
