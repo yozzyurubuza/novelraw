@@ -69,8 +69,7 @@ izlude,127,168,4	script	Sindri#1	-1,{
 	OnMenu:
 		mes "[Sindri]";
 		mes "Welcome!";
-		mes "Enter, seeker of power.";
-		mes "Together, we forge legends";
+		mes "Enter, seeker of power. Togerther, we forge legends";
 		next;
 		//This part of code is responsible for the arrangement of items inside the shop
 		set .@size, getarraysize(@itemCount);
@@ -82,9 +81,7 @@ izlude,127,168,4	script	Sindri#1	-1,{
 		}
 		
 		mes "[Sindri]";
-		mes "Step forward, seeker of power,";
-		mes "as I wield the flames that shapes";
-		mes "the unrivaled strength you crave.";
+		mes "Step forward, seeker of power, as I wield the flames that shapes the unrivaled strength you crave.";
 		close2;
 		dispbottom "Select one item at a time.";
 		//Display the list of items in the Shop
@@ -207,9 +204,11 @@ function Chk {
 		set @reqCheck[0], 1;
 		// Color of requirement when incomplete.
 		return "^FF0000";
-	} else
-		// Color of requirement when completed
-		return "^008000";
+	}
+
+	// Color of requirement when completed
+	set @reqCheck[0], 0;
+	return "^008000";
 }
 
 // Check item slot
