@@ -276,6 +276,15 @@ izlude,109,140,5	script	Shiitake	-1,{
 			close;
 		}
 
+		// Plant Cultivation skill is not level 2
+		if (getskilllv(491) != 2){
+			mes "[Sepia Enoki]";
+			mes "Hmmm...";
+			mes "I see what you did there!";
+			mes "You need ^32CD32Level 2 Plant Cultivation^000000!";
+			close;
+		}
+
 		// Player hasn't selected plant/mushroom
 		if (!planting_choice) {
 			mes "[Sepia Enoki]";
