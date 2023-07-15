@@ -2523,6 +2523,8 @@ Body:
             Rate: 1
           - Item: Gullinbursti_Card
             Rate: 1
+          - Item: Gig_Card
+            Rate: 1
           - Item: Nightmare_Terror_Card
             Rate: 1
           - Item: Neraid_Card
@@ -2619,6 +2621,10 @@ Body:
             Rate: 1
           - Item: Stem_Worm_Card
             Rate: 1
+          - Item: Stone_Shooter_Card
+            Rate: 1
+          - Item: Sting_Card
+            Rate: 1
           - Item: Spring_Rabbit_Card
             Rate: 1
           - Item: Sleeper_Card
@@ -2640,6 +2646,8 @@ Body:
           - Item: Owl_Duke_Card
             Rate: 1
           - Item: Owl_Baron_Card
+            Rate: 1
+          - Item: Iron_Fist_Card
             Rate: 1
           - Item: Arclouse_Card
             Rate: 1
@@ -2694,6 +2702,8 @@ Body:
           - Item: Giant_Spider_Card
             Rate: 1
           - Item: Giant_Honet_Card
+            Rate: 1
+          - Item: Dancing_Dragon_Card
             Rate: 1
           - Item: Shellfish_Card
             Rate: 1
@@ -2833,6 +2843,10 @@ Body:
             Rate: 1
           - Item: Gemini_Card
             Rate: 1
+          # - Item: Gremlin_Card
+          #   Rate: 3
+          # - Item: Beholder_Card
+          #   Rate: 1
           - Item: Seyren_Card
             Rate: 1
           - Item: Eremes_Card
@@ -2873,10 +2887,28 @@ Body:
             Rate: 3
           - Item: Ancient_Mimic_Card
             Rate: 1
+          # - Item: Deathword_Card
+          #   Rate: 3
           - Item: Plasma_Card
             Rate: 1
           - Item: Breeze_Card
             Rate: 1
+          # - Item: Retribution_Card
+          #   Rate: 3
+          # - Item: Observation_Card
+          #   Rate: 1
+          # - Item: Shelter_Card
+          #   Rate: 1
+          # - Item: Solace_Card
+          #   Rate: 1
+          # - Item: Tha_Maero_Card
+          #   Rate: 1
+          # - Item: Tha_Odium_Card
+          #   Rate: 1
+          # - Item: Tha_Despero_Card
+          #   Rate: 1
+          # - Item: Tha_Dolor_Card
+          #   Rate: 1
           - Item: Aliza_Card
             Rate: 1
           - Item: Alicel_Card
@@ -2887,16 +2919,111 @@ Body:
             Rate: 1
           - Item: Frus_Card
             Rate: 1
-          - Item: Knocker_Card
+          # - Item: Agav_Card
+          #   Rate: 1
+          # - Item: Echio_Card
+          #   Rate: 1
+          # - Item: Vanberk_Card
+          #   Rate: 1
+          # - Item: Isilla_Card
+          #   Rate: 1
+          # - Item: Hodremlin_Card
+          #   Rate: 1
+          # - Item: Seeker_Card
+          #   Rate: 1
+          # - Item: Snowier_Card
+          #   Rate: 2
+          # - Item: Siroma_Card
+          #   Rate: 1
+          # - Item: Ice_Titan_Card
+          #   Rate: 1
+          # - Item: Gazeti_Card
+          #   Rate: 1
+          # - Item: Muscipular_Card
+          #   Rate: 1
+          # - Item: Drosera_Card
+          #   Rate: 2
+          # - Item: Roween_Card
+          #   Rate: 1
+          # - Item: Galion_Card
+          #   Rate: 1
+          # - Item: Stapo_Card
+          #   Rate: 3
+          # - Item: Byorgue_Card
+          #   Rate: 1
+          # - Item: Sword_Guardian_Card
+          #   Rate: 1
+          # - Item: Bow_Guardian_Card
+          #   Rate: 1
+          # - Item: Salamander_Card
+          #   Rate: 1
+          # - Item: Kasa_Card
+          #   Rate: 1
+          # - Item: Magmaring_Card
+          #   Rate: 2
+          # - Item: Imp_Card
+          #   Rate: 1
+          # - Item: Knocker_Card
+          #   Rate: 1
+          # - Item: Zombie_Slaughter_Card
+          #   Rate: 1
+          # - Item: Ragged_Zombie_Card
+          #   Rate: 2
+          # - Item: Hell_Poodle_Card
+          #   Rate: 2
+          # - Item: Banshee_Card
+          #   Rate: 2
+          # - Item: Flame_Skull_Card
+          #   Rate: 1
+          - Item: Necromancer_Card
             Rate: 1
-          - Item: Gig_Card
+          # - Item: Tatacho_Card
+          #   Rate: 1
+          # - Item: Aqua_Elemental_Card
+          #   Rate: 2
+          # - Item: Draco_Card
+          #   Rate: 2
+          # - Item: Luciola_Vespa_Card
+          #   Rate: 1
+          # - Item: Centipede_Card
+          #   Rate: 1
+          # - Item: Cornus_Card
+          #   Rate: 1
+          # - Item: Dark_Shadow_Card
+          #   Rate: 1
+          - Item: Banshee_Master_Card
             Rate: 1
-          - Item: Stone_Shooter_Card
-            Rate: 1
-          - Item: Sting_Card
-            Rate: 1
-          - Item: Dancing_Dragon_Card
-            Rate: 1
+          # - Item: Centipede_Larva_Card
+          #   Rate: 2
+          # - Item: Hilsrion_Card
+          #   Rate: 2
+          # - Item: Duneirre_Card
+          #   Rate: 1
+          # - Item: Lata_Card
+          #   Rate: 1
+          # - Item: Ringco_Card
+          #   Rate: 1
+          # - Item: Pillar_Card
+          #   Rate: 1
+          # - Item: Hardrock_Mommos_Card
+          #   Rate: 1
+          # - Item: Tendrilion_Card
+          #   Rate: 1
+          # - Item: Aunoe_Card
+          #   Rate: 1
+          # - Item: Panat_Card
+          #   Rate: 1
+          # - Item: Beholder_Master_Card
+          #   Rate: 1
+          # - Item: Heavy_Metaling_Card
+          #   Rate: 1
+          # - Item: Pinguicula_Dark_Card
+          #   Rate: 1
+          # - Item: Naga_Card
+          #   Rate: 1
+          # - Item: Nepenthes_Card
+          #   Rate: 1
+
   - Group: CASH_FOOD
     SubGroups:
       - SubGroup: 1
