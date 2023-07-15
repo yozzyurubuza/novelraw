@@ -94,7 +94,7 @@ izlude,127,168,4	script	Sindri#1	-1,{
 		// .@q[] : RewardID, BoughtAmt, RewardAmt, BaseAmt, ReqZeny, ReqPts, { ReqItem, ReqAmt, ... }
 		// Checks and copy the requiments
 		setarray .@requiredItem[0], @bought_nameid[0], ((@bought_quantity[0] > .MaxStack) ? .MaxStack : @bought_quantity[0]);
-	 	copyarray .@requiredItem[3], getd(".q_" + @shop_index + "_"+.@requiredItem[0] + "[0]"), getarraysize(getd(".q_" + @shop_index + "_" + @requiredItem[0]));
+	 	copyarray .@requiredItem[3], getd(".q_" + @shop_index + "_" + .@requiredItem[0] + "[0]"), getarraysize(getd(".q_" + @shop_index + "_" + .@requiredItem[0]));
 		//Number of selected items
 		set .@requiredItem[2],.@requiredItem[1];
 
@@ -124,6 +124,7 @@ izlude,127,168,4	script	Sindri#1	-1,{
 				+ (.@requiredItem[.@reqList+1] * .@requiredItem[1]) + ")^000000";	//Item Required
 			}
 		}
+
 		next;
 
 		while(1) {
