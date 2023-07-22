@@ -837,7 +837,7 @@ Body:
     Icon: EFST_PROTECTWEAPON
     DurationLookup: AM_CP_WEAPON
     Flags:
-      NoClearbuff: true
+      NoClearbuff: false
       NoDispell: true
       NoBanishingBuster: true
       NoClearance: true
@@ -847,7 +847,7 @@ Body:
     Icon: EFST_PROTECTSHIELD
     DurationLookup: AM_CP_SHIELD
     Flags:
-      NoClearbuff: true
+      NoClearbuff: false
       NoDispell: true
       NoBanishingBuster: true
       NoClearance: true
@@ -857,7 +857,7 @@ Body:
     Icon: EFST_PROTECTARMOR
     DurationLookup: AM_CP_ARMOR
     Flags:
-      NoClearbuff: true
+      NoClearbuff: false
       NoDispell: true
       NoBanishingBuster: true
       NoClearance: true
@@ -867,7 +867,7 @@ Body:
     Icon: EFST_PROTECTHELM
     DurationLookup: AM_CP_HELM
     Flags:
-      NoClearbuff: true
+      NoClearbuff: false
       NoDispell: true
       NoBanishingBuster: true
       NoClearance: true
