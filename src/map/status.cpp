@@ -3752,6 +3752,10 @@ int status_calc_pc_sub(map_session_data* sd, uint8 opt)
 		if (!sd->inventory_data[index])
 			continue;
 
+		// costconv
+		if (sd->inventory.u.items_inventory[current_equip_item_index].card[0] == CARD0_CREATE && MakeDWord(sd->inventory.u.items_inventory[current_equip_item_index].card[2], sd->inventory.u.items_inventory[current_equip_item_index].card[3]) == battle_config.reserved_costume_id)
+			continue;
+
 		base_status->def += sd->inventory_data[index]->def;
 
 		// Items may be equipped, their effects however are nullified.

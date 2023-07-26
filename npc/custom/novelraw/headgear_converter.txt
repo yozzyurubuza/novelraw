@@ -1,0 +1,120 @@
+izlude,94,125,3	script	Freyja#1	-1,{
+	callsub OnClick;
+
+	OnInit:
+		callfunc("customizeNPCSprite", JOB_TROUVERE, SEX_FEMALE, 6, 27, 1980, 0, 1996, 5);
+		end;
+
+	OnClick:
+		// Prevent user to change items while interacting to the NPC to prevent exploit
+		disable_items;
+		mes "[Freyja]";
+		mes "Such beauty isn't it?";
+		mes "It's like a reflection of the beauty that resides within us all.";
+		next;
+		mes "[Freyja]";
+		mes "I possess the ability to transform your headgears into enchanting costumes or restore them to their original forms.";
+		mes "";
+		mes "Intriguing, isn't it?";
+		mes "So, what will it be?";
+		next;
+
+		switch(select("Convert Headgear:Restore Costume")) {
+			case 1:
+				set .playerchoice, 0;		
+				// Check all the equipped item/s
+				callsub GetEquipped, EQI_HEAD_TOP, EQI_HEAD_MID, EQI_HEAD_LOW, "Headgear", "Costume";
+
+			case 2:
+				set .playerchoice, 1;
+				// Check all the equipped costume/s
+				callsub GetEquipped, EQI_COSTUME_HEAD_TOP, EQI_COSTUME_HEAD_MID, EQI_COSTUME_HEAD_LOW, "Costume", "Headgear";
+		}
+
+		GetEquipped:
+			setarray .@equippedItem[1], getarg(0), getarg(1), getarg(2);
+			// Prepare the equipped item list
+			for (.@equippedItemCheck = 1; .@equippedItemCheck <= 4; .@equippedItemCheck++) {
+				if (getequipisequiped(.@equippedItem[.@equippedItemCheck])) {
+					.@equippedItemList$ += getequipname(.@equippedItem[.@equippedItemCheck])
+										+ " - [^008000" + F_getpositionname2(.@equippedItem[.@equippedItemCheck]) + "^000000]"
+										+ ":";
+					.@equipped = true;
+				}
+			}
+
+			// Check if nothing is equipped
+			if (!.@equipped) {
+				mes "[Freyja]";
+				mes "You need to wear a ^FF0000" + getarg(3) + "^000000...";
+				end;
+			}
+
+			// Return the value of the selected item
+			.@selectedItem = .@equippedItem[prompt(.@equippedItemList$)];
+
+			if (.@selectedItem == 0){
+				callsub CancelDialogue;
+			}
+
+			mes "[Freyja]";
+			mes "You want to make your ^008000" + getitemname(getequipid(.@selectedItem)) + "^000000 a " + getarg(4) + "?";
+			next;
+
+			// Return the value of choice [1, 2, 255]
+			.@confirmation = prompt("Yes, proceed:No, sorry.");
+			if (.@confirmation == 2 || .@confirmation == 255) {
+				callsub CancelDialogue;
+			}
+
+			// 
+			if (.playerchoice == 1){
+				// Check if player is wearing multiple costume of the same kind
+				// Can be remove, only to prevent stacking of costumes
+				if (isequippedcnt(getequipid(.@selectedItem)) > 1) {
+					mes "[Freyja]";
+					mes "You're wearing too many of the same costume!";
+					mes "How am I supposed to know which one to restore?";
+					mes "See me when you only have one equipped.";
+					close;
+				}
+
+				// Check the inventory for similar costume headgear
+				if (countitem(getequipid(.@selectedItem)) > 1) {
+					mes "[Freyja]";
+					mes "You have another ^008000" + getitemname(getequipid(.@selectedItem)) + "^000000 with you.";
+					mes "Put it away before restoring.";
+					end;
+				}
+
+				// Restore headgear by recreating
+				selectedCostume = getequipid(.@selectedItem);
+				delitem selectedCostume, 1;
+				getitem selectedCostume, 1;
+				end;
+			}
+
+			costume .@selectedItem;
+			mes "[Freyja]";
+			mes "Done, enjoy your costume headgear.";
+			close;
+
+		HeadgearDialogue:
+			mes "[Freyja]";
+			mes "Please select what to convert.";
+			mes "Remember, random options, cards, and refine will be removed.";
+			next;
+
+		CostumeDialogue:
+			mes "[Freyja]";
+			mes "Please select what to restore.";
+			mes "Remember, I will only restore it back without the random options, card and refile.";
+			next;
+
+		CancelDialogue:
+			mes "[Freyja]";
+			mes "Need some time to think about it?";
+			mes "Alright, I understand.";
+			end;
+}
+

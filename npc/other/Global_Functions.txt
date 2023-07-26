@@ -658,6 +658,23 @@ function	script	F_getpositionname	{
 	}
 }
 
+function	script	F_getpositionname2	{
+	switch( getarg(0,999) ) {
+		case EQI_GARMENT:	return "Robe";
+		case EQI_HEAD_TOP:	return "Top";
+		case EQI_HEAD_MID:	return "Mid";
+		case EQI_HEAD_LOW:	return "Low";
+
+		case EQI_COSTUME_GARMENT:	return "Robe";
+		case EQI_COSTUME_HEAD_TOP:	return "Top";
+		case EQI_COSTUME_HEAD_MID:	return "Mid";
+		case EQI_COSTUME_HEAD_LOW:	return "Low";
+
+		default:
+			return "Unknown";
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////////////
 // Gives attached player their Platinum Skill based on their class.
 //////////////////////////////////////////////////////////////////////////////////
