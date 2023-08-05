@@ -38396,7 +38396,7 @@ Body:
       - Item: Browny_Root
         Rate: 3000
       - Item: Flower
-        Rate: 1250
+        Rate: 2500
 #  - Id: 1996
 #    AegisName: BACSOJIN_T
 #    Name: White Lady
