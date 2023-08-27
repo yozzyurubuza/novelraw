@@ -6,12 +6,13 @@ Put a script function here if you think it will be used in more than 1 file, if 
 
 //NRO-151: Customize the appearance of an NPC sprite
 function	script	customizeNPCSprite	{
-	setunitdata getnpcid(0), UNPC_CLASS, getarg(0);
-	setunitdata getnpcid(0), UNPC_SEX, getarg(1); //if it exists
-	setunitdata getnpcid(0), UNPC_HAIRCOLOR, getarg(2);
-	setunitdata getnpcid(0), UNPC_HAIRSTYLE, getarg(3);
-	setunitdata getnpcid(0), UNPC_HEADTOP, getarg(4);
-	setunitdata getnpcid(0), UNPC_HEADMIDDLE, getarg(5); 
-	setunitdata getnpcid(0), UNPC_HEADBOTTOM, getarg(6);
+	setunitdata getnpcid(0), UNPC_CLASS, getarg(0,0);
+	setunitdata getnpcid(0), UNPC_SEX, getarg(1,0); //if it exists
+	setunitdata getnpcid(0), UNPC_HAIRCOLOR, getarg(2,0);
+	setunitdata getnpcid(0), UNPC_HAIRSTYLE, getarg(3,0);
+	setunitdata getnpcid(0), UNPC_HEADTOP, getarg(4,0);
+	setunitdata getnpcid(0), UNPC_HEADMIDDLE, getarg(5,0); 
+	setunitdata getnpcid(0), UNPC_HEADBOTTOM, getarg(6,0);
 	setunitdata getnpcid(0), UNPC_ROBE, getarg(7);
+	hateffect getarg(8,0), true, getnpcid(0);
 }
