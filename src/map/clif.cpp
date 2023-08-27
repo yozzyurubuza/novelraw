@@ -21202,23 +21202,15 @@ void clif_navigateTo(map_session_data *sd, const char* mapname, uint16 x, uint16
 /// 0A3B <Length>.W <AID>.L <Status>.B { <HatEffectId>.W }
 void clif_hat_effects(struct block_list* src, struct block_list* bl, bool enable, enum send_target target ){
 #if PACKETVER_MAIN_NUM >= 20150507 || PACKETVER_RE_NUM >= 20150429 || defined(PACKETVER_ZERO)
-	map_session_data *tsd;
-	struct block_list* tbl;
-
-	if( target == SELF ){
-		tsd = BL_CAST(BL_PC,bl);
-		tbl = &sd->bl;
-	}else{
-		tsd = sd;
-		tbl = bl;
-	}
-
-	nullpo_retv( tsd );
-
-	if( tsd->hatEffects.empty() || map_getmapdata(tbl->m)->getMapFlag(MF_NOCOSTUME) ){
+	struct unit_data* ud;
+	
+	if (!src || !bl || !(ud = unit_bl2ud(bl)))
 		return;
-	}
-
+	
+	if (ud->hatEffects.empty() || map_getmapdata(src->m)->getMapFlag(MF_NOCOSTUME)) {
+ 		return;
+ 	}
+	
 	struct PACKET_ZC_EQUIPMENT_EFFECT* p = (struct PACKET_ZC_EQUIPMENT_EFFECT*)packet_buffer;
  
  	p->packetType = HEADER_ZC_EQUIPMENT_EFFECT;
