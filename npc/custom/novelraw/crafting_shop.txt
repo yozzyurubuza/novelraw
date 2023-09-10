@@ -1,11 +1,17 @@
 // Headgear Crafting (New)
 
-izlude,127,168,4	script	Sindri#1	-1,{	
+iz_craft,35,74,5	script	Sindri#1	-1,{	
 	callsub OnClick;
 	end;
 	
 	OnInit:
+		initnpctimer;
 		callfunc("customizeNPCSprite", JOB_MEISTER, SEX_MALE, 6, 27, 1760, 1715, 1920, 7);
+		end;
+
+	OnTimer1000:
+		showscript("Headgear Rank 1");
+		setnpctimer 0;
 		end;
 
 	OnClick:
@@ -17,15 +23,12 @@ izlude,127,168,4	script	Sindri#1	-1,{
 		next;
 
 		set .@shop_index, select("Headgears - Upper:Headgears - Middle:Headgears - Lower:Headgears - Mixed:Cancel");
-		if (.@shop_index == 5) {
-			close;
-		}
+		if (.@shop_index == 5) close;
 
 		mes "[Sindri]";
 		mes "Step forward, seeker of power,";
 		mes "as I wield the flames that shapes";
 		mes "the unrivaled strength you crave.";
-		dispbottom "Select one item at a time.";
 		close2;
 		callshop "headgears_r1_option" + .@shop_index;
 }
