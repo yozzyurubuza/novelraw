@@ -15,4 +15,6 @@ function	script	customizeNPCSprite	{
 	setunitdata getnpcid(0), UNPC_HEADBOTTOM, getarg(6,0);
 	setunitdata getnpcid(0), UNPC_ROBE, getarg(7);
 	hateffect getarg(8,0), true, getnpcid(0);
+	hateffect getarg(9,0), true, getnpcid(0);
+	hateffect getarg(10,0), true, getnpcid(0);
 }
