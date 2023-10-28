@@ -6,7 +6,7 @@ iz_craft,26,65,5	script	Sindri	-1,{
 	
 	OnInit:
 		initnpctimer;
-		callfunc("customizeNPCSprite", JOB_MEISTER, SEX_MALE, 6, 27, 0, 1715, 1920, 107);
+		callfunc("customizeNPCSprite", JOB_MEISTER, SEX_MALE, 6, 27, 0, 1762, 1920, 107);
 		end;
 
 	OnTimer1000:
@@ -15,6 +15,7 @@ iz_craft,26,65,5	script	Sindri	-1,{
 		end;
 
 	OnClick:
+		cutin "sindri", 2;
 		mes "[ Sindri ]";
 		mes "Welcome!";
 		mes "Enter, seeker of power.";
@@ -30,6 +31,8 @@ iz_craft,26,65,5	script	Sindri	-1,{
 		mes "as I wield the flames that shapes";
 		mes "the unrivaled strength you crave.";
 		close2;
+		cutin "",255;
+		
 		callshop "headgears_r1_option" + .@shop_index;
 }
 
@@ -56,6 +59,7 @@ iz_craft,35,74,5	script	Shiki	-1,{
 			case 0:
 				mes "^1873f7[ Shiki ]^000000";
 				mes "Ah, welcome adventurer!";
+				mes "";
 				mes "The path of adventure is long and winding, isn't it?";
 				mes "How may I assist you today?";
 				break;
@@ -63,15 +67,20 @@ iz_craft,35,74,5	script	Shiki	-1,{
 			case 1:
 				mes "^1873f7[ Shiki ]^000000";
 				mes "Greetings!";
-				mes "A sturdy headgear can be like a trusted friend, keeping you safe from your adventures.";
+				mes "";
+				mes "A sturdy headgear can be like";
+				mes "a trusted friend, keeping you";
+				mes "safe from your adventures.";
 				mes "Shall we craft one together?";
 				break;
 			
 			case 2:
 				mes "^1873f7[ Shiki ]^000000";
 				mes "Oh, hello dear adventurer!";
+				mes "";
 				mes "How's your farming going?";
-				mes "I've recently learned a few new crafting techniques.";
+				mes "I've recently learned a few";
+				mes "new crafting techniques.";
 				mes "Would you like to try a new one?";
 				break;
 		}
@@ -105,6 +114,7 @@ iz_craft,49,78,4	script	Sylvie	-1,{
 			case 0:
 				mes "^0047AB[ Sylvie ]^000000";
 				mes "Hello there!";
+				mes "";
 				mes "The road ahead is fraught with danger, but also opportunities for glory.";
 				mes "I can craft you headgears that are an adventurer's dream";
 				break;
@@ -112,6 +122,7 @@ iz_craft,49,78,4	script	Sylvie	-1,{
 			case 1:
 				mes "^0047AB[ Sylvie ]^000000";
 				mes "Hello adventurer!";
+				mes "";
 				mes "You look like someone who could use a fine piece of headgear.";
 				mes "Care to see what I can craft?";
 				break;
@@ -119,8 +130,11 @@ iz_craft,49,78,4	script	Sylvie	-1,{
 			case 2:
 				mes "^0047AB[ Sylvie ]^000000";
 				mes "Greetings, brave one.";
-				mes "I can see you've been through some battles.";
-				mes "How about we up your game with a cut above headgears?";
+				mes "";
+				mes "I can see you've been through";
+				mes "some battles.";
+				mes "How about we up your game with"; 
+				mes "a cut above headgears?";
 				break;
 		}
 		next;
@@ -165,18 +179,20 @@ iz_craft,62,74,3	script	Siegil	-1,{
 
 	OnClick:
 		set .random_line_num, callfunc("randomNumWithoutRepeat", .random_line_num);
-		cutin "", 1;
+		cutin "siegil", 2;
 		switch(.random_line_num){
 			case 0:
 				mes "^4169E1[ Siegil ]^000000";
-				mes "If you seek the pinnacle of craftsmanship, ";
-				mes "you've come to the right place.";
-				mes "My sisters Sylvie and Shiki are talented, but Level 4 headgears are an art form.";
+				mes "If you seek the pinnacle of craftsmanship, you've come";
+				mes "to the right place.";
+				mes "";
+				mes "My sisters ^0047ABSylvie^000000 and ^1873f7Shiki^000000 are talented, but mine is an art form.";
 				break;
 
 			case 1:
 				mes "^4169E1[ Siegil ]^000000";
 				mes "Greetings.";
+				mes "";
 				mes "I can see you've been around, ";
 				mes "perhaps even met my sisters. ";
 				mes "Ready to experience the epitome of headgear crafting?";
@@ -186,7 +202,9 @@ iz_craft,62,74,3	script	Siegil	-1,{
 				mes "^4169E1[ Siegil ]^000000";
 				mes "Ah, a new adventurer"; 
 				mes "graces my workshop.";
-				mes "Time to experience what true mastery can create.";
+				mes "";
+				mes "Time to experience what";
+				mes "true mastery can create.";
 				mes "Interested?";
 				break;
 		}
@@ -195,13 +213,69 @@ iz_craft,62,74,3	script	Siegil	-1,{
 		set .@shop_index, select("Headgears - Upper:Headgears - Middle:Headgears - Lower:Headgears - Mixed:Cancel");
 		if (.@shop_index == 5) close;
 
-		cutin "", 1;
 		mes "^4169E1[ Siegil ]^000000";
 		mes "Just a moment. I'm preparing to show you headgears that are nothing short of works of art.";
 		close2;
 		cutin "",255;
 
 		callshop "headgears_r4_option" + .@shop_index;
+}
+
+
+
+iz_craft,43,48,5	script	Spica#iz_craft	-1,{
+	callsub OnClick;
+	end;
+	
+	OnInit:
+		initnpctimer;
+		callfunc("customizeNPCSprite", 4_ep16_spica, 0, 0, 0, 0, 0, 0, 0, 0, 188, 29);
+		set .random_line_num, -1;
+		end;
+
+	OnTimer1000:
+		showscript("Teleporter");
+		setnpctimer 0;
+		end;
+
+	OnClick:
+		set .random_line_num, callfunc("randomNumWithoutRepeat", .random_line_num);
+		cutin "spica_tele", 2;
+		mes "^0069ff[ Spica ]^000000";
+		switch(.random_line_num){
+			case 0:
+				mes "Enjoyed your time among the artisans?"; 
+				mes "";
+				mes "Shall we make our way back";
+				mes "to the ^ff0004Izlude Academy^000000?";
+				break;
+			
+			case 1:
+				mes "Had enough of the local crafts? ";
+				mes "";
+				mes "Ready to return to the halls" ;
+				mes "of ^ff0004Izlude Academy^000000?";
+				break;
+			
+			case 2:
+				mes "I hope you found";
+				mes "the Artisans' Quarter inspiring!";
+				mes "";
+				mes "Ready to head back";
+				mes "to ^ff0004Izlude Academy^000000?";
+			
+		}
+		
+		next;
+		set .@tele_index, select("Yes:I'll stay here for a while");
+		switch(.@tele_index){
+			case 1:
+				warp "iz_ac01", 100,36;
+
+			default:
+				cutin "", 255;
+				close2;
+		} 
 }
 
 function	script	randomNumWithoutRepeat	{
