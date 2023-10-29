@@ -16,23 +16,24 @@ iz_craft,26,65,5	script	Sindri	-1,{
 
 	OnClick:
 		cutin "sindri", 2;
-		mes "[ Sindri ]";
+		mes "^ff0000[ Sindri ]^000000";
 		mes "Welcome!";
+		mes "";
 		mes "Enter, seeker of power.";
 		mes "Together, we forge legends";
 		specialeffect EF_HEAT_BARREL;
 		next;
 
 		set .@shop_index, select("Headgears - Upper:Headgears - Middle:Headgears - Lower:Headgears - Mixed:Cancel");
-		if (.@shop_index == 5) close;
+		if (.@shop_index == 5) close3;
 
-		mes "[ Sindri ]";
+		mes "^ff0000[ Sindri ]^000000";
 		mes "Step forward, seeker of power,";
 		mes "as I wield the flames that shapes";
 		mes "the unrivaled strength you crave.";
 		close2;
-		cutin "",255;
-		
+		cutin "", 255;
+
 		callshop "headgears_r1_option" + .@shop_index;
 }
 
@@ -87,13 +88,13 @@ iz_craft,35,74,5	script	Shiki	-1,{
 		next;
 
 		set .@shop_index, select("Headgears - Upper:Headgears - Middle:Headgears - Lower:Headgears - Mixed:Cancel");
-		if (.@shop_index == 5) close;
+		if (.@shop_index == 5) close3;
 
 		cutin "shiki02", 2;
 		mes "^1873f7[ Shiki ]^000000";
 		mes "Sure thing, I'm carefully curating the list of headgears just for you.";
 		close2;
-		cutin "",255;
+		cutin "", 255;
 
 		callshop "headgears_r2_option" + .@shop_index;
 }
@@ -140,13 +141,13 @@ iz_craft,49,78,4	script	Sylvie	-1,{
 		next;
 
 		set .@shop_index, select("Headgears - Upper:Headgears - Middle:Headgears - Lower:Headgears - Mixed:Cancel");
-		if (.@shop_index == 5) close;
+		if (.@shop_index == 5) close3;
 
 		cutin "princess_meer2", 2;
 		mes "^0047AB[ Sylvie ]^000000";
 		mes "Hang on, I'm putting together a list that'll make even my sister ^1873f7Shiki^000000 jealous!";
 		close2;
-		cutin "",255;
+		cutin "", 255;
 
 		callshop "headgears_r3_option" + .@shop_index;
 }
@@ -211,12 +212,12 @@ iz_craft,62,74,3	script	Siegil	-1,{
 		next;
 
 		set .@shop_index, select("Headgears - Upper:Headgears - Middle:Headgears - Lower:Headgears - Mixed:Cancel");
-		if (.@shop_index == 5) close;
+		if (.@shop_index == 5) close3;
 
 		mes "^4169E1[ Siegil ]^000000";
 		mes "Just a moment. I'm preparing to show you headgears that are nothing short of works of art.";
 		close2;
-		cutin "",255;
+		cutin "", 255;
 
 		callshop "headgears_r4_option" + .@shop_index;
 }
@@ -247,7 +248,7 @@ iz_craft,43,48,5	script	Spica#iz_craft	-1,{
 				mes "Enjoyed your time among the artisans?"; 
 				mes "";
 				mes "Shall we make our way back";
-				mes "to the ^ff0004Izlude Academy^000000?";
+				mes "to ^ff0004Izlude Academy^000000?";
 				break;
 			
 			case 1:
@@ -271,34 +272,73 @@ iz_craft,43,48,5	script	Spica#iz_craft	-1,{
 		switch(.@tele_index){
 			case 1:
 				warp "iz_ac01", 100,36;
+				break;
+
+			case 2:
+				mes "^0069ff[ Spica ]^000000";
+				mes "Alright, feel free to roam around and check their crafts.";
 
 			default:
-				cutin "", 255;
-				close2;
+				close3;
+				break;
 		} 
 }
 
-function	script	randomNumWithoutRepeat	{
-	set .@last_rand_num, getarg(0);
-	//Generate 3 Unique Dialogues
-	switch(.@last_rand_num){
-		case -1: //First time any player clicks the NPC
-			set .@new_rand_num, rand(3);
-			break;
+iz_ac01,96,44,5	script	Spica#iz_ac01	-1,{
+	callsub OnClick;
+	end;
+	
+	OnInit:
+		initnpctimer;
+		callfunc("customizeNPCSprite", 4_ep16_spica, 0, 0, 0, 0, 0, 0, 0, 0, 188, 29);
+		set .random_line_num, -1;
+		end;
 
-		case 0: //Last number was 0
-			set .@new_rand_num, rand(1,2);
-			break;
+	OnTimer1000:
+		showscript("Equipment Craft");
+		setnpctimer 0;
+		end;
+
+	OnClick:
+		set .random_line_num, callfunc("randomNumWithoutRepeat", .random_line_num);
+		cutin "spica_tele", 2;
+		mes "^0069ff[ Spica ]^000000";
+		switch(.random_line_num){
+			case 0:
+				mes "Welcome!";
+				mes "";
+				mes "How about a journey";
+				mes "to the heart of creativity itself,";
+				mes "the ^6500ffIzlude Artisans' Quarter?^000000";
+				break;
+			
+			case 1:
+				mes "Hi!";
+				mes "";
+				mes "Care to discover the hidden gems";
+				mes "of the ^6500ffIzlude Artisans' Quarter^000000 today?";
+				break;
+			
+			case 2:
+				mes "Hello there!";
+				mes "";
+				mes "Ready to be amazed by the handiwork";
+				mes "at the ^6500ffIzlude Artisans' Quarter?^000000";
+		}
 		
-		case 1: //Last number was 1
-			set .@new_rand_num, rand(2); //Generates 0 or 1
-			if (.@new_rand_num == 1)
-				set .@new_rand_num, 2;
-			break;
-		
-		case 2: //If the last number was 2
-			set .@new_rand_num, rand(2);
-			break;
-	}
-	return .@new_rand_num;
+		next;
+		set .@tele_index, select("Yes, Let's go!:No, maybe some other time");
+		switch(.@tele_index){
+			case 1:
+				warp "iz_craft", 47,45;
+				break;
+
+			case 2:
+				mes "^0069ff[ Spica ]^000000";
+				mes "Alright, see you around!";
+
+			default:
+				close3;
+				break;
+		}
 }

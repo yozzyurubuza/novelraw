@@ -45,9 +45,92 @@ Header:
   Type: BARTER_DB
   Version: 1
 
-Footer:
-  Imports:
-  - Path: npc/custom/novelraw/barters/iz_craft/headgear_crafting_r1.yml
-  - Path: npc/custom/novelraw/barters/iz_craft/headgear_crafting_r2.yml
-  - Path: npc/custom/novelraw/barters/iz_craft/headgear_crafting_r3.yml
-  - Path: npc/custom/novelraw/barters/iz_craft/headgear_crafting_r4.yml
+Body:
+  - Name: headgears_r1_option1
+    Items:
+      - Index: 0
+        Item: Angeling_Hat
+        Zeny: 1000000
+        RequiredItems:
+          - Index: 0
+            Item: Poring_Hat
+            Amount: 1
+            Refine: 7
+          - Index: 1
+            Item: Poporing_Cap
+            Amount: 1
+          - Index: 2
+            Item: Unripe_Apple
+            Amount: 10
+          - Index: 3
+            Item: Large_Jellopy
+            Amount: 100
+          - Index: 4
+            Item: Angeling_Card
+            Amount: 1
+  - Name: headgears_r1_option2
+    Items:
+      - Index: 0
+        Item: Angeling_Hat
+        Zeny: 1000000
+        RequiredItems:
+          - Index: 0
+            Item: Poring_Hat
+            Amount: 1
+            Refine: 7
+          - Index: 1
+            Item: Poporing_Cap
+            Amount: 1
+          - Index: 2
+            Item: Unripe_Apple
+            Amount: 10
+          - Index: 3
+            Item: Large_Jellopy
+            Amount: 100
+          - Index: 4
+            Item: Angeling_Card
+            Amount: 1
+  - Name: headgears_r1_option3
+    Items:
+      - Index: 0
+        Item: Angeling_Hat
+        Zeny: 1000000
+        RequiredItems:
+          - Index: 0
+            Item: Poring_Hat
+            Amount: 1
+            Refine: 7
+          - Index: 1
+            Item: Poporing_Cap
+            Amount: 1
+          - Index: 2
+            Item: Unripe_Apple
+            Amount: 10
+          - Index: 3
+            Item: Large_Jellopy
+            Amount: 100
+          - Index: 4
+            Item: Angeling_Card
+            Amount: 1
+  - Name: headgears_r1_option4
+    Items:
+      - Index: 0
+        Item: Angeling_Hat
+        Zeny: 1000000
+        RequiredItems:
+          - Index: 0
+            Item: Poring_Hat
+            Amount: 1
+            Refine: 7
+          - Index: 1
+            Item: Poporing_Cap
+            Amount: 1
+          - Index: 2
+            Item: Unripe_Apple
+            Amount: 10
+          - Index: 3
+            Item: Large_Jellopy
+            Amount: 100
+          - Index: 4
+            Item: Angeling_Card
+            Amount: 1
