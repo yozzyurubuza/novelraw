@@ -91,6 +91,7 @@ struct s_npc_barter_item{
 	uint16 index;
 	t_itemid nameid;
 	bool stockLimited;
+	bool broadcast_transaction;
 	uint32 stock;
 	uint32 price;
 	std::map<uint16, std::shared_ptr<s_npc_barter_requirement>> requirements;

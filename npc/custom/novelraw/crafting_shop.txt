@@ -3,7 +3,7 @@
 iz_craft,26,65,5	script	Sindri	-1,{	
 	callsub OnClick;
 	end;
-	
+
 	OnInit:
 		initnpctimer;
 		callfunc("customizeNPCSprite", JOB_MEISTER, SEX_MALE, 7, 28, 2427, 2169, 2374, 107);
@@ -33,7 +33,7 @@ iz_craft,26,65,5	script	Sindri	-1,{
 		mes "the unrivaled strength you crave.";
 		close2;
 		cutin "", 255;
-
+		
 		callshop "headgears_r1_option" + .@shop_index;
 }
 

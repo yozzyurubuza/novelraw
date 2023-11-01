@@ -32,6 +32,7 @@
 #      - Index          Index of the item inside the shop. (0-...)
 #                       Maximum index depends on client.
 #        Item           Aegis name of the item.
+#        Broadcast      Announce the item creation (Default: true)
 #        Stock          Amount of item in stock. 0 means unlimited. (Default: 0)
 #        Zeny           Cost of them item in Zeny. (Default: 0)
 #        RequiredItems: List of required items (Optional)
@@ -68,6 +69,22 @@ Body:
           - Index: 4
             Item: Angeling_Card
             Amount: 1
+      - Index: 1
+        Item: T_Valkyrie_Feather_Band
+        Zeny: 0
+        Broadcast: false
+        RequiredItems:
+          - Index: 0
+            Item: Jellopy
+            Amount: 1
+      - Index: 2
+        Item: Combat_Knife
+        Zeny: 0
+        RequiredItems:
+          - Index: 0
+            Item: Jellopy
+            Amount: 1
+
   - Name: headgears_r1_option2
     Items:
       - Index: 0
