@@ -56,9 +56,9 @@ iz_craft,35,74,5	script	Shiki	-1,{
 	OnClick:
 		set .random_line_num, callfunc("randomNumWithoutRepeat", .random_line_num);
 		cutin "shiki01", 2;
+		mes "^1873f7[ Shiki ]^000000";
 		switch(.random_line_num){
 			case 0:
-				mes "^1873f7[ Shiki ]^000000";
 				mes "Ah, welcome adventurer!";
 				mes "";
 				mes "The path of adventure is long and winding, isn't it?";
@@ -66,7 +66,6 @@ iz_craft,35,74,5	script	Shiki	-1,{
 				break;
 
 			case 1:
-				mes "^1873f7[ Shiki ]^000000";
 				mes "Greetings!";
 				mes "";
 				mes "A sturdy headgear can be like";
@@ -76,7 +75,6 @@ iz_craft,35,74,5	script	Shiki	-1,{
 				break;
 			
 			case 2:
-				mes "^1873f7[ Shiki ]^000000";
 				mes "Oh, hello dear adventurer!";
 				mes "";
 				mes "How's your farming going?";
@@ -111,9 +109,9 @@ iz_craft,49,78,4	script	Sylvie	-1,{
 	OnClick:
 		set .random_line_num, callfunc("randomNumWithoutRepeat", .random_line_num);
 		cutin "princess_meer", 2;
+		mes "^0047AB[ Sylvie ]^000000";
 		switch(.random_line_num){
 			case 0:
-				mes "^0047AB[ Sylvie ]^000000";
 				mes "Hello there!";
 				mes "";
 				mes "The road ahead is fraught with danger, but also opportunities for glory.";
@@ -121,7 +119,6 @@ iz_craft,49,78,4	script	Sylvie	-1,{
 				break;
 
 			case 1:
-				mes "^0047AB[ Sylvie ]^000000";
 				mes "Hello adventurer!";
 				mes "";
 				mes "You look like someone who could use a fine piece of headgear.";
@@ -129,7 +126,6 @@ iz_craft,49,78,4	script	Sylvie	-1,{
 				break;
 			
 			case 2:
-				mes "^0047AB[ Sylvie ]^000000";
 				mes "Greetings, brave one.";
 				mes "";
 				mes "I can see you've been through";
@@ -181,9 +177,9 @@ iz_craft,62,74,3	script	Siegil	-1,{
 	OnClick:
 		set .random_line_num, callfunc("randomNumWithoutRepeat", .random_line_num);
 		cutin "siegil", 2;
+		mes "^4169E1[ Siegil ]^000000";
 		switch(.random_line_num){
 			case 0:
-				mes "^4169E1[ Siegil ]^000000";
 				mes "If you seek the pinnacle of craftsmanship, you've come";
 				mes "to the right place.";
 				mes "";
@@ -191,7 +187,6 @@ iz_craft,62,74,3	script	Siegil	-1,{
 				break;
 
 			case 1:
-				mes "^4169E1[ Siegil ]^000000";
 				mes "Greetings.";
 				mes "";
 				mes "I can see you've been around, ";
@@ -200,7 +195,6 @@ iz_craft,62,74,3	script	Siegil	-1,{
 				break;
 			
 			case 2:
-				mes "^4169E1[ Siegil ]^000000";
 				mes "Ah, a new adventurer"; 
 				mes "graces my workshop.";
 				mes "";
