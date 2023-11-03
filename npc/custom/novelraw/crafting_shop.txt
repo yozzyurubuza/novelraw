@@ -276,7 +276,9 @@ iz_craft,43,48,5	script	Spica#iz_craft	-1,{
 
 			case 2:
 				mes "^0069ff[ Spica ]^000000";
-				mes "Alright, feel free to roam around and check their crafts.";
+				mes "Okay~";
+				mes "";
+				mes "Feel free to roam around and check their crafts. =^_^=";
 
 			default:
 				close3;
@@ -335,7 +337,9 @@ iz_ac01,96,44,5	script	Spica#iz_ac01	-1,{
 
 			case 2:
 				mes "^0069ff[ Spica ]^000000";
-				mes "Alright, see you around!";
+				mes "Okay~";
+				mes "";
+				mes "See you around! =^_^=";
 
 			default:
 				close3;
