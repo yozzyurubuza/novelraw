@@ -91,6 +91,7 @@ struct s_npc_barter_item{
 	uint16 index;
 	t_itemid nameid;
 	bool stockLimited;
+	bool broadcast_transaction;
 	uint32 stock;
 	uint32 price;
 	std::map<uint16, std::shared_ptr<s_npc_barter_requirement>> requirements;
@@ -1473,7 +1474,11 @@ enum e_job_types
 	JT_ROZ_MQ_MOCLORD,
 	JT_ROZ_MQ_SKULD,
 
-	JT_NEW_NPC_3RD_END = 19999,
+	JT_C_KHALITZBURG = 20576,
+
+	JT_AB_PRINCESS_1 = 20701,
+
+	JT_NEW_NPC_3RD_END = 21000,
 	NPC_RANGE3_END, // Official: JT_NEW_NPC_3RD_END=19999
 
 	// Unofficial

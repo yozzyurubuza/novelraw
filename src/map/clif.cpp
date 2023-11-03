@@ -23092,6 +23092,23 @@ void clif_parse_barter_extended_close( int fd, map_session_data* sd ){
 #endif
 }
 
+void broadcast_barter_success(struct map_session_data* sd, int item_id) {
+    char output[CHAT_SIZE_MAX];
+
+    // Assuming item_db is the structure that holds item data, and it has a find() method that takes an item_id
+    std::shared_ptr<item_data> item = item_db.find(item_id);
+
+    // Check if item exists in the database
+    if (item != nullptr) {
+        snprintf(output, sizeof(output), "%s has successfully created %s !!", sd->status.name, item->ename.c_str());
+    } else {
+        snprintf(output, sizeof(output), "%s has successfully created Item ID: %d !!", sd->status.name, item_id);
+    }
+
+    // Use clif_broadcast to send the message
+    clif_broadcast(&sd->bl, output, strlen(output) + 1, 0, ALL_CLIENT);
+}
+
 void clif_parse_barter_extended_buy( int fd, map_session_data* sd ){
 #if PACKETVER_MAIN_NUM >= 20191120 || PACKETVER_RE_NUM >= 20191106 || PACKETVER_ZERO_NUM >= 20191127
 	// No shop open
@@ -23169,6 +23186,14 @@ void clif_parse_barter_extended_buy( int fd, map_session_data* sd ){
 		purchase.amount = p->list[i].amount;
 
 		purchases.push_back( purchase );
+	}
+
+	// Loop through the list of purchased items to check if any should be broadcasted
+	for (const s_barter_purchase& purchase : purchases) {
+		if (purchase.item->broadcast_transaction) {
+			// Call your broadcasting function here. You can model it after clif_broadcast_refine_result.
+			broadcast_barter_success(sd, purchase.item->nameid);
+		}
 	}
 
 	clif_npc_buy_result( sd, npc_barter_purchase( *sd, barter, purchases )  );
