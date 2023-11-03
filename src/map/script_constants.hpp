@@ -9092,6 +9092,8 @@
 	export_constant_npc(JT_4_LARVA_VIOLET);
 	export_constant_npc(JT_4_HERO_SAUSAGE);
 	export_constant_npc(JT_4_PRINCESS_SAUSAGE);
+	export_constant_npc(JT_AB_PRINCESS_1);
+	export_constant_npc(JT_C_KHALITZBURG);
 	export_constant_npc(JT_4_EP20_LASGAND);
 	export_constant_npc(JT_4_EP20_NYAR);
 	export_constant_npc(JT_4_EP20_DEVICE_BLUE);

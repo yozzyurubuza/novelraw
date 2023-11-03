@@ -573,6 +573,15 @@ uint64 BarterDatabase::parseBodyNode( const ryml::NodeRef& node ){
 				item->nameid = id->nameid;
 			}
 
+			item->broadcast_transaction = true; // Default behavior is to announce if not defined
+			if (this->nodeExists(itemNode, "Broadcast")) {
+				bool bcast;
+				if (!this->asBool(itemNode, "Broadcast", bcast)) {
+					return 0;
+				}
+				item->broadcast_transaction = bcast;
+			}
+
 			if( this->nodeExists( itemNode, "Stock" ) ){
 				uint32 stock;
 
