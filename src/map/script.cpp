@@ -24321,12 +24321,14 @@ BUILDIN_FUNC(getcostumeitem)
 	if (data_isstring(data)) {
 		int ep;
 		const char *name = conv_str(st, data);
-		struct item_data *item_data = itemdb_searchname(name);
-		if (item_data == NULL)
-		{	//Failed
-			script_pushint(st, 0);
-			return SCRIPT_CMD_SUCCESS;
-		}
+        std::map<t_itemid, std::shared_ptr<item_data>> items;
+        itemdb_searchname_array(items, MAX_SEARCH, name);
+        if (items.empty())
+        {
+            script_pushint(st, 0);
+            return SCRIPT_CMD_SUCCESS;
+        }
+        auto item_data = items.begin()->second.get();
 		ep = item_data->equip;
 		if (!(ep&EQP_HEAD_LOW) && !(ep&EQP_HEAD_MID) && !(ep&EQP_HEAD_TOP) && !(ep&EQP_GARMENT)){
 			ShowError("buildin_getcostumeitem: Attempted to convert non-cosmetic item to costume.");
@@ -24337,7 +24339,7 @@ BUILDIN_FUNC(getcostumeitem)
 	else
 		nameid = conv_num(st, data);
 
-	if (!itemdb_exists(nameid))
+	if (!item_db.exists(nameid))
 	{	// Item does not exist.
 		script_pushint(st, 0);
 		return SCRIPT_CMD_SUCCESS;
