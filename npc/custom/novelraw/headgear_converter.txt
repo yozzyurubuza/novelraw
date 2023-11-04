@@ -54,6 +54,10 @@ izlude,94,125,3	script	Freyja#1	-1,{
 				mes "You must wear a ^6000ddCostume-converted Headgear^000000 for me to convert.";
 				break;
 
+			case 5:
+				mes "Oh dear,";
+				mes "I can only restore ^6000ddCostume-converted Headgears^000000.";
+
 		}
 		close;
 
@@ -94,10 +98,11 @@ function	script	handleHeadgear	{
 	mes "Please select what to convert.";
 	mes "";
 	mes "Remember, ^dd0000Random options^000000, ^00cfddCards^000000, and ^62dd00Refine Rate^000000 will be removed and ^2200ddwill not be restored^000000.";
+
 	// Build the select options string
 	.@options$ = "";
 	for (.@i = 0; .@i < .@headgear_count; .@i++) {
-		// Determine position string
+		// Determine position string and allocate color
 		if (.@headgear_pos[.@i] == .@eqi_head_top) {
 			.@pos$ = "Upper";
 			.@posColor$ = "^dd0000";
@@ -110,27 +115,31 @@ function	script	handleHeadgear	{
 			.@pos$ = "Lower";
 			.@posColor$ = "^002bff";
 		}
-		
 		.@options$ += .@pos$ + " - [ " + .@posColor$ + getitemname(.@headgear_id[.@i]) + "^000000 ]:";
 	}
 	.@options$ += "Cancel";
+	next;
 
 	// Allow the player to select which headgear to handle
-	next;
+	//Perform error-checking first
 	.@selection = select(.@options$);
-	if (.@selection <= .@headgear_count) {
-		if (.@operation == 0) {
-			costume .@headgear_pos[.@selection - 1];  // Convert the selected headgear to a costume
-			return 0;
-		}
-		else {
-			// Restore headgear by recreating
-			dispbottom .@headgear_id[.@selection - 1];
-			delitem .@headgear_id[.@selection - 1], 1;
-			getitem .@headgear_id[.@selection - 1], 1;
-			return 1;
-		}
+	if (.@selection > .@headgear_count) // If cancel was selected
+		return 2;
+
+	// If the selected item to be restored is not a Costume-converted headgear
+	if (.@operation == 1 && getequipcardid(.@headgear_pos[.@selection - 1], 0) != 254)
+		return 5;
+
+	//Convert to Costume
+	if (.@operation == 0) {
+		costume .@headgear_pos[.@selection - 1];  // Convert the selected headgear to a costume
+		return 0;
 	}
-	//If Cancel was selected
-	return 2;
+	//Restore to Headgear by recreating
+	else if (.@operation == 1){
+		delitem .@headgear_id[.@selection - 1], 1;
+		getitem .@headgear_id[.@selection - 1], 1;
+		return 1;
+	}
+
 }
