@@ -3,12 +3,13 @@ izlude,94,125,3	script	Freyja#1	-1,{
 	end;
 
 	OnInit:
-		callfunc("customizeNPCSprite", JOB_TROUVERE, SEX_FEMALE, 6, 27, 1980, 0, 1996, 5);
+		callfunc("customizeNPCSprite", JOB_TROUVERE, SEX_FEMALE, 8, 27, 1980, 0, 1996, 5);
 		end;
 
 	OnClick:
 		// Prevent user to change items while interacting to the NPC to prevent exploit
 		disable_items;
+		cutin "freyja_hg", 2;
 		mes "[Freyja]";
 		mes "Such beauty isn't it?";
 		mes "It's like a reflection of the beauty that resides within us all.";
@@ -59,7 +60,7 @@ izlude,94,125,3	script	Freyja#1	-1,{
 				mes "I can only restore ^6000ddCostume-converted Headgears^000000.";
 
 		}
-		close;
+		close3;
 
 }
 
