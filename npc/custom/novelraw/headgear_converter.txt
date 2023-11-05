@@ -123,11 +123,11 @@ function	script	handleHeadgear	{
 	// Allow the player to select which headgear to handle
 	//Perform error-checking first
 	.@selection = select(.@options$);
-	if (.@selection > .@headgear_count) // If cancel was selected
+	if (.@selection > .@headgear_count) // If "Cancel" was selected
 		return 2;
 
 	// If the selected item to be restored is not a Costume-converted headgear
-	if (.@operation == 1 && getequipcardid(.@headgear_pos[.@selection - 1], 0) != 254)
+	if (.@operation == 1 && getequipcardid(.@headgear_pos[.@selection - 1], 2) != 16958)
 		return 5;
 
 	//Convert to Costume
