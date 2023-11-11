@@ -176,7 +176,7 @@ function	script	handleHeadgear	{
 	else if (.@operation == 1){
 		delitem .@headgear_id[.@selection - 1], 1;
 		getitem .@headgear_id[.@selection - 1], 1;
-		delitem 69000, 1;
+		delitem 69000, 10;
 		return 1;
 	}
 

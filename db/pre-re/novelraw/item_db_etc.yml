@@ -93,5 +93,6 @@ Body:
     AegisName: Essence_Feather
     Name: Essence Feather
     Type: Etc
-    Buy: 20
     Weight: 10
+    Trade: 
+      NoSell: true
