@@ -134,7 +134,7 @@ Body:
     Refineable: true
   - Id: 5977
     AegisName: C_Poker_Card_In_Mouth
-    Name: "Costume: Poker Card In Mouth"
+    Name: "Costume Poker Card In Mouth"
     Type: Armor
     Locations:
       Costume_Head_Low: true
