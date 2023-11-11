@@ -13,20 +13,28 @@ izlude,94,125,3	script	Freyja#1	-1,{
 		end;
 
 	OnClick:
-		// Prevent user to change items while interacting to the NPC to prevent exploit
+		// Prevent user to change items while interacting to the NPC
 		disable_items;
 		cutin "freyja_hg", 2;
-		mes "[Freyja]";
+		mes "^00b0ff[Freyja]^000000";
 		mes "Such beauty isn't it?";
 		mes "It's like a reflection of the beauty that resides within us all.";
 		next;
-		mes "[Freyja]";
+		mes "^00b0ff[Freyja]^000000";
 		mes "I possess the ability to transform your headgears into enchanting costumes or restore them to their original forms.";
 		mes "";
 		mes "Intriguing, isn't it?";
 		mes "So, what will it be?";
 		next;
-		
+		mes "^00b0ff[Freyja]^000000";
+		mes "Requirements";
+		mes "Convert Headgear to Costume: ";
+		mes "x1 - " + mesitemlink(69000);
+		mes "";
+		mes "Restore Costume: ";
+		mes "x10 - " + mesitemlink(69000);
+		next;
+
 		switch(select("Convert Headgear to Costume:Restore Costume to Headgear")) {
 			case 1:
 				set .@endingMes, callfunc("handleHeadgear", EQI_HEAD_TOP, EQI_HEAD_MID, EQI_HEAD_LOW, 0); // 0 for conversion
@@ -36,7 +44,7 @@ izlude,94,125,3	script	Freyja#1	-1,{
 				break;
 		}
 		
-		mes "[Freyja]";
+		mes "^00b0ff[Freyja]^000000";
 		switch(.@endingMes){
 			case 0:
 				mes "Done, enjoy your costume headgear.";
@@ -64,10 +72,21 @@ izlude,94,125,3	script	Freyja#1	-1,{
 			case 5:
 				mes "Oh dear,";
 				mes "I can only restore ^6000ddCostume-converted Headgears^000000.";
+				break;
 
+			case 6:
+				mes "Oh dear,";
+				mes "I need a catalyst to convert your item:";
+				mes mesitemlink(69000);
+				break;
+
+			case 7:
+				mes "Oh dear,";
+				mes "You don't have enough: ";
+				mes mesitemlink(69000);
+				break;
 		}
 		close3;
-
 }
 
 // Define a new function to handle both conversion and restoration
@@ -76,6 +95,16 @@ function	script	handleHeadgear	{
 	.@eqi_head_mid = getarg(1);
 	.@eqi_head_low = getarg(2);
 	.@operation = getarg(3); // 0 for conversion, 1 for restoration
+
+	// Check if catalyst is present in the player's inventory
+	if (countitem(69000) < 1) {
+		return 6;
+	}
+
+	// Check if player has enough catalyst to restore costume
+	if (.@operation == 1 && countitem(69000) < 10){
+		return 7;
+	} 
 	
 	// Checking the equipment in each headgear position
 	.@headgear_count = 0;
@@ -101,7 +130,7 @@ function	script	handleHeadgear	{
 	else if (.@headgear_count == 0 && .@operation == 1)
 		return 4;
 
-	mes "[Freyja]";
+	mes "^00b0ff[Freyja]^000000";
 	mes "Please select what to convert.";
 	mes "";
 	mes "Remember, ^dd0000Random options^000000, ^00cfddCards^000000, and ^62dd00Refine Rate^000000 will be removed and ^2200ddwill not be restored^000000.";
@@ -140,12 +169,14 @@ function	script	handleHeadgear	{
 	//Convert to Costume
 	if (.@operation == 0) {
 		costume .@headgear_pos[.@selection - 1];  // Convert the selected headgear to a costume
+		delitem 69000, 1;
 		return 0;
 	}
 	//Restore to Headgear by recreating
 	else if (.@operation == 1){
 		delitem .@headgear_id[.@selection - 1], 1;
 		getitem .@headgear_id[.@selection - 1], 1;
+		delitem 69000, 1;
 		return 1;
 	}
 

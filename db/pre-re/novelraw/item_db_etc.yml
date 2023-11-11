@@ -88,11 +88,10 @@ Header:
   Type: ITEM_DB
   Version: 3
 
-# Dummy Data for now
 Body:
-  - Id: 670
-    AegisName: Gold_Coin_Moneybag
-    Name: Bag of Gold Coins
+  - Id: 69000
+    AegisName: Essence_Feather
+    Name: Essence Feather
     Type: Etc
-    Buy: 100000
-    Weight: 400
+    Buy: 20
+    Weight: 10
