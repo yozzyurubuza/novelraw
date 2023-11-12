@@ -1420,6 +1420,7 @@ int pc_equippoint_sub(map_session_data *sd,struct item_data* id){
 				return EQP_SHADOW_ARMS;
 		}
 	}
+
 	return ep;
 }
 
@@ -1431,7 +1432,18 @@ int pc_equippoint_sub(map_session_data *sd,struct item_data* id){
 int pc_equippoint(map_session_data *sd,int n){
 	nullpo_ret(sd);
 
-	return pc_equippoint_sub(sd,sd->inventory_data[n]);
+	int ep = pc_equippoint_sub(sd, sd->inventory_data[n]);
+
+	if (battle_config.reserved_costume_id &&
+		sd->inventory.u.items_inventory[n].card[0] == CARD0_CREATE &&
+		MakeDWord(sd->inventory.u.items_inventory[n].card[2], sd->inventory.u.items_inventory[n].card[3]) == battle_config.reserved_costume_id)
+	{ // Costume Item - Converted
+		if (ep&EQP_HEAD_TOP) { ep &= ~EQP_HEAD_TOP; ep |= EQP_COSTUME_HEAD_TOP; }
+		if (ep&EQP_HEAD_LOW) { ep &= ~EQP_HEAD_LOW; ep |= EQP_COSTUME_HEAD_LOW; }
+		if (ep&EQP_HEAD_MID) { ep &= ~EQP_HEAD_MID; ep |= EQP_COSTUME_HEAD_MID; }
+		if (ep&EQP_GARMENT) { ep &= ~EQP_GARMENT; ep |= EQP_COSTUME_GARMENT; }
+	}
+	return ep;
 }
 
 /**
@@ -1790,10 +1802,12 @@ static bool pc_isItemClass (map_session_data *sd, struct item_data* item) {
  *------------------------------------------------*/
 uint8 pc_isequip(map_session_data *sd,int n)
 {
+	struct item equip;
 	struct item_data *item;
 
 	nullpo_retr(ITEM_EQUIP_ACK_FAIL, sd);
 
+	equip = sd->inventory.u.items_inventory[n];
 	item = sd->inventory_data[n];
 
 	if(pc_has_permission(sd, PC_PERM_USE_ALL_EQUIPMENT))
@@ -1801,6 +1815,11 @@ uint8 pc_isequip(map_session_data *sd,int n)
 
 	if(item == nullptr)
 		return ITEM_EQUIP_ACK_FAIL;
+
+	//Automatically allow equip if it's a costume-converted headgear
+	if(equip.card[2] == GetWord(battle_config.reserved_costume_id, 0))
+		return ITEM_EQUIP_ACK_OK;
+	
 	if(item->elv && sd->status.base_level < (unsigned int)item->elv)
 		return ITEM_EQUIP_ACK_FAILLEVEL;
 	if(item->elvmax && sd->status.base_level > (unsigned int)item->elvmax)
