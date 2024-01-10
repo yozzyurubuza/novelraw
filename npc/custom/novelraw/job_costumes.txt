@@ -16,7 +16,7 @@ izlude,88,128,6	script	Celestia	-1,{
 	//Change appearance of char upon login without changing the appearance in the login screen
 	//Changing the appearance in the login screen is buggy and inaccurate
 	OnPCLoginEvent:
-		if(baselook) changebase baselook;
+		if(baselook) changebase baselook; //Job ID
 		end;
 
 	OnClick:
@@ -59,14 +59,17 @@ function	script	prepareCostumes	{
 	//Initialize Values
 	set .@CosChangeMode, 0;
 	set @eac, eaclass();
-	set @SPECIAL_EAJ, (roclass(@eac&EAJL_2) != -1 ? EAJL_2_1 : EAJL_UPPER); //Star Glad costume for Taekwon
-	set @BASE_EXPAND_3RD_EAJ, (roclass(@eac&EAJ_UPPERMASK|EAJL_2_1|EAJL_THIRD) != -1 ? EAJL_2_1|EAJL_THIRD : //1-1 jobs / Taekwon Condition
-								roclass(@eac|EAJL_THIRD) != -1 ? EAJL_THIRD : EAJL_2_1); //If player has 3rd job
-	set @BASE_EXPAND_4TH_EAJ, (roclass(@eac|EAJL_2_1) != -1 ? EAJL_2_1|EAJL_UPPER : EAJL_UPPER); //If players has 2nd Expanded
+	set @SPECIAL_EAJ, (!(@eac&EAJL_2) ? EAJL_2_1 : EAJL_UPPER); //Star Glad costume for Taekwon / Ninja/GS 3rd job / 2nd trans
+	set @BASE_EXPAND_3RD_EAJ, (roclass((@eac|EAJL_UPPER|EAJL_THIRD)) != -1 ? EAJL_UPPER|EAJL_THIRD : //Default Trans 3rd job
+								roclass((@eac&EAJ_UPPERMASK|EAJL_2_1|EAJL_THIRD)) != -1 ? EAJL_2_1|EAJL_THIRD : //Taekwon, Suno
+								roclass((@eac&EAJ_UPPERMASK|EAJL_2_1)) != -1 ? EAJL_2_1 : //Ninja/GS 3rd job
+								EAJL_THIRD); //Star Glad, Soul Linker
+	set @BASE_EXPAND_4TH_EAJ, (roclass(@eac|EAJL_2_1) != -1 ? EAJL_2_1|EAJL_UPPER : EAJL_UPPER); //Check whether 3rd job is from extended or 2nd trans
 
 	//Costume Variables - Assumming player is Trans / Expanded
-	set .@SecondBase, roclass(@eac&EAJ_UPPERMASK); //All 2nd base jobs + Expanded jobs
-	set .@SecondTrans, roclass(@eac&EAJ_UPPERMASK|@SPECIAL_EAJ); //All Trans + Taekwon
+	set .@OriginalJob, roclass(@eac); //Original Job of the player
+	set .@SecondBase, roclass(@eac&EAJ_UPPERMASK); //All 2nd base jobs + Expanded jobs + Star Glad (for Taekwon Base)
+	set .@SecondTrans, roclass(@eac&EAJ_UPPERMASK|@SPECIAL_EAJ); //All Trans + 3rd jobs of Expanded jobs
 	set .@ThirdJobs, roclass(@eac&EAJ_UPPERMASK|@BASE_EXPAND_3RD_EAJ); //All 3rd jobs + Expanded jobs
 	set .@FourthJobs, roclass(@eac&EAJ_UPPERMASK|@BASE_EXPAND_4TH_EAJ|EAJL_THIRD|EAJL_FOURTH); //All 4th jobs + Expanded jobs
 
@@ -74,38 +77,40 @@ function	script	prepareCostumes	{
 	mes "Which of these Job Costumes fancy to your liking?";
 	next;
 	switch(select(
+		"^0317fe[ Original ]^000000 - " + jobname(.@OriginalJob),
 		jobname(.@SecondBase),
 		jobname(.@SecondTrans),
 		jobname(.@ThirdJobs),
 		jobname(.@ThirdJobs) + " Alternate",
 		jobname(.@FourthJobs),
-		"Legacy Rune Knight"
-	)
-	) {
-
-
+		jobname(.@ThirdJobs) + " v3"
+	)){
 		case 1: 
-			callfunc("ChangeJobOutfit", .@SecondBase, .@CosChangeMode);
+			callfunc("ChangeJobOutfit", .@OriginalJob, .@CosChangeMode);
 			break;
 
 		case 2: 
-			callfunc("ChangeJobOutfit", .@SecondTrans, .@CosChangeMode);
+			callfunc("ChangeJobOutfit", .@SecondBase, .@CosChangeMode);
 			break;
 
 		case 3: 
-			callfunc("ChangeJobOutfit", .@ThirdJobs, .@CosChangeMode);
+			callfunc("ChangeJobOutfit", .@SecondTrans, .@CosChangeMode);
 			break;
 
 		case 4: 
-			set .@CosChangeMode, 1;
 			callfunc("ChangeJobOutfit", .@ThirdJobs, .@CosChangeMode);
 			break;
 
 		case 5: 
+			set .@CosChangeMode, 1;
+			callfunc("ChangeJobOutfit", .@ThirdJobs, .@CosChangeMode);
+			break;
+
+		case 6: 
 			callfunc("ChangeJobOutfit", .@FourthJobs, .@CosChangeMode);
 			break;
 
-		case 6: // Rune Knight v1
+		case 7: // Rune Knight v1 and Warlock v2
 			set .@CosChangeMode, 2;
 			callfunc("ChangeJobOutfit", .@SecondBase, .@CosChangeMode);
 			break;
@@ -164,6 +169,7 @@ function	script	HasjROCostume	{
 		case JOB_SHADOW_CHASER_T:
 			return 1;
 		default:
+			dispbottom "No jRO Costume found.";
 			return 0;
 	}
 }
