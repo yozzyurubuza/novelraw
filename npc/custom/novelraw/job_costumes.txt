@@ -110,7 +110,7 @@ function	script	prepareCostumes	{
 			callfunc("ChangeJobOutfit", .@FourthJobs, .@CosChangeMode);
 			break;
 
-		case 7: // Rune Knight v1 and Warlock v2
+		case 7: // Rune Knight v1, Warlock v3, Archbishop v3
 			set .@CosChangeMode, 2;
 			callfunc("ChangeJobOutfit", .@SecondBase, .@CosChangeMode);
 			break;
@@ -139,7 +139,7 @@ function	script	ChangeJobOutfit	{
 			dispbottom "Alternate Mode";
 			break;
 
-		case 2: //Extra slot in base 2nd job for Rune Knight v1
+		case 2: //Extra slot in base 2nd job
 			changebase getarg(0);
 			setlook LOOK_BODY2, 1;
 			set baselook, getarg(0);
