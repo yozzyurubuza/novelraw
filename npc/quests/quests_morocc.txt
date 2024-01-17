@@ -4259,7 +4259,7 @@ cave,113,74,5	script	Cave Settler#f_cave4	401,{
 	close;
 }
 
-cave,76,39,5	shop	Cave Girl#f_cave5	62,712:-1
+cave,76,39,5	shop	Cave Girl#f_cave5	62,744:-1
 
 cave,108,34,3	script	Cave Settler#f_cave6	979,{
 	mes "[Cave Settler]";

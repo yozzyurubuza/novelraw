@@ -537,6 +537,7 @@
 	export_constant(MF_NOPETCAPTURE);
 	export_constant(MF_NOBUYINGSTORE);
 	export_constant(MF_NODYNAMICNPC);
+	export_constant(MF_NOBANK);
 
 	/* setcell types */
 	export_constant(CELL_WALKABLE);
@@ -962,6 +963,7 @@
 	export_constant2("Eff_Freezing",SC_FREEZING);
 	export_constant2("Eff_Heat",SC_BURNT);
 	export_constant2("Eff_Deepsleep",SC_DEEPSLEEP);
+	export_constant2("Eff_WhiteImprison",SC_WHITEIMPRISON);
 
 	export_constant2("SC_ALL",SC_NONE);
 
@@ -6773,6 +6775,7 @@
 	export_constant(IG_CLASS_SHADOW_PD_CUBE);
 	export_constant(IG_CLASS_SHADOW_EA_CUBE);
 	export_constant(IG_ENCHANT_STONE_BOX30);
+	export_constant(IG_ENCHANT_STONE_BOX31);
 
 	/* unit stop walking */
 	export_constant(USW_NONE);
@@ -8056,6 +8059,8 @@
 	export_constant_npc(JT_4_LARVA_VIOLET);
 	export_constant_npc(JT_4_HERO_SAUSAGE);
 	export_constant_npc(JT_4_PRINCESS_SAUSAGE);
+	export_constant_npc(JT_AB_PRINCESS_1);
+	export_constant_npc(JT_C_KHALITZBURG);
 	export_constant_npc(JT_ROZ_MQ_XAVIER);
 	export_constant_npc(JT_ROZ_MQ_MOCLORD);
 	export_constant_npc(JT_ROZ_MQ_SKULD);
@@ -9374,6 +9379,15 @@
 	export_constant(HAT_EF_SUBJECT_AURA_NAVY);
 	export_constant(HAT_EF_20TH_SCARF_J);
 	export_constant(HAT_EF_GHOST_FIRE);
+	export_constant(HAT_EF_C_1ST_EVT_HAT_MSP);
+	export_constant(HAT_EF_C_1ST_EVT_BALLOON_MSP);
+	export_constant(HAT_EF_RABBIT_AURA);
+	export_constant(HAT_EF_ALICE_TEA);
+	export_constant(HAT_EF_C_DARK_LORD_CLOAK);
+	export_constant(HAT_EF_C_SAKURA_FUBUKI);
+	export_constant(HAT_EF_C_DARK_LORD_MANTEAU);
+	export_constant(HAT_EF_DECORATION_OF_MUSIC);
+	
 
 	/* pet catch */
 	export_constant(PET_CATCH_UNIVERSAL);

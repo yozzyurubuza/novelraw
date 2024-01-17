@@ -9,17 +9,18 @@ izlude,109,140,5	script	Shiitake	-1,{
 	end;
 
 	OnInit:
-		callfunc("customizeNPCSprite", 4304, SEX_MALE, 0, 26, 1730, 1116, 1729, 0);
+		callfunc("customizeNPCSprite", 4304, SEX_MALE, 0, 26, 1730, 1116, 1729, 0, HAT_EF_MANYSTARS);
 		end;
 
 	OnClick:
-		set .@party_id,getcharid(1);
-		set .@md_name$,"Planting Area";
+		set .@party_id, getcharid(1);
+		set .@md_name$, "Planting Area";
 
 		set .@plantArea_timer,checkquest(690000,PLAYTIME); // 2 days
 		set .@plantArea_timer2,checkquest(690001,PLAYTIME); // 2 hours
 
-		if (!instance_check_party(.@party_id,2)) {
+		getpartymember .@party_id;
+		if ($@partymembercount < 2) {
 			mes "[Shiitake]";
 			mes "Make or join a party with more than 1 member and try again.";
 			close;

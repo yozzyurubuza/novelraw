@@ -34,7 +34,7 @@ struct skill_unit;
 struct s_vending;
 struct party;
 struct party_data;
-struct guild;
+struct mmo_guild;
 struct s_battleground_data;
 struct quest;
 struct party_booking_ad_info;
@@ -801,8 +801,8 @@ void clif_item_repair_list(map_session_data *sd, map_session_data *dstsd, int lv
 void clif_item_repaireffect(map_session_data *sd, int idx, int flag);
 void clif_item_damaged(map_session_data* sd, unsigned short position);
 void clif_item_refine_list(map_session_data *sd);
-void clif_hat_effects( map_session_data* sd, struct block_list* bl, enum send_target target );
-void clif_hat_effect_single( map_session_data* sd, uint16 effectId, bool enable );
+void clif_hat_effects(struct block_list* src, struct block_list* bl, bool enable, enum send_target target);
+void clif_hat_effect_single(struct block_list* bl, uint16 effectId, bool enable);
 
 void clif_item_skill(map_session_data *sd,uint16 skill_id,uint16 skill_lv);
 
@@ -848,17 +848,17 @@ void clif_guild_allianceinfo(map_session_data *sd);
 void clif_guild_memberlist( map_session_data& sd );
 void clif_guild_skillinfo(map_session_data* sd);
 void clif_guild_send_onlineinfo(map_session_data *sd); //[LuzZza]
-void clif_guild_memberlogin_notice(struct guild *g,int idx,int flag);
-void clif_guild_invite(map_session_data *sd,struct guild *g);
+void clif_guild_memberlogin_notice(const struct mmo_guild &g,int idx,int flag);
+void clif_guild_invite(const map_session_data &sd, const struct mmo_guild &g);
 void clif_guild_inviteack(map_session_data *sd,int flag);
 void clif_guild_leave(map_session_data *sd,const char *name,const char *mes);
 void clif_guild_expulsion(map_session_data* sd, const char* name, const char* mes, uint32 account_id);
-void clif_guild_positionchanged(struct guild *g,int idx);
-void clif_guild_memberpositionchanged(struct guild *g,int idx);
-void clif_guild_emblem(map_session_data *sd,struct guild *g);
+void clif_guild_positionchanged(const struct mmo_guild &g,int idx);
+void clif_guild_memberpositionchanged(const struct mmo_guild &g,int idx);
+void clif_guild_emblem(const map_session_data &sd, const struct mmo_guild &g);
 void clif_guild_emblem_area(struct block_list* bl);
 void clif_guild_notice(map_session_data* sd);
-void clif_guild_message(struct guild *g,uint32 account_id,const char *mes,int len);
+void clif_guild_message(const struct mmo_guild &g,uint32 account_id,const char *mes,int len);
 void clif_guild_reqalliance(map_session_data *sd,uint32 account_id,const char *name);
 void clif_guild_allianceack(map_session_data *sd,int flag);
 void clif_guild_delalliance(map_session_data *sd,int guild_id,int flag);
