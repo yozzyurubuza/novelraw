@@ -4440,7 +4440,8 @@ Body:
           #   Rate: 1
           # - Item: Dark_Shadow_Card
           #   Rate: 1
-          - Item: Banshee_Master_Card
+          - Index: 369
+            Item: Banshee_Master_Card
             Rate: 1
           # - Item: Centipede_Larva_Card
           #   Rate: 2
