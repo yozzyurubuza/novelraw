@@ -8190,6 +8190,7 @@
 	export_constant_npc(JT_4_M_ROYALGUARD);
 	export_constant_npc(JT_4_M_BARMUND);
 	export_constant_npc(JT_4_F_KHALITZBURG);
+	export_constant_npc(JT_AB_PRINCESS_1);
 	export_constant_npc(JT_4_F_HIMEL2);
 	export_constant_npc(JT_4_WHITEKNIGHT);
 	export_constant_npc(JT_4_COCO);
