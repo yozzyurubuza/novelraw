@@ -20,6 +20,7 @@ izlude,88,128,6	script	Celestia	-1,{
 		end;
 
 	OnClick:
+		cutin "celestia", 2;
 		mes .npcName$;
 		mes "Hello Adventurer!";
 		mes "";
