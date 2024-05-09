@@ -1898,7 +1898,7 @@ enum e_special_effects {
 	EF_SOUL_REAPER,
 
 	EF_SOUL_EXPLOSION = 1242,
-	EF_MAX
+	EF_MAX = 9999
 };
 
 enum e_hat_effects : int16{
