@@ -406,8 +406,10 @@ function	script	F_KafInfo	{
 		setarray .@menu$[0], "Check Special Reserve Points.", "", "", "Cancel";
 	else if (.@block)
 		setarray .@menu$[0], "Check Special Reserve Points.", "", "Kafra Employee Locations", "Cancel";
+	else if (getarg(0) == 3)// Izlude, Izlude Academy
+		setarray .@menu$[0], "Check Special Reserve Points.", "Storage Password Service", "", "Cancel"; 
 	else
-		setarray .@menu$[0], "Check Special Reserve Points.", "Storage Password Service", "Kafra Employee Locations", "Cancel";
+		setarray .@menu$[0], "Check Special Reserve Points.", "Storage Password Service", "Kafra Employee Locations", "Cancel"; 
 	.@menu_list$ = implode(.@menu$,":");
 	while (true) {
 		.@j = select(.@menu_list$) - 1;

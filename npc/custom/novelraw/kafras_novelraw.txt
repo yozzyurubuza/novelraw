@@ -20,7 +20,7 @@ iz_ac01,103,44,3	script	Kafra Employee::kaf_iz_ac01	-1,{
 		mes "The Kafra services";
 		mes "are always on your side.";
 		mes "How may I assist you?";
-		callfunc "F_Kafra",5,0,0,40,800;
+		callfunc "F_Kafra",5,0,3,40,800;
 		savepoint "iz_ac01",100,35,1,1;
 		callfunc "F_KafEnd",0,1,"in the Izlude Academy";
 }
