@@ -13,31 +13,7 @@
 //= 1.0 First version, Renewal guides.
 //= 1.1 Navigation system update. [Euphy]
 //============================================================ 
-function	script	F_Navi	{
 
-	if ( PACKETVER < 20111010 )
-		set .@disabled,1;
-
-	// This function takes 0 ~ 3 parameters.
-	switch(getargcount()) {
-	case 0:	// Check if system is disabled.
-		return .@disabled;
-	case 1:	// Display information message, if enabled.
-		if (!.@disabled) {
-			next;
-			mes getarg(0);
-			mes "When you click on the ^B9062F[location name]^000000, you'll receive the most advanced ^B9062FNavigation^000000 services!";
-		}
-		return;
-	default: // Display navigation link, if enabled; else set text color, if available.
-		if (!.@disabled)
-			return "<NAVI>[" + getarg(0) + "]<INFO>" + getarg(1) + ",0,000,0</INFO></NAVI>";
-		else if (getargcount() == 3)
-			return getarg(2)+getarg(0)+"^000000";
-		else
-			return getarg(0);
-	}
-}
 alberta,23,238,4	script	Guide#01alberta::AlbertaGuide	105,{
 	cutin "prt_soldier",2;
 	mes "[Alberta Guide]";
@@ -64,7 +40,7 @@ alberta,23,238,4	script	Guide#01alberta::AlbertaGuide	105,{
 					break;
 				case 2:
 					mes "[Alberta Guide]";
-					mes "The "+F_Navi("Forge","alberta,35,41","^B9062F")+" is currently";
+					mes "The "+F_Navi("Forge","alberta,35,41","^B9062F")+"\t is currently";
 					mes "located inside the Merchant Guild building.";
 					mes .@str$;
 					viewpoint 1,35,41,1,0xFF0000;
@@ -99,7 +75,7 @@ alberta,23,238,4	script	Guide#01alberta::AlbertaGuide	105,{
 					break;
 				case 6:
 					mes "[Alberta Guide]";
-					mes "The "+F_Navi("Merchant Guild","alberta,33,41")+" is where";
+					mes "The "+F_Navi("Merchant Guild","alberta,33,41")+"\t is where";
 					mes "you can change your job to ^800080Merchant^000000.";
 					mes "Let me mark its location";
 					mes "on your mini-map.";
