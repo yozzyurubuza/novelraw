@@ -17,31 +17,6 @@
 //=     Optimized.
 //= 1.4 Added Izlude duplicates. [Euphy]
 //============================================================ 
-function	script	F_Navi	{
-
-	if ( PACKETVER < 20111010 )
-		set .@disabled,1;
-
-	// This function takes 0 ~ 3 parameters.
-	switch(getargcount()) {
-	case 0:	// Check if system is disabled.
-		return .@disabled;
-	case 1:	// Display information message, if enabled.
-		if (!.@disabled) {
-			next;
-			mes getarg(0);
-			mes "When you click on the ^B9062F[location name]^000000, you'll receive the most advanced ^B9062FNavigation^000000 services!";
-		}
-		return;
-	default: // Display navigation link, if enabled; else set text color, if available.
-		if (!.@disabled)
-			return "<NAVI>[" + getarg(0) + "]<INFO>" + getarg(1) + ",0,000,0</INFO></NAVI>";
-		else if (getargcount() == 3)
-			return getarg(2)+getarg(0)+"^000000";
-		else
-			return getarg(0);
-	}
-}
 
 -	script	::GuideIzlude	-1,{
 	cutin "prt_soldier",2;
@@ -57,10 +32,10 @@ function	script	F_Navi	{
 		case 1:
 			set .@loop,1;
 			while (.@loop) {
-				switch(select("[ Cryptura Academy ]:[ Marina ]:[ International Airship ]:[ Arena ]:[ Kit Shop ]:[ Swordsman Guild ]:[ Enchant Association ]:[ Forge ]:Previous Menu")) {
+				switch(select("[ Criatura Academy ]:[ Marina ]:[ International Airship ]:[ Arena ]:[ Kit Shop ]:[ Swordsman Guild ]:[ Enchant Association ]:[ Forge ]:Previous Menu")) {
 				case 1:
 					mes "[Izlude Guide]";
-					mes "Novice adventurers should go to "+F_Navi("Cryptura Academy","iz_ac01,100,39")+" to receive more information and training!";
+					mes "Novice adventurers should go to "+F_Navi("Criatura Academy","izlude,127,253")+"\t to receive more information and training!";
 					mes "Would you like to check any other locations?";
 					viewpoint 1,128,260,0,0xD2691E;
 					next;
