@@ -1,20 +1,3 @@
-# This file is a part of rAthena.
-#   Copyright(C) 2021 rAthena Development Team
-#   https://rathena.org - https://github.com/rathena
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program. If not, see <http://www.gnu.org/licenses/>.
-#
 ###########################################################################
 # Item Database
 ###########################################################################
@@ -84,16 +67,19 @@
 #   UnEquipScript           Script to execute when the item is unequipped or when a rental item expires. (Default: null)
 ###########################################################################
 
+# NovelRaw Custom Equips
+
 Header:
   Type: ITEM_DB
   Version: 3
 
-Footer:
-  Imports:
-  - Path: db/pre-re/item_db_usable.yml
-  - Path: db/pre-re/item_db_equip.yml
-  - Path: db/pre-re/item_db_etc.yml
-  # Novelraw Space
-  - Path: db/pre-re/novelraw/item_db_etc-nro.yml
-  - Path: db/pre-re/novelraw/item_db_equip-nro.yml
-  - Path: db/pre-re/novelraw/item_db_equip_migrate.yml
+Body:
+  - Id: 70000
+    AegisName: Green_Apple_Ring_
+    Name: Green Apple Ring
+    Type: Armor
+    Locations:
+      Both_Accessory: true
+    EquipLevelMin: 1
+    Script: |
+      bonus bAllStats,5-(BaseLevel/30);
