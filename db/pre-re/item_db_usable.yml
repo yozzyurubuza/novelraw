@@ -22121,6 +22121,10 @@ Body:
       NoMail: true
       NoAuction: true
     Script: |
+      if (rk_version == 2){
+        showscript "This Job Costume cannot use Halter Lead.", getcharid(3), SELF;
+        return;
+      }
       setmounting();
     UnEquipScript: |
       if (ismounting())

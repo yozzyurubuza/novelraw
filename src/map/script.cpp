@@ -22475,34 +22475,94 @@ BUILDIN_FUNC(checkdragon) {
  * - 4 : Blue Dragon
  * - 5 : Red Dragon
  **/
-BUILDIN_FUNC(setdragon) {
-	TBL_PC* sd;
-	int color = script_hasdata(st,2) ? script_getnum(st,2) : 0;
+// BUILDIN_FUNC(setdragon) {
+// 	TBL_PC* sd;
+// 	int color = script_hasdata(st,2) ? script_getnum(st,2) : 0;
 
-	if (!script_charid2sd(3,sd))
-		return SCRIPT_CMD_FAILURE;
-	if( !pc_checkskill(sd,RK_DRAGONTRAINING) || (sd->class_&MAPID_THIRDMASK) != MAPID_RUNE_KNIGHT )
-		script_pushint(st,0);//Doesn't have the skill or it's not a Rune Knight
-	else if ( pc_isridingdragon(sd) ) {//Is mounted; release
-		pc_setoption(sd, sd->sc.option&~OPTION_DRAGON);
-		script_pushint(st,1);
-	} else {//Not mounted; Mount now.
-		unsigned int option = OPTION_DRAGON1;
-		if( color ) {
-			option = ( color == 1 ? OPTION_DRAGON1 :
-					   color == 2 ? OPTION_DRAGON2 :
-					   color == 3 ? OPTION_DRAGON3 :
-					   color == 4 ? OPTION_DRAGON4 :
-					   color == 5 ? OPTION_DRAGON5 : 0);
-			if( !option ) {
-				ShowWarning("script_setdragon: Unknown Color %d used; changing to green (1)\n",color);
-				option = OPTION_DRAGON1;
-			}
-		}
-		pc_setoption(sd, sd->sc.option|option);
-		script_pushint(st,1);
+// 	if (!script_charid2sd(3,sd))
+// 		return SCRIPT_CMD_FAILURE;
+// 	if( !pc_checkskill(sd,RK_DRAGONTRAINING) || (sd->class_&MAPID_THIRDMASK) != MAPID_RUNE_KNIGHT )
+// 		script_pushint(st,0);//Doesn't have the skill or it's not a Rune Knight
+// 	else if ( pc_isridingdragon(sd) ) {//Is mounted; release
+// 		pc_setoption(sd, sd->sc.option&~OPTION_DRAGON);
+// 		script_pushint(st,1);
+// 	} else {//Not mounted; Mount now.
+// 		unsigned int option = OPTION_DRAGON1;
+// 		if( color ) {
+// 			option = ( color == 1 ? OPTION_DRAGON1 :
+// 					   color == 2 ? OPTION_DRAGON2 :
+// 					   color == 3 ? OPTION_DRAGON3 :
+// 					   color == 4 ? OPTION_DRAGON4 :
+// 					   color == 5 ? OPTION_DRAGON5 : 0);
+// 			if( !option ) {
+// 				ShowWarning("script_setdragon: Unknown Color %d used; changing to green (1)\n",color);
+// 				option = OPTION_DRAGON1;
+// 			}
+// 		}
+// 		pc_setoption(sd, sd->sc.option|option);
+// 		script_pushint(st,1);
+// 	}
+// 	return SCRIPT_CMD_SUCCESS;
+// }
+
+BUILDIN_FUNC(setdragon) {
+    TBL_PC* sd;
+    int color = script_hasdata(st,2) ? script_getnum(st,2) : 0;
+
+    if (!script_charid2sd(3,sd))
+        return SCRIPT_CMD_FAILURE;
+
+    // Database interaction to fetch the base look
+    char* error;
+    int base_look = 0, result = 0;
+    SqlStmt* stmt = SqlStmt_Malloc(mmysql_handle);
+    if (stmt == NULL) {
+        ShowError("script:setdragon: Out of memory!\n");
+        return SCRIPT_CMD_FAILURE;
+    }
+
+    if (SQL_ERROR == SqlStmt_Prepare(stmt, "SELECT value FROM `char_reg_num` WHERE `char_id` = %d AND `key` = 'baselook'", sd->status.char_id) ||
+        SQL_ERROR == SqlStmt_Execute(stmt) ||
+        SQL_ERROR == SqlStmt_BindColumn(stmt, 0, SQLDT_INT, &baselook, 0, NULL, NULL) ||
+        SQL_ERROR == SqlStmt_NextRow(stmt)) {
+        ShowError("script:setdragon: Database error!\n");
+        SqlStmt_Free(stmt);
+        return SCRIPT_CMD_FAILURE;
+    }
+    SqlStmt_Free(stmt);
+
+	unsigned short baselook_mapid = pc_jobid2mapid(baselook);
+	if ((baselook_mapid & MAPID_THIRDMASK) != MAPID_RUNE_KNIGHT) {
+		script_pushint(st, 0);
+		ShowError("Baselook %d does not match MAPID_RUNE_KNIGHT (%d).\n", baselook_mapid, MAPID_RUNE_KNIGHT);
+		return SCRIPT_CMD_SUCCESS;
 	}
-	return SCRIPT_CMD_SUCCESS;
+
+    if( !pc_checkskill(sd,RK_DRAGONTRAINING) ) {
+        script_pushint(st,0); // Doesn't have the skill
+        return SCRIPT_CMD_SUCCESS;
+    }
+
+    if ( pc_isridingdragon(sd) ) { // Is mounted; release
+        pc_setoption(sd, sd->sc.option & ~OPTION_DRAGON);
+        script_pushint(st,1);
+    } else { // Not mounted; Mount now.
+        unsigned int option = OPTION_DRAGON1;
+        if( color ) {
+            option = ( color == 1 ? OPTION_DRAGON1 :
+                       color == 2 ? OPTION_DRAGON2 :
+                       color == 3 ? OPTION_DRAGON3 :
+                       color == 4 ? OPTION_DRAGON4 :
+                       color == 5 ? OPTION_DRAGON5 : 0);
+            if( !option ) {
+                ShowWarning("script_setdragon: Unknown Color %d used; changing to green (1)\n", color);
+                option = OPTION_DRAGON1;
+            }
+        }
+        pc_setoption(sd, sd->sc.option | option);
+        script_pushint(st,1);
+    }
+    return SCRIPT_CMD_SUCCESS;
 }
 
 /**

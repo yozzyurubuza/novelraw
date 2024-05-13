@@ -78,6 +78,7 @@ Body:
     AegisName: Green_Apple_Ring_
     Name: Green Apple Ring
     Type: Armor
+    ArmorLevel: 1
     Locations:
       Both_Accessory: true
     EquipLevelMin: 1

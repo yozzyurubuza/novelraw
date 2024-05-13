@@ -87,33 +87,35 @@ function	script	prepareCostumes	{
 		jobname(.@ThirdJobs) + " v3"
 	)){
 		case 1: 
-			callfunc("ChangeJobOutfit", .@OriginalJob, .@CosChangeMode);
+			set .@CosChangeMode, 3;
+			callfunc("ChangeJobOutfit", .@OriginalJob, .@CosChangeMode, .@SecondBase);
 			break;
 
-		case 2: 
-			callfunc("ChangeJobOutfit", .@SecondBase, .@CosChangeMode);
+		case 2:
+			set .@CosChangeMode, 4; 
+			callfunc("ChangeJobOutfit", .@SecondBase, .@CosChangeMode, .@SecondBase);
 			break;
 
 		case 3: 
-			callfunc("ChangeJobOutfit", .@SecondTrans, .@CosChangeMode);
+			callfunc("ChangeJobOutfit", .@SecondTrans, .@CosChangeMode, .@SecondBase);
 			break;
 
 		case 4: 
-			callfunc("ChangeJobOutfit", .@ThirdJobs, .@CosChangeMode);
+			callfunc("ChangeJobOutfit", .@ThirdJobs, .@CosChangeMode, .@SecondBase);
 			break;
 
 		case 5: 
 			set .@CosChangeMode, 1;
-			callfunc("ChangeJobOutfit", .@ThirdJobs, .@CosChangeMode);
+			callfunc("ChangeJobOutfit", .@ThirdJobs, .@CosChangeMode, .@SecondBase);
 			break;
 
 		case 6: 
-			callfunc("ChangeJobOutfit", .@FourthJobs, .@CosChangeMode);
+			callfunc("ChangeJobOutfit", .@FourthJobs, .@CosChangeMode, .@SecondBase);
 			break;
 
 		case 7: // Rune Knight v1, Warlock v3, Archbishop v3
 			set .@CosChangeMode, 2;
-			callfunc("ChangeJobOutfit", .@SecondBase, .@CosChangeMode);
+			callfunc("ChangeJobOutfit", .@SecondBase, .@CosChangeMode, .@SecondBase);
 			break;
 	}
 	return;
@@ -124,12 +126,17 @@ function	script	ChangeJobOutfit	{
 	//Always reset these parameters first
 	setlook LOOK_BODY2, 0;
 	setlook LOOK_CLOTHES_COLOR, 0;
+	callfunc("removeMounts", getarg(2));
 
+	//Rune Knight unique variable: 1 = new default; 2 = legacy; 3 = alternate JP
 	switch(getarg(1)){
 		case 0: // Normal Mode
 			changebase getarg(0);
 			set baselook, getarg(0);
 			dispbottom "Normal Mode";
+			if (getarg(2) != roclass(EAJ_KNIGHT)) break;
+			if (getarg(0) == roclass(EAJ_KNIGHT) || getarg(0) == roclass(EAJ_LORD_KNIGHT)) { set rk_version, 0; } 
+			else { set rk_version, 1; }
 			break;
 
 		case 1: // jRO Mode
@@ -137,6 +144,7 @@ function	script	ChangeJobOutfit	{
 			changebase getarg(0);
 			setlook LOOK_BODY2, 1;
 			set baselook, getarg(0);
+			if(getarg(2) == roclass(EAJ_KNIGHT)) set rk_version, 2;
 			dispbottom "Alternate Mode";
 			break;
 
@@ -144,7 +152,22 @@ function	script	ChangeJobOutfit	{
 			changebase getarg(0);
 			setlook LOOK_BODY2, 1;
 			set baselook, getarg(0);
+			if(getarg(2) == roclass(EAJ_KNIGHT)) set rk_version, 3;
 			dispbottom "Extra mode";
+			break;
+
+		case 3: //Remove baselook
+			changebase getarg(0);
+			set baselook, 0;
+			if(getarg(2) == roclass(EAJ_KNIGHT)) set rk_version, 0;
+			dispbottom "Original mode";
+			break;
+
+		case 4: //2nd base job
+			changebase getarg(0);
+			set baselook, getarg(0);
+			if(getarg(2) == roclass(EAJ_KNIGHT)) set rk_version, 0;
+			dispbottom "2nd base mode";
 			break;
 	}
 	return;
@@ -173,4 +196,27 @@ function	script	HasjROCostume	{
 			dispbottom "No jRO Costume found.";
 			return 0;
 	}
+}
+
+//Remove Mounts and Skills upon changing job costumes
+function	script	removeMounts	{
+	if(ismounting()) setmounting; //Remove from all class
+
+	switch(getarg(0)){
+		case 7: //Knight Job ID
+			if(checkriding()) setriding 0;
+			if(checkdragon()) setdragon 0;
+			if(getskilllv("RK_DRAGONTRAINING")) skill "RK_DRAGONTRAINING", 0, SKILL_PERM_GRANT;
+			return;
+	}
+
+	if(checkfalcon()){ 
+		setfalcon 0;
+		return;
+	}
+	if(checkwug()) setoption Option_Wugrider, 0;
+	
+	if(checkmadogear()) setmadogear 0;
+	
+	return;
 }
