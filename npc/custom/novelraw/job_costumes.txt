@@ -136,7 +136,7 @@ function	script	ChangeJobOutfit	{
 			dispbottom "Normal Mode";
 			if (getarg(2) != roclass(EAJ_KNIGHT)) break;
 			if (getarg(0) == roclass(EAJ_KNIGHT) || getarg(0) == roclass(EAJ_LORD_KNIGHT)) { set rk_version, 0; } 
-			else { set rk_version, 1; }
+			else { set rk_version, 1; } // For Default Rune Knight and Dragon Knight
 			break;
 
 		case 1: // jRO Mode
