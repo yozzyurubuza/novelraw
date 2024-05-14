@@ -22485,7 +22485,7 @@ BUILDIN_FUNC(setdragon) {
 
     // Database interaction to fetch the base look
     char* error;
-    int base_look = 0, result = 0;
+    int baselook = 0, result = 0;
     SqlStmt* stmt = SqlStmt_Malloc(mmysql_handle);
     if (stmt == NULL) {
         ShowError("script:setdragon: Out of memory!\n");
