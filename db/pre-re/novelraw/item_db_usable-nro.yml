@@ -1,20 +1,3 @@
-# This file is a part of rAthena.
-#   Copyright(C) 2021 rAthena Development Team
-#   https://rathena.org - https://github.com/rathena
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program. If not, see <http://www.gnu.org/licenses/>.
-#
 ###########################################################################
 # Item Database
 ###########################################################################
@@ -84,17 +67,66 @@
 #   UnEquipScript           Script to execute when the item is unequipped or when a rental item expires. (Default: null)
 ###########################################################################
 
+# NovelRaw Custom Equips
+
 Header:
   Type: ITEM_DB
   Version: 3
 
-Footer:
-  Imports:
-  - Path: db/pre-re/item_db_usable.yml
-  - Path: db/pre-re/item_db_equip.yml
-  - Path: db/pre-re/item_db_etc.yml
-  # Novelraw Space
-  - Path: db/pre-re/novelraw/item_db_usable-nro.yml
-  - Path: db/pre-re/novelraw/item_db_etc-nro.yml
-  - Path: db/pre-re/novelraw/item_db_equip-nro.yml
-  - Path: db/pre-re/novelraw/item_db_equip_migrate.yml
+Body:
+  - Id: 12622
+    AegisName: Boarding_Halter
+    Name: Reins Of Mount
+    Type: Usable
+    Flags:
+      NoConsume: true
+    Delay:
+      Duration: 3000
+      Status: All_Riding_Reuse_Limit
+    Trade:
+      NoDrop: true
+      NoTrade: true
+      NoSell: true
+      NoCart: true
+      NoStorage: false
+      NoGuildStorage: true
+      NoMail: true
+      NoAuction: true
+    Script: |
+      if (rk_version == 2 || mado_compatible == 1){
+        showscript "This Job Costume cannot use Halter Lead.", getcharid(3), SELF;
+        end;
+      }
+      setmounting();
+  - Id: 68000
+    AegisName: Mado_Box_Mount
+    Name: Madogear Boarding Module
+    Type: Usable
+    Flags:
+      NoConsume: true
+    Delay:
+      Duration: 3000
+      Status: All_Riding_Reuse_Limit
+    Weight: 0
+    Trade:
+      NoDrop: true
+      NoTrade: true
+      NoSell: true
+      NoCart: true
+      NoStorage: true
+      NoGuildStorage: true
+      NoMail: true
+      NoAuction: true
+    Script: |
+      if(!getskilllv("NC_MADOLICENCE")){
+        showscript "Please get a Magic Gear License from Litzy (Mount Manager)", getcharid(3), SELF;
+        end;
+      }
+      if (ismounting()){
+        setmounting();
+        sc_end SC_SPEEDUP0;
+        end;
+      }
+      specialeffect2 1977;
+      sc_start SC_SPEEDUP0, 180000, 25;
+      setmounting();

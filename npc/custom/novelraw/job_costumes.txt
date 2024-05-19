@@ -134,6 +134,7 @@ function	script	ChangeJobOutfit	{
 			changebase getarg(0);
 			set baselook, getarg(0);
 			dispbottom "Normal Mode";
+			if(getarg(0) == roclass(EAJ_MECHANIC_T) || getarg(0) == EAJ_MEISTER) set mado_compatible, 1;
 			if (getarg(2) != roclass(EAJ_KNIGHT)) break;
 			if (getarg(0) == roclass(EAJ_KNIGHT) || getarg(0) == roclass(EAJ_LORD_KNIGHT)) { set rk_version, 0; } 
 			else { set rk_version, 1; } // For Default Rune Knight and Dragon Knight
@@ -145,6 +146,7 @@ function	script	ChangeJobOutfit	{
 			setlook LOOK_BODY2, 1;
 			set baselook, getarg(0);
 			if(getarg(2) == roclass(EAJ_KNIGHT)) set rk_version, 2;
+			if(getarg(0) == roclass(EAJ_MECHANIC_T) || getarg(0) == EAJ_MEISTER) set mado_compatible, 1;
 			dispbottom "Alternate Mode";
 			break;
 
@@ -160,12 +162,14 @@ function	script	ChangeJobOutfit	{
 			changebase getarg(0);
 			set baselook, 0;
 			if(getarg(2) == roclass(EAJ_KNIGHT)) set rk_version, 0;
+			if(getarg(2) == roclass(EAJ_BLACKSMITH)) set mado_compatible, 0;
 			dispbottom "Original mode";
 			break;
 
 		case 4: //2nd base job
 			changebase getarg(0);
 			set baselook, getarg(0);
+			if(getarg(2) == roclass(EAJ_BLACKSMITH)) set mado_compatible, 0;
 			if(getarg(2) == roclass(EAJ_KNIGHT)) set rk_version, 0;
 			dispbottom "2nd base mode";
 			break;
@@ -207,6 +211,9 @@ function	script	removeMounts	{
 			if(checkriding()) setriding 0;
 			if(checkdragon()) setdragon 0;
 			if(getskilllv("RK_DRAGONTRAINING")) skill "RK_DRAGONTRAINING", 0, SKILL_PERM_GRANT;
+			return;
+		case 10: //Blacksmith
+			if(getskilllv("NC_MADOLICENCE")) skill "NC_MADOLICENCE", 0, SKILL_PERM_GRANT;
 			return;
 	}
 

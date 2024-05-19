@@ -10,7 +10,8 @@ izlude,88,148,5	script	Mount Manager	-1,{
 
 	OnClick:
 		set .@npc_name$, "^a39f00[ Litzy ]^000000";
-		set .@dragon$, "^388E3CDragon^000000"; set .@madogear$, "^FF8F00Madogear^000000"; set .@wolf$, "^0288D1Wolf^000000";
+		set .@dragon$, "^388E3CDragon^000000"; set .@madogear$, "^ff6800Madogear^000000"; set .@wolf$, "^0288D1Wolf^000000";
+		set .@knight_id, roclass(EAJ_KNIGHT); set .@blacksmith_id, roclass(EAJ_BLACKSMITH); set .@hunter_id, roclass(EAJ_HUNTER);
 		// Start of dialogue
 		cutin "litzy", 2;
 		mes .@npc_name$;
@@ -22,14 +23,14 @@ izlude,88,148,5	script	Mount Manager	-1,{
 		set .@mount_select, select("Can you help me train a " +.@dragon$+ "?:Can you build a "+.@madogear$+"?:Can you call a lone " +.@wolf$+ "?:Cancel");
 		switch(.@mount_select){
 			// Check Halter lead first.
-			if (ismounting()){
+			if (ismounting() && !getskilllv("NC_MADOLICENCE")){
 					emotion ET_WRAP;
 					mes .@npc_name$;
 					mes "Please dismount from your ^000fff'Halter Lead'^000000 before acquiring a new mount here.";
 					close3;
 				}
 			
-			case 1:
+			case 1: //Dragon Mounts
 				set .@dragon_color, 1;
 
 				if (!rk_version){
@@ -70,7 +71,7 @@ izlude,88,148,5	script	Mount Manager	-1,{
 							setdragon 0;
 							break;
 						case 2:
-							callfunc ("exitSpeech", .@npc_name$);
+							callfunc("exitSpeech", .@npc_name$, .@knight_id);
 							close3;
 							return;
 					}
@@ -127,30 +128,95 @@ izlude,88,148,5	script	Mount Manager	-1,{
 					next;
 					specialeffect2 1218, SELF;
 					soundeffect "dragon_h.wav", 0;
-					callfunc ("exitSpeech", .@npc_name$);
+					callfunc("exitSpeech", .@npc_name$, .@knight_id);
 				} else if (getskilllv("RK_DRAGONTRAINING")){
 					specialeffect2 1803, SELF;
 					soundeffect "dragon_h.wav", 0;
-					callfunc ("exitSpeech", .@npc_name$);
+					callfunc("exitSpeech", .@npc_name$, .@knight_id);
 				}
 
 				// For rk_version 3, use pecopeco only
-				if (rk_version == 3){
+				if (rk_version == 3) {
 					setriding 1;
 					close3;
 				}
 				setdragon .@dragon_color;	
 				close3;
-			
+
+			case 2: //Madogear Mounts
+				if (!mado_compatible){
+					emotion ET_STARE_ABOUT;
+					mes .@npc_name$;
+					mes "You should be a ^F57C00Mechanic^000000 or";
+					mes "^F44336Meister^000000 to get a " +.@madogear$+ ".";
+					mes "Please find <NAVI>Celestia<INFO>izlude,88,128,0,000,0</INFO></NAVI>";
+					mes "to change Job Costumes before getting a " +.@madogear$+ ".";
+					close3;
+				}
+
+				if (!getskilllv("NC_MADOLICENCE")) {
+					mes .@npc_name$;
+					mes "Seems like you haven't gotten";
+					mes "'^388E3CMagic License^000000' yet.";
+					mes "Let me show you...";
+					mes "<URL>How to build a Madogear~<INFO>https://www.youtube.com/watch?v=h9nB5ZzbSO8</INFO></URL>";
+					next;
+					progressbar "ffff00", 3;
+					specialeffect 1854, SELF;
+					
+					next;
+					mes "You got 'Magic Gear License'.";
+					mes "You got a " +.@madogear$+ ".";
+					skill "NC_MADOLICENCE", 5, SKILL_PERM_GRANT;
+					next;
+				}
+
+				if (ismounting()) {
+					mes .@npc_name$;
+					mes "Looks like you¡¯ve got your "+.@madogear$+" all set up!";
+					next;
+					callfunc("exitSpeech", .@npc_name$, .@blacksmith_id, .@madogear$);
+				}  else if(!ismounting()) {
+					setmounting();
+					specialeffect2 1835, SELF;
+					soundeffect "CD_FRAMEN.wav", 0;
+					callfunc("exitSpeech", .@npc_name$, .@blacksmith_id, .@madogear$);
+				}
+
+				// Give special mount item
+				if(countitem(68000) < 1) {
+					next;
+					mes .@npc_name$;
+					mes "Take this exclusive item";
+					mes "to mount or unmount anytime.";
+					mes "Don't you lose it~!";
+					getnameditem 68000, getcharid(0);
+				}
+				close3;
+
+			case 3: // Wolf Mounts
+				close3;
+				break;
 		}
 		
-
 
 }
 
 function	script	exitSpeech	{
-	emotion ET_GOODBOY;
-	mes getarg(0);
-	mes "Keep it nourished and happy, and it will illuminate your path, even in the darkest dungeons~ ^_^";
+	switch(getarg(1)){
+		mes getarg(0); //NPC name
+		case 7: //Knight Class
+			emotion ET_GOODBOY;
+			mes "Keep it nourished and happy, and it will illuminate your path, even in the darkest dungeons~ ^_^";
+			break;
+			
+		case 10: //Blacksmith Class
+			emotion ET_SPARK;
+			mes "This "+getarg(2)+" is more ";
+			mes "than a machine;";
+			mes "it's your steadfast companion. ";
+			mes "Together, you can explore anything~ ^_^";
+			break;
+	}
 	return;
 }
