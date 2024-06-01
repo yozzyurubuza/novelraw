@@ -9,23 +9,27 @@ izlude,88,148,5	script	Mount Manager	-1,{
 		end;
 
 	OnClick:
-		set .@npc_name$, "^a39f00[ Litzy ]^000000";
-		set .@dragon$, "^388E3CDragon^000000"; set .@madogear$, "^ff6800Madogear^000000"; set .@wolf$, "^0288D1Wolf^000000";
-		set .@knight_id, roclass(EAJ_KNIGHT); set .@blacksmith_id, roclass(EAJ_BLACKSMITH); set .@hunter_id, roclass(EAJ_HUNTER);
+		// Define variables
+		set .@NPC_NAME$, "^a39f00[ Litzy ]^000000";
+		set .@DRAGON_COLORTXT$, "^388E3CDragon^000000"; set .@MADOGEAR_COLORTXT$, "^ff6800Madogear^000000"; set .@WOLF_COLORTXT$, "^0288D1Wolf^000000";
+		set .@KNIGHT_ID, roclass(EAJ_KNIGHT); set .@BLACKSMITH_ID, roclass(EAJ_BLACKSMITH); set .@HUNTER_ID, roclass(EAJ_HUNTER);
+		setarray .@BASELOOK_KNIGHT[0], 4060, 4252; setarray .@BASELOOK_KNIGHT$[0], "Rune Knight", "Dragon Knight";  
+		setarray .@BASELOOK_BLACKSMITH[0], 4064, 4253; setarray .@BASELOOK_BLACKSMITH$[0], "Mechanic", "Meister";  
+		setarray .@BASELOOK_HUNTER[0], 4062, 4257; setarray .@BASELOOK_HUNTER$[0], "Ranger", "Windhawk";  
 		// Start of dialogue
 		cutin "litzy", 2;
-		mes .@npc_name$;
+		mes .@NPC_NAME$;
 		mes "Hey there~!";
 		mes "I'm Litzy, should you need guidance for";
-		mes .@dragon$ + ", " +.@madogear$+ ", and " +.@wolf$+ " mounts,";
+		mes .@DRAGON_COLORTXT$ + ", " +.@MADOGEAR_COLORTXT$+ ", and " +.@WOLF_COLORTXT$+ " mounts,";
 		mes "then I'm here to assist you.";
 		next;
-		set .@mount_select, select("Can you help me train a " +.@dragon$+ "?:Can you build a "+.@madogear$+"?:Can you call a lone " +.@wolf$+ "?:Cancel");
+		set .@mount_select, select("Can you help me train a " +.@DRAGON_COLORTXT$+ "?:Can you build a "+.@MADOGEAR_COLORTXT$+"?:Can you call a lone " +.@WOLF_COLORTXT$+ "?:Cancel");
 		switch(.@mount_select){
 			// Check Halter lead first.
 			if (ismounting() && !getskilllv("NC_MADOLICENCE")){
 					emotion ET_WRAP;
-					mes .@npc_name$;
+					mes .@NPC_NAME$;
 					mes "Please dismount from your ^000fff'Halter Lead'^000000 before acquiring a new mount here.";
 					close3;
 				}
@@ -33,18 +37,12 @@ izlude,88,148,5	script	Mount Manager	-1,{
 			case 1: //Dragon Mounts
 				set .@dragon_color, 1;
 
-				if (!rk_version){
-					emotion ET_STARE_ABOUT;
-					mes .@npc_name$;
-					mes "You should be a ^F57C00Rune Knight^000000 or";
-					mes "^F44336Dragon Knight^000000 to get a " +.@dragon$+ ".";
-					mes "Please find <NAVI>Celestia<INFO>izlude,88,128,0,000,0</INFO></NAVI>";
-					mes "to change Job Costumes before getting a " +.@dragon$+ ".";
-					close3;
+				if (!rk_version){ // 1 = new default / 2 = legacy / 3 = JP
+					callfunc("check_job_costume", .@NPC_NAME$, .@BASELOOK_KNIGHT$[0], .@BASELOOK_KNIGHT$[1], .@DRAGON_COLORTXT$);
 				}
 
 				if (getskilllv("KN_CAVALIERMASTERY") != 5){
-					mes .@npc_name$;
+					mes .@NPC_NAME$;
 					mes "I'm sorry, you need to have";
 					mes "<URL>Level 5 Cavalry Masyery<INFO>https://irowiki.org/classic/Cavalier_Mastery</INFO></URL>";
 					emotion ET_SORRY;
@@ -52,87 +50,46 @@ izlude,88,148,5	script	Mount Manager	-1,{
 				}
 
 				// Intro speech for special dragons
-				if (rk_version == 2 && !checkdragon()){
-					emotion ET_BIGTHROB;
-					mes .@npc_name$;
-					mes "Oh!, the version of your costume";
-					mes "allows you to choose a";
-					mes "^8F00FFMystically Colored Dragon^000000~";
-					next;
-				}
-
-				// If player already has a colored dragon, then wants to change it
-				if (rk_version == 2 && checkdragon()){
-					mes .@npc_name$;
-					mes "Do you want change your " +.@dragon$+ "?";
-					next;
-					switch(select("Yes:No")){
-						case 1:
-							setdragon 0;
-							break;
-						case 2:
-							callfunc("exitSpeech", .@npc_name$, .@knight_id);
-							close3;
-							return;
-					}
-				}
-
-				// Choose color of your dragon
 				if (rk_version == 2){
-					mes .@npc_name$;
-					mes "What color do you want for your";
-					mes .@dragon$+ "?";
-					next;
-					switch(select("^388E3CGreen (Default)^000000:^4E342EBrown^000000:^455A64Gray^000000:^0288D1Blue^000000:^D32F2FRed^000000")){
-						case 1:
-							break;
-						case 2:
-							set .@dragon_color, 2;
-							break;
-						case 3:
-							set .@dragon_color, 3;
-							break;
-						case 4:
-							set .@dragon_color, 4;
-							break;
-						case 5:
-							set .@dragon_color, 5;
-							break;
-					}
+					set .@dragon_color, callfunc("handle_rk_legacy_mount", .@NPC_NAME$, .@DRAGON_COLORTXT$, .@KNIGHT_ID);
 				}
 
-
+				// RK Version not legacy
 				if ((checkdragon() && rk_version != 2) || (rk_version == 3 && checkriding())){
 					emotion ET_OK;
-					mes .@npc_name$;
-					mes "You already have a " +.@dragon$+ ".";
+					mes .@NPC_NAME$;
+					mes "You already have a " +.@DRAGON_COLORTXT$+ ".";
 					mes "Remember to give it head pats regularly~";
 					close3;
 				}
 
-
+				// First time getting a mount after Job Costume change
 				if (!getskilllv("RK_DRAGONTRAINING")) {
-					mes .@npc_name$;
+					mes .@NPC_NAME$;
 					mes "Seems like you haven't learned";
 					mes "'^388E3CDragon Training^000000' yet.";
 					mes "Let me show you...";
 					mes "<URL>How to train a dragon~<INFO>https://www.youtube.com/watch?v=ZDyEERuK31Y</INFO></URL>";
 					next;
+
 					progressbar "ffff00", 3;
 					specialeffect 670, SELF;
 					soundeffect "dragonfear.wav", 0;
 					next;
+
 					mes "You learned 'Dragon Training'.";
-					mes "You got a " +.@dragon$+ ".";
+					mes "You got a " +.@DRAGON_COLORTXT$+ ".";
 					skill "RK_DRAGONTRAINING", 5, SKILL_PERM_GRANT;
 					next;
+
 					specialeffect2 1218, SELF;
 					soundeffect "dragon_h.wav", 0;
-					callfunc("exitSpeech", .@npc_name$, .@knight_id);
-				} else if (getskilllv("RK_DRAGONTRAINING")){
+					callfunc("exit_speech", .@NPC_NAME$, .@KNIGHT_ID);
+
+				} else if (getskilllv("RK_DRAGONTRAINING")){ // Just remount
 					specialeffect2 1803, SELF;
 					soundeffect "dragon_h.wav", 0;
-					callfunc("exitSpeech", .@npc_name$, .@knight_id);
+					callfunc("exit_speech", .@NPC_NAME$, .@KNIGHT_ID);
 				}
 
 				// For rk_version 3, use pecopeco only
@@ -140,54 +97,50 @@ izlude,88,148,5	script	Mount Manager	-1,{
 					setriding 1;
 					close3;
 				}
-				setdragon .@dragon_color;	
+				// Finally, apply dragon mount here
+				setdragon .@dragon_color;
 				close3;
 
 			case 2: //Madogear Mounts
-				if (!mado_compatible){
-					emotion ET_STARE_ABOUT;
-					mes .@npc_name$;
-					mes "You should be a ^F57C00Mechanic^000000 or";
-					mes "^F44336Meister^000000 to get a " +.@madogear$+ ".";
-					mes "Please find <NAVI>Celestia<INFO>izlude,88,128,0,000,0</INFO></NAVI>";
-					mes "to change Job Costumes before getting a " +.@madogear$+ ".";
-					close3;
+				if (baselook != .@BASELOOK_BLACKSMITH[0] && baselook != .@BASELOOK_BLACKSMITH[1]){
+					callfunc("check_job_costume", .@NPC_NAME$, .@BASELOOK_BLACKSMITH$[0], .@BASELOOK_BLACKSMITH$[2], .@MADOGEAR_COLORTXT$);
 				}
 
 				if (!getskilllv("NC_MADOLICENCE")) {
-					mes .@npc_name$;
+					mes .@NPC_NAME$;
 					mes "Seems like you haven't gotten";
 					mes "'^388E3CMagic Gear License^000000' yet.";
 					mes "Let me show you...";
 					mes "<URL>How to build a Madogear~<INFO>https://www.youtube.com/watch?v=h9nB5ZzbSO8</INFO></URL>";
 					next;
+
 					progressbar "ffff00", 3;
 					specialeffect 1854, SELF;
-					
 					next;
+
 					mes "You got 'Magic Gear License'.";
-					mes "You got a " +.@madogear$+ ".";
+					mes "You got a " +.@MADOGEAR_COLORTXT$+ ".";
 					skill "NC_MADOLICENCE", 5, SKILL_PERM_GRANT;
 					next;
 				}
 
 				if (ismounting()) {
-					mes .@npc_name$;
-					mes "Looks like you¡¯ve got your "+.@madogear$+" all set up!";
+					mes .@NPC_NAME$;
+					mes "Looks like you¡¯ve got your "+.@MADOGEAR_COLORTXT$+" all set up!";
 					next;
-					callfunc("exitSpeech", .@npc_name$, .@blacksmith_id, .@madogear$);
-				}  else if(!ismounting()) {
+					callfunc("exit_speech", .@NPC_NAME$, .@BLACKSMITH_ID, .@MADOGEAR_COLORTXT$);
+				}  else {
 					setmounting();
 					specialeffect2 1835, SELF;
 					sc_start SC_SPEEDUP0, 180000, 25;
 					soundeffect "CD_FRAMEN.wav", 0;
-					callfunc("exitSpeech", .@npc_name$, .@blacksmith_id, .@madogear$);
+					callfunc("exit_speech", .@NPC_NAME$, .@BLACKSMITH_ID, .@MADOGEAR_COLORTXT$);
 				}
 
 				// Give special mount item
 				if(countitem(68000) < 1) {
 					next;
-					mes .@npc_name$;
+					mes .@NPC_NAME$;
 					mes "Take this exclusive item";
 					mes "to mount or unmount anytime.";
 					mes "Don't you lose it~!";
@@ -196,46 +149,57 @@ izlude,88,148,5	script	Mount Manager	-1,{
 				close3;
 
 			case 3: // Wolf Mounts
-				if (baselook != 4062 && baselook != 4257){
-					emotion ET_STARE_ABOUT;
-					mes .@npc_name$;
-					mes "You should be a ^F57C00Ranger^000000 or";
-					mes "^F44336Windhawk^000000 to get a " +.@wolf$+ ".";
-					mes "Please find <NAVI>Celestia<INFO>izlude,88,128,0,000,0</INFO></NAVI>";
-					mes "to change Job Costumes before getting a " +.@wolf$+ ".";
-					close3;
+				if (baselook != .@BASELOOK_HUNTER[0] && baselook != .@BASELOOK_HUNTER[1]){
+					callfunc("check_job_costume", .@NPC_NAME$, .@BASELOOK_HUNTER$[0], .@BASELOOK_HUNTER$[1], .@WOLF_COLORTXT$);
+				}
+
+				if (checkoption(Option_Wugrider)){
+					mes .@NPC_NAME$;
+					mes "I can tell that you're enjoying your time";
+					mes "with your "+ .@WOLF_COLORTXT$ +".";
+					next;
+					callfunc("exit_speech", .@NPC_NAME$, .@HUNTER_ID, .@WOLF_COLORTXT$);
 				}
 
 				if (!getskilllv("RA_WUGMASTERY")) {
-					mes .@npc_name$;
+					mes .@NPC_NAME$;
 					mes "Seems like you've yet to learn";
 					mes "'^388E3CWarg Mastery^000000'.";
 					mes "Let me show you...";
 					mes "<URL>How to call a lone Wolf~<INFO>https://youtu.be/Telc8mgZ0ag?si=s4iO0MtABI1EDDmy&t=16</INFO></URL>";
 					next;
+
 					progressbar "ffff00", 3;
 					specialeffect 2371, SELF;
-					
 					next;
+
 					mes "You learned 'Warg Mastery'.";
 					mes "You learned 'Warg Rider'.";
-					mes "You got a " +.@wolf$+ ".";
+					mes "You got a " +.@WOLF_COLORTXT$+ ".";
 					skill "RA_WUGMASTERY", 1, SKILL_PERM_GRANT;
 					skill "RA_WUGRIDER", 3, SKILL_PERM_GRANT;
+					next; 
+
 					setoption Option_Wug;
 					specialeffect2 2338, SELF;
 					soundeffect "wolf_die.wav", 0;
-					next;
-					callfunc("exitSpeech", .@npc_name$, .@hunter_id, .@wolf$);
+					callfunc("exit_speech", .@NPC_NAME$, .@HUNTER_ID, .@WOLF_COLORTXT$);
+				} else if (getskilllv("RA_WUGMASTERY") && !checkoption(Option_Wugrider)) {
+					mes .@NPC_NAME$;
+					mes "Use the skill ^0063f8Warg Mastery^000000";
+					mes "to call or release your "+ .@WOLF_COLORTXT$ +".";
+					mes "Then, you may use ^0063f8Warg Rider^000000";
+					mes "to get on your "+ .@WOLF_COLORTXT$ +".";
 				}
 
 				// Give special mount item
 				if(countitem(12848) < 1 || countitem(6124) < 1) {
 					next;
-					mes .@npc_name$;
-					mes "Take this exclusive item";
-					mes "to mount or unmount anytime.";
-					mes "Don't you lose it~!";
+					mes .@NPC_NAME$;
+					mes "Here are some special gifts for you";
+					mes "to summon your wolf and falcon";
+					mes "whenever necessary.";
+					mes "Take care of them~!";
 					if(countitem(12848) < 1) getnameditem 12848, getcharid(0);
 					if(countitem(6124) < 1) getnameditem 6124, getcharid(0);
 				}
@@ -246,7 +210,60 @@ izlude,88,148,5	script	Mount Manager	-1,{
 		}
 }
 
-function	script	exitSpeech	{
+function	script	check_job_costume	{
+	emotion ET_STARE_ABOUT;
+	mes getarg(0);
+	mes "You should be a ^F57C00"+ getarg(1) +"^000000 or";
+	mes "^F44336"+ getarg(2) +"^000000 to get a "+ getarg(3) +".";
+	mes "To change Job Costumes, please find";
+	mes "<NAVI>Celestia<INFO>izlude,88,128,0,000,0</INFO></NAVI>";
+	close3;
+}
+
+function	script	handle_rk_legacy_mount	{
+	// Check if has dragon already
+	if (!checkdragon()){
+		emotion ET_BIGTHROB;
+		mes getarg(0);
+		mes "Oh!, the version of your costume";
+		mes "allows you to choose a";
+		mes "^8F00FFMystically Colored Dragon^000000~";
+		next;
+	} else {
+		mes getarg(0);
+		mes "Do you want change your "+ getarg(1) +"?";
+		next;
+		switch(select("Yes:No")){
+			case 1:
+				setdragon 0;
+				break;
+			case 2:
+				callfunc("exit_speech", getarg(0), getarg(2));
+				close3;
+		}
+	}
+
+	// RK Legacy: Choose color of your dragon
+	mes getarg(0);
+	mes "What color do you want for your";
+	mes getarg(1)+ "?";
+	next;
+	switch(select("^388E3CGreen (Default)^000000:^4E342EBrown^000000:^455A64Gray^000000:^0288D1Blue^000000:^D32F2FRed^000000")){
+		case 1:
+			return 1; //Default Color
+		case 2:
+			return 2;
+		case 3:
+			return 3;
+		case 4:
+			return 4;
+		case 5:
+			return 5;
+	}
+}
+
+// Exit speech does not end or close the NPC
+function	script	exit_speech	{
 	switch(getarg(1)){
 		mes getarg(0); //NPC name
 		case 7: //Knight Class
