@@ -157,7 +157,7 @@ izlude,88,148,5	script	Mount Manager	-1,{
 				if (!getskilllv("NC_MADOLICENCE")) {
 					mes .@npc_name$;
 					mes "Seems like you haven't gotten";
-					mes "'^388E3CMagic License^000000' yet.";
+					mes "'^388E3CMagic Gear License^000000' yet.";
 					mes "Let me show you...";
 					mes "<URL>How to build a Madogear~<INFO>https://www.youtube.com/watch?v=h9nB5ZzbSO8</INFO></URL>";
 					next;
@@ -196,11 +196,54 @@ izlude,88,148,5	script	Mount Manager	-1,{
 				close3;
 
 			case 3: // Wolf Mounts
-				close3;
-				break;
-		}
-		
+				if (baselook != 4062 && baselook != 4257){
+					emotion ET_STARE_ABOUT;
+					mes .@npc_name$;
+					mes "You should be a ^F57C00Ranger^000000 or";
+					mes "^F44336Windhawk^000000 to get a " +.@wolf$+ ".";
+					mes "Please find <NAVI>Celestia<INFO>izlude,88,128,0,000,0</INFO></NAVI>";
+					mes "to change Job Costumes before getting a " +.@wolf$+ ".";
+					close3;
+				}
 
+				if (!getskilllv("RA_WUGMASTERY")) {
+					mes .@npc_name$;
+					mes "Seems like you've yet to learn";
+					mes "'^388E3CWarg Mastery^000000'.";
+					mes "Let me show you...";
+					mes "<URL>How to call a lone Wolf~<INFO>https://youtu.be/Telc8mgZ0ag?si=s4iO0MtABI1EDDmy&t=16</INFO></URL>";
+					next;
+					progressbar "ffff00", 3;
+					specialeffect 2371, SELF;
+					
+					next;
+					mes "You learned 'Warg Mastery'.";
+					mes "You learned 'Warg Rider'.";
+					mes "You got a " +.@wolf$+ ".";
+					skill "RA_WUGMASTERY", 1, SKILL_PERM_GRANT;
+					skill "RA_WUGRIDER", 3, SKILL_PERM_GRANT;
+					setoption Option_Wug;
+					specialeffect2 2338, SELF;
+					soundeffect "wolf_die.wav", 0;
+					next;
+					callfunc("exitSpeech", .@npc_name$, .@hunter_id, .@wolf$);
+				}
+
+				// Give special mount item
+				if(countitem(12848) < 1 || countitem(6124) < 1) {
+					next;
+					mes .@npc_name$;
+					mes "Take this exclusive item";
+					mes "to mount or unmount anytime.";
+					mes "Don't you lose it~!";
+					if(countitem(12848) < 1) getnameditem 12848, getcharid(0);
+					if(countitem(6124) < 1) getnameditem 6124, getcharid(0);
+				}
+				close3;
+
+			default: 
+				close3;
+		}
 }
 
 function	script	exitSpeech	{
@@ -217,6 +260,14 @@ function	script	exitSpeech	{
 			mes "than a machine;";
 			mes "it's your steadfast companion. ";
 			mes "Together, you can explore anything~ ^_^";
+			break;
+
+		case 11: //Hunter Class
+			emotion ET_BEST;
+			mes "With your "+getarg(2)+" by your side,";
+			mes "may you find both wisdom and wealth";
+			mes "on your path.";
+			mes "Like the cunning and wise wolf, Holo~ ^_^";
 			break;
 	}
 	return;

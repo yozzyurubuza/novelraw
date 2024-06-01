@@ -20377,7 +20377,7 @@ Body:
     HitCount: 1
     AfterCastActDelay: 1000
     Requires:
-      SpCost: 5
+      SpCost: 0
       ItemCost:
         - Item: Wolf's_Flute
           Amount: 0
@@ -20392,7 +20392,7 @@ Body:
     HitCount: 1
     AfterCastActDelay: 500
     Requires:
-      SpCost: 2
+      SpCost: 0
   - Id: 2242
     Name: RA_WUGDASH
     Description: Warg Dash

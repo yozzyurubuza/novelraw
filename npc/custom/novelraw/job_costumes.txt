@@ -213,18 +213,22 @@ function	script	removeMounts	{
 			if(checkdragon()) setdragon 0;
 			if(getskilllv("RK_DRAGONTRAINING")) skill "RK_DRAGONTRAINING", 0, SKILL_PERM_GRANT;
 			return;
+
 		case 10: //Blacksmith
 			if(getskilllv("NC_MADOLICENCE")) skill "NC_MADOLICENCE", 0, SKILL_PERM_GRANT;
+			if(checkmadogear()) setmadogear 0;
+			return;
+
+		case 11: //Hunter
+			if(checkfalcon()) setfalcon 0;
+			if(checkwug()) {
+				setoption Option_Wugrider, 0;
+				setoption Option_Wug, 0;
+			}
+			if(getskilllv("RA_WUGMASTERY")) skill "RA_WUGMASTERY", 0, SKILL_PERM_GRANT;
+			if(getskilllv("RA_WUGRIDER")) skill "RA_WUGRIDER", 0, SKILL_PERM_GRANT;
 			return;
 	}
-
-	if(checkfalcon()){ 
-		setfalcon 0;
-		return;
-	}
-	if(checkwug()) setoption Option_Wugrider, 0;
-	
-	if(checkmadogear()) setmadogear 0;
 	
 	return;
 }
