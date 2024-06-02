@@ -105,7 +105,7 @@ izlude,88,148,5	script	Mount Manager	-1,{
 				if (baselook != .@BASELOOK_BLACKSMITH[0] && baselook != .@BASELOOK_BLACKSMITH[1]){
 					callfunc("check_job_costume", .@NPC_NAME$, .@BASELOOK_BLACKSMITH$[0], .@BASELOOK_BLACKSMITH$[2], .@MADOGEAR_COLORTXT$);
 				}
-
+				
 				if (!getskilllv("NC_MADOLICENCE")) {
 					mes .@NPC_NAME$;
 					mes "Seems like you haven't gotten";
@@ -129,7 +129,7 @@ izlude,88,148,5	script	Mount Manager	-1,{
 					mes "Looks like you¡¯ve got your "+.@MADOGEAR_COLORTXT$+" all set up!";
 					next;
 					callfunc("exit_speech", .@NPC_NAME$, .@BLACKSMITH_ID, .@MADOGEAR_COLORTXT$);
-				}  else {
+				} else {
 					setmounting();
 					specialeffect2 1835, SELF;
 					sc_start SC_SPEEDUP0, 180000, 25;
@@ -221,7 +221,7 @@ function	script	check_job_costume	{
 }
 
 function	script	handle_rk_legacy_mount	{
-	// Check if has dragon already
+	// Check if dragon is present
 	if (!checkdragon()){
 		emotion ET_BIGTHROB;
 		mes getarg(0);
