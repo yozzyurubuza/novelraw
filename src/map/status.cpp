@@ -3547,7 +3547,7 @@ bool status_calc_weight(map_session_data *sd, enum e_status_calc_weight_opt flag
 		if (pc_isriding(sd) && pc_checkskill(sd, KN_RIDING) > 0)
 			sd->max_weight += 10000;
 		else if (pc_isridingdragon(sd))
-			sd->max_weight += 5000 + 2000 * pc_checkskill(sd, RK_DRAGONTRAINING);
+			sd->max_weight += 2000 * pc_checkskill(sd, RK_DRAGONTRAINING);
 		if (sc->getSCE(SC_KNOWLEDGE))
 			sd->max_weight += sd->max_weight * sc->getSCE(SC_KNOWLEDGE)->val1 / 10;
 		if ((skill = pc_checkskill(sd, ALL_INCCARRY)) > 0)
