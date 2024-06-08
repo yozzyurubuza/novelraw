@@ -142,7 +142,7 @@ Body:
       NoAuction: true
     Script: |
       if(!getskilllv("NC_MADOLICENCE")){
-        showscript "Please get a Magic Gear License from Litzy (Mount Manager)", getcharid(3), SELF;
+        showscript "Please get a Madogear License from Litzy (Mount Manager)", getcharid(3), SELF;
         end;
       }
       if (ismounting()){
