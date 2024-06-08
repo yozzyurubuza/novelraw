@@ -55,7 +55,7 @@ izlude,88,148,5	script	Mount Manager	-1,{
 				}
 
 				// RK Version not legacy
-				if ((checkdragon() && rk_version != 2) || (rk_version == 3 && checkriding())){
+				if ((checkdragon() && rk_version != 2) || (checkriding() && rk_version == 3)){
 					emotion ET_OK;
 					mes .@NPC_NAME$;
 					mes "You already have a " +.@DRAGON_COLORTXT$+ ".";
