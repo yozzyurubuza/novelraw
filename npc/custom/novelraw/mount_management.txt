@@ -109,7 +109,7 @@ izlude,88,148,5	script	Mount Manager	-1,{
 				if (!getskilllv("NC_MADOLICENCE")) {
 					mes .@NPC_NAME$;
 					mes "Seems like you haven't gotten";
-					mes "'^388E3CMagic Gear License^000000' yet.";
+					mes "'^388E3CMadogear License^000000' yet.";
 					mes "Let me show you...";
 					mes "<URL>How to build a Madogear~<INFO>https://www.youtube.com/watch?v=h9nB5ZzbSO8</INFO></URL>";
 					next;
