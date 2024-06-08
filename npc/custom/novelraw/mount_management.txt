@@ -118,7 +118,7 @@ izlude,88,148,5	script	Mount Manager	-1,{
 					specialeffect 1854, SELF;
 					next;
 
-					mes "You got 'Magic Gear License'.";
+					mes "You got 'Madogear License'.";
 					mes "You got a " +.@MADOGEAR_COLORTXT$+ ".";
 					skill "NC_MADOLICENCE", 5, SKILL_PERM_GRANT;
 					next;
