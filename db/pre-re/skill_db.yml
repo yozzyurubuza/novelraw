@@ -20375,7 +20375,7 @@ Body:
     TargetType: Self
     Hit: Single
     HitCount: 1
-    AfterCastActDelay: 1000
+    AfterCastActDelay: 500
     Requires:
       SpCost: 0
       ItemCost:
