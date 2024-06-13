@@ -9476,16 +9476,6 @@ Body:
       Third: true
       Third_Upper: true
       Third_Baby: true
-  - Id: 12848
-    AegisName: Falcon_Flute
-    Name: Falcon Flute
-    Type: Delayconsume
-    Weight: 10
-    Script: |
-      if (getskilllv("HT_FALCON")) {
-         if (!checkoption(Option_Wug) && !checkoption(Option_Wugrider))
-            setfalcon (!checkfalcon());
-      }
   - Id: 12900
     AegisName: Battle_Manual_Box
     Name: Battle Manual Box
