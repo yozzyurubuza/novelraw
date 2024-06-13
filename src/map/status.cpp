@@ -1932,6 +1932,16 @@ bool status_check_skilluse(struct block_list *src, struct block_list *target, ui
 		status = &dummy_status;
 	}
 
+	// Add check for Wug Rider status using sd->sc.option
+	if (src->type == BL_PC) {
+		struct map_session_data *sd = BL_CAST(BL_PC, src);
+		if (sd && (sd->sc.option & OPTION_WUGRIDER)) {
+			if (skill_id != RA_WUGRIDER) {
+				return false; // Block all skills except RA_WUGRIDER
+			}
+		}
+	}
+
 	status_change *sc = status_get_sc(src);
 	status_change *tsc = status_get_sc(target);
 
@@ -3537,7 +3547,7 @@ bool status_calc_weight(map_session_data *sd, enum e_status_calc_weight_opt flag
 		if (pc_isriding(sd) && pc_checkskill(sd, KN_RIDING) > 0)
 			sd->max_weight += 10000;
 		else if (pc_isridingdragon(sd))
-			sd->max_weight += 5000 + 2000 * pc_checkskill(sd, RK_DRAGONTRAINING);
+			sd->max_weight += 2000 * pc_checkskill(sd, RK_DRAGONTRAINING);
 		if (sc->getSCE(SC_KNOWLEDGE))
 			sd->max_weight += sd->max_weight * sc->getSCE(SC_KNOWLEDGE)->val1 / 10;
 		if ((skill = pc_checkskill(sd, ALL_INCCARRY)) > 0)
@@ -7924,7 +7934,7 @@ static unsigned short status_calc_speed(struct block_list *bl, status_change *sc
 			if( pc_isriding(sd) || sd->sc.option&OPTION_DRAGON )
 				val = 25; // Same bonus
 			else if( pc_isridingwug(sd) )
-				val = 15 + 5 * pc_checkskill(sd, RA_WUGRIDER);
+				val = 10 + 5 * pc_checkskill(sd, RA_WUGRIDER);
 			else if( sc->getSCE(SC_ALL_RIDING) )
 				val = battle_config.rental_mount_speed_boost;
 		}
