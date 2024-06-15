@@ -4025,7 +4025,6 @@ Body:
       Right_Hand: true
     Flags:
       BuyingStore: true
-      DropEffect: RED_PILLAR
     Script: |
       skill "TF_DOUBLE",1;
   - Id: 4118
