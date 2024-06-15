@@ -1116,6 +1116,8 @@ Body:
         Rate: 25
       - Item: Pointed_Scale
         Rate: 5500
+      - Item: Flower
+        Rate: 2500
       - Item: Pike_
         Rate: 30
       - Item: Yellow_Herb
@@ -5546,6 +5548,8 @@ Body:
     Drops:
       - Item: Blossom_Of_Maneater
         Rate: 9000
+      - Item: Flower
+        Rate: 2500
       - Item: Sunflower
         Rate: 3
       - Item: Aloe
@@ -7665,6 +7669,8 @@ Body:
         Rate: 10
       - Item: Shoot
         Rate: 550
+      - Item: Flower
+        Rate: 500
       - Item: White_Herb
         Rate: 30
       - Item: Rafflesia_Card
@@ -18641,6 +18647,8 @@ Body:
         Rate: 4800
       - Item: Sweet_Potato
         Rate: 4800
+      - Item: Flower
+        Rate: 3000
       - Item: Rope_
         Rate: 1
       - Item: Strawberry
@@ -20954,6 +20962,8 @@ Body:
     Drops:
       - Item: Tough_Vines
         Rate: 5335
+      - Item: Flower
+        Rate: 4000
       - Item: Great_Leaf
         Rate: 1000
       - Item: Browny_Root
@@ -21098,6 +21108,8 @@ Body:
     DamageMotion: 480
     Ai: 04
     Drops:
+      - Item: Flower
+        Rate: 5000
       - Item: Heart_Of_Tree
         Rate: 4000
       - Item: Browny_Root
@@ -21244,6 +21256,8 @@ Body:
         Rate: 5500
       - Item: Soft_Leaf
         Rate: 2000
+      - Item: Flower
+        Rate: 3000
       - Item: Thin_Stem
         Rate: 3880
       - Item: Great_Leaf
