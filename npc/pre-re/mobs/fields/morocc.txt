@@ -206,16 +206,16 @@ moc_fild13,161,273,5,5	monster	Yellow Plant	1081,3,180000,90000
 //==================================================
 // moc_fild14 - Sograt Desert
 //==================================================
-moc_fild14,0,0	monster	Desert Wolf	1106,80
-moc_fild14,0,0	monster	Side Winder	1037,20
-moc_fild14,0,0	monster	Baby Desert Wolf	1107,40
-moc_fild14,0,0	monster	Magnolia	1138,25
-moc_fild14,124,93,5,5	monster	Shining Plant	1083,1,1800000,900000
-moc_fild14,85,271	monster	Yellow Plant	1081,1,180000,90000
-moc_fild14,165,282	monster	Yellow Plant	1081,1,180000,90000
-moc_fild14,149,333	monster	Yellow Plant	1081,1,180000,90000
-moc_fild14,64,342	monster	Yellow Plant	1081,1,180000,90000
-moc_fild14,160,366	monster	Yellow Plant	1081,1,180000,90000
+moc_fild14,0,0	monster	Desert Wolf	1106,30
+moc_fild14,0,0	monster	Side Winder	1037,200
+moc_fild14,0,0	monster	Baby Desert Wolf	1107,50
+moc_fild14,0,0	monster	Magnolia	1138,60
+moc_fild14,124,93,5,5	monster	Shining Plant	1083,3,1800000,900000
+moc_fild14,85,271	monster	Yellow Plant	1081,3,180000,90000
+moc_fild14,165,282	monster	Yellow Plant	1081,3,180000,90000
+moc_fild14,149,333	monster	Yellow Plant	1081,3,180000,90000
+moc_fild14,64,342	monster	Yellow Plant	1081,3,180000,90000
+moc_fild14,160,366	monster	Yellow Plant	1081,3,180000,90000
 
 //==================================================
 // moc_fild15 - Sograt Desert
