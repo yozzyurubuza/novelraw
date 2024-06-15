@@ -3449,7 +3449,7 @@ Body:
       - Item: Clam_Shell
         Rate: 5500
       - Item: Flesh_Of_Clam
-        Rate: 1000
+        Rate: 5000
       - Item: Stone
         Rate: 500
       - Item: Grit
@@ -14865,7 +14865,7 @@ Body:
       - Item: Broken_Shell
         Rate: 850
       - Item: Ice_Piece
-        Rate: 1250
+        Rate: 5000
       - Item: Zargon
         Rate: 1800
       - Item: Royal_Jelly
@@ -17275,11 +17275,11 @@ Body:
     Ai: 04
     Drops:
       - Item: Bear's_Foot
-        Rate: 5000
+        Rate: 1000
       - Item: Animal's_Skin
         Rate: 5000
       - Item: Nice_Sweet_Potato
-        Rate: 2500
+        Rate: 5000
       - Item: Grizzly_Card
         Rate: 1
         StealProtected: true
@@ -18242,7 +18242,7 @@ Body:
       - Item: Yellow_Herb
         Rate: 40
       - Item: Nice_Sweet_Potato
-        Rate: 350
+        Rate: 700
       - Item: Panacea
         Rate: 250
       - Item: The_Cyclone_
@@ -28047,7 +28047,7 @@ Body:
       - Item: Gas_Mask
         Rate: 10
       - Item: Nice_Sweet_Potato
-        Rate: 500
+        Rate: 1000
       - Item: Detrimindexta
         Rate: 50
       - Item: Karvodailnirol
