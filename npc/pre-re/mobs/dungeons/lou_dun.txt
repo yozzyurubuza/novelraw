@@ -20,7 +20,7 @@ lou_dun01,0,0	monster	Mi Gao	1516,30
 lou_dun01,215,159,40,80	monster	Side Winder	1037,20,300000,120000
 lou_dun01,215,159,40,80	monster	Jing Guai	1517,40,300000,120000
 lou_dun01,0,0	monster	Jing Guai	1517,30
-lou_dun01,0,0	monster	Grizzly	1381,60
+lou_dun01,0,0	monster	Grizzly	1381,80
 lou_dun01,0,0	monster	Leib Olmai	1306,1
 lou_dun01,197,77,10,10	monster	Black Mushroom	1084,7
 lou_dun01,0,0	monster	Shining Plant	1083,7
