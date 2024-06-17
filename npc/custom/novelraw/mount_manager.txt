@@ -13,9 +13,9 @@ izlude,88,148,5	script	Mount Manager	-1,{
 		set .@NPC_NAME$, "^a39f00[ Litzy ]^000000";
 		set .@DRAGON_COLORTXT$, "^388E3CDragon^000000"; set .@MADOGEAR_COLORTXT$, "^ff6800Madogear^000000"; set .@WOLF_COLORTXT$, "^0288D1Wolf^000000";
 		set .@KNIGHT_ID, roclass(EAJ_KNIGHT); set .@BLACKSMITH_ID, roclass(EAJ_BLACKSMITH); set .@HUNTER_ID, roclass(EAJ_HUNTER);
-		setarray .@BASELOOK_KNIGHT[0], 4060, 4252; setarray .@BASELOOK_KNIGHT$[0], "Rune Knight", "Dragon Knight";  
-		setarray .@BASELOOK_BLACKSMITH[0], 4064, 4253; setarray .@BASELOOK_BLACKSMITH$[0], "Mechanic", "Meister";  
-		setarray .@BASELOOK_HUNTER[0], 4062, 4257; setarray .@BASELOOK_HUNTER$[0], "Ranger", "Windhawk";  
+		setarray .@BASELOOK_KNIGHT[0], 4060, 4252; 		setarray .@BASELOOK_KNIGHT$[0], "Rune Knight", "Dragon Knight";  
+		setarray .@BASELOOK_BLACKSMITH[0], 4064, 4253; 	setarray .@BASELOOK_BLACKSMITH$[0], "Mechanic", "Meister";  
+		setarray .@BASELOOK_HUNTER[0], 4062, 4257; 		setarray .@BASELOOK_HUNTER$[0], "Ranger", "Windhawk";  
 		// Start of dialogue
 		cutin "litzy", 2;
 		mes .@NPC_NAME$;
@@ -102,8 +102,8 @@ izlude,88,148,5	script	Mount Manager	-1,{
 				close3;
 
 			case 2: //Madogear Mounts
-				if (baselook != .@BASELOOK_BLACKSMITH[0] && baselook != .@BASELOOK_BLACKSMITH[1]){
-					callfunc("check_job_costume", .@NPC_NAME$, .@BASELOOK_BLACKSMITH$[0], .@BASELOOK_BLACKSMITH$[2], .@MADOGEAR_COLORTXT$);
+				if (inarray(.@BASELOOK_BLACKSMITH, baselook) == -1) {// BS, WS not found
+					callfunc("check_job_costume", .@NPC_NAME$, .@BASELOOK_BLACKSMITH$[0], .@BASELOOK_BLACKSMITH$[1], .@MADOGEAR_COLORTXT$);
 				}
 				
 				if (!getskilllv("NC_MADOLICENCE")) {
@@ -149,7 +149,7 @@ izlude,88,148,5	script	Mount Manager	-1,{
 				close3;
 
 			case 3: // Wolf Mounts
-				if (baselook != .@BASELOOK_HUNTER[0] && baselook != .@BASELOOK_HUNTER[1]){
+				if (inarray(.@BASELOOK_HUNTER, baselook) == -1){
 					callfunc("check_job_costume", .@NPC_NAME$, .@BASELOOK_HUNTER$[0], .@BASELOOK_HUNTER$[1], .@WOLF_COLORTXT$);
 				}
 
