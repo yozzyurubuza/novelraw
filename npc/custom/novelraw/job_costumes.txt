@@ -39,6 +39,7 @@ izlude,88,128,6	script	Celestia	-1,{
 		mes "99/70 - ^ff0000Transcendent^000000 / ^002affNinja^000000 / ^d07000Gunslinger^000000";
 		mes "99/50 - ^05c400Soul Linker^000000 / ^ef7000Star Gladiator / Taekwon^000000";
 		mes "99/99 - ^adaa01Super Novice^000000";
+		opentips(1);
 		next;
 		switch(select("Okay, proceed:I'll be right back")){
 			case 1:
@@ -175,30 +176,30 @@ function	script	prepare_jobcostume_choices	{
 	// Actions will now be based on .@jobcostume_cases rather than the index of selection from the menu.
 	set .@jobcostume_menu$, implode(.@jobcostume_menu_arr$, ":");
     switch (.@jobcostume_cases[select(.@jobcostume_menu$)]) {
-        case 1: //Proceed, will use default values
+		case 1: //Proceed, will use default values
 			set .@reset_costume, 1;
-            break;
-        case 2:
-            set .@job_id, .@SECOND_BASE;
-            break;
-        case 3:
-            set .@job_id, .@THIRD_JOBS;
-            break;
-        case 4:
-            set .@job_id, .@THIRD_JOBS; set .@bodystyle, 1;
-            break;
-        case 5:
-            set .@job_id, .@SECOND_BASE; set .@bodystyle, 1;
-            break;
-        case 6:
-            set .@job_id, .@FOURTH_JOBS;
-            break;
+			break;
+		case 2:
+			set .@job_id, .@SECOND_BASE;
+			break;
+		case 3:
+			set .@job_id, .@THIRD_JOBS;
+			break;
+		case 4:
+			set .@job_id, .@THIRD_JOBS; set .@bodystyle, 1;
+			break;
+		case 5:
+			set .@job_id, .@SECOND_BASE; set .@bodystyle, 1;
+			break;
+		case 6:
+			set .@job_id, .@FOURTH_JOBS;
+			break;
 		case 7:
-            set .@job_id, .@SECOND_TRANS;
-            break;
-        case 8:
-            set .@job_id, .@NOVICE_JOB;
-            break;
+			set .@job_id, .@SECOND_TRANS;
+			break;
+		case 8:
+			set .@job_id, .@NOVICE_JOB;
+			break;
     }
 
 	//return can't pass a whole array, so combine it into 1 string
