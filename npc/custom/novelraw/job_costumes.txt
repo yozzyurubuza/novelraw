@@ -200,7 +200,7 @@ function	script	set_jobcostume_flags	{
 	set .@selected_job_id, getarg(0); set .@bodystyle, getarg(1);
 	setarray .@affected_jobs[0], roclass(EAJ_MECHANIC_T), roclass(EAJ_MEISTER), 
 								 roclass(EAJ_RUNE_KNIGHT_T), roclass(EAJ_DRAGON_KNIGHT),
-								 roclass(EAJ_NOVICE);
+								 roclass(EAJ_KNIGHT), roclass(EAJ_NOVICE);
 	setarray .@mado_compatible[0], roclass(EAJ_MECHANIC_T), roclass(EAJ_MEISTER);
 	setarray .@dragon_compatible[0], roclass(EAJ_RUNE_KNIGHT_T), roclass(EAJ_DRAGON_KNIGHT);
 
