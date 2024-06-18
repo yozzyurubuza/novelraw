@@ -198,8 +198,13 @@ function	script	prepare_jobcostume_choices	{
 //Set certain job conditions, usually for obtaining mounts for RK and Mechanic or retaining Novice job costume
 function	script	set_jobcostume_flags	{
 	set .@selected_job_id, getarg(0); set .@bodystyle, getarg(1);
+	setarray .@affected_jobs[0], roclass(EAJ_MECHANIC_T), roclass(EAJ_MEISTER), 
+								 roclass(EAJ_RUNE_KNIGHT_T), roclass(EAJ_DRAGON_KNIGHT),
+								 roclass(EAJ_NOVICE);
 	setarray .@mado_compatible[0], roclass(EAJ_MECHANIC_T), roclass(EAJ_MEISTER);
 	setarray .@dragon_compatible[0], roclass(EAJ_RUNE_KNIGHT_T), roclass(EAJ_DRAGON_KNIGHT);
+
+	if(!countinarray(.@affected_jobs, .@selected_job_id)) return;
 
 	if(countinarray(.@mado_compatible, .@selected_job_id)) set mado_compatible, 1; 
 	else if(countinarray(.@dragon_compatible, .@selected_job_id) && .@bodystyle != 1) set rk_version, 1;
