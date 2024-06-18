@@ -73,20 +73,20 @@ function	script	exit_speech_celestia	{
 
 	mes .@npc_name$;
 	switch (.@exit_scenario) {
-        case 0: // Level req failed
-            mes "Ah, it seems that you haven't reached the required level yet~";
-            mes "Stop by again once ready. ^_^";
-            break;
-        case 1: // Come back again later
-            mes "May the stars guide your path, dear adventurer.";
-            mes "I look forward to see you again soon. ^_^";
-            break;
-        case 2: // Change costume success
-            mes "Here you go!";
-            mes "Remember, it's not just the clothes, but also your heart that makes you great.";
-            mes "Have fun and have a nice day~";
-            break;
-    }
+		case 0: // Level req failed
+			mes "Ah, it seems that you haven't reached the required level yet~";
+			mes "Stop by again once ready. ^_^";
+			break;
+		case 1: // Come back again later
+			mes "May the stars guide your path, dear adventurer.";
+			mes "I look forward to see you again soon. ^_^";
+			break;
+		case 2: // Change costume success
+			mes "Here you go!";
+			mes "Remember, it's not just the clothes, but also your heart that makes you great.";
+			mes "Have fun and have a nice day~";
+			break;
+	}
 	close3;
 }
 
