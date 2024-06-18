@@ -222,7 +222,6 @@ function	script	set_jobcostume_flags	{
 }
 
 function	script	change_jobcostume	{
-	//Initialize variables passed to lessen confusion (getarg(0) is difficult to understand).
 	set .@job_id, getarg(0); set .@costume_id, getarg(1); set .@bodystyle, getarg(2);
 
 	if (.@bodystyle) setlook LOOK_BODY2, .@bodystyle;
