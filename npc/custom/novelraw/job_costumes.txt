@@ -39,15 +39,13 @@ izlude,88,128,6	script	Celestia	-1,{
 		mes "99/70 - ^ff0000Transcendent^000000 / ^002affNinja^000000 / ^d07000Gunslinger^000000";
 		mes "99/50 - ^05c400Soul Linker^000000 / ^ef7000Star Gladiator / Taekwon^000000";
 		mes "99/99 - ^adaa01Super Novice^000000";
-		opentips(1);
 		next;
 		switch(select("Okay, proceed:I'll be right back")){
 			case 1:
-				set .@level_met, callfunc("check_lvl_req"); //Check level
-				if (!.@level_met) callfunc("exit_speech_celestia", .npcName$, .@exit_scenario);
+				if (!callfunc("check_lvl_req")) callfunc("exit_speech_celestia", .npcName$, 0);
 				break;
 			case 2:
-				callfunc("exit_speech_celestia", .npcName$, .@exit_scenario);
+				callfunc("exit_speech_celestia", .npcName$, 1);
 				break;
 		}
 		mes .npcName$;
@@ -67,7 +65,7 @@ izlude,88,128,6	script	Celestia	-1,{
 		callfunc("set_jobcostume_flags", .@jobcostume_details[0], .@jobcostume_details[3]); //char variables for mount
 
 		//End
-		callfunc("exit_speech_celestia", .npcName$, .@exit_scenario);
+		callfunc("exit_speech_celestia", .npcName$, 2);
 }
 
 function	script	exit_speech_celestia	{
@@ -101,7 +99,6 @@ function	script	check_lvl_req	{
 	else if(countinarray(.@GROUP_99_50, .@CURRENT_JOB) && JobLevel < 50) return 0;
 	else if(!countinarray(.@GROUP_99_50, .@CURRENT_JOB) && JobLevel < 70) return 0; //All other remaining jobs
 
-	dispbottom "Check Level Req: Passed";
 	return 1; //return true if it meets the level requirements
 }
 
@@ -128,9 +125,9 @@ function	script	prepare_jobcostume_choices	{
 	setarray .@CLASSES_WITH_V3[0], roclass(EAJ_WIZARD), roclass(EAJ_PRIEST);
 	setarray .@EXPANDED_CLASSES[0], roclass(EAJ_NINJA), roclass(EAJ_GUNSLINGER), roclass(EAJ_SOUL_LINKER), roclass(EAJ_STAR_GLADIATOR);
 
-	// Define all the list of possible choices in an array (1-9)
+	// Define all the list of possible choices in an array (0-8) (0-5)
 	// Start with [1] to align with switch-case numbering
-    setarray .@JOB_CHOICES$[1], "^0317fe[ Original ]^000000 - " + jobname(.@ORIGINAL_JOB),
+    setarray .@JOB_CHOICES$[0], "^0317fe[ Original ]^000000 - " + jobname(.@ORIGINAL_JOB),
 								jobname(.@SECOND_BASE),
 								jobname(.@THIRD_JOBS),
 								jobname(.@THIRD_JOBS) + " Alternate (jRO)",
@@ -139,68 +136,59 @@ function	script	prepare_jobcostume_choices	{
 								jobname(.@THIRD_JOBS) + " Legacy",
 								jobname(.@SECOND_TRANS),
 								jobname(.@NOVICE_JOB);
+	setarray .@JOB_CHOICES_ID[0], .@ORIGINAL_JOB, .@SECOND_BASE, .@THIRD_JOBS, .@FOURTH_JOBS, .@SECOND_TRANS,.@NOVICE_JOB;
 	
 	//Set defaults
 	set .@job_id, .@ORIGINAL_JOB; set .@reset_costume, 0; set .@bodystyle, 0;
 
 	if (countinarray(.@CLASSES_WITH_V3, .@SECOND_BASE)){
-		setarray .@show_job_choices[1], 1, 2, 3, 4, 5, 6;
-		copyarray(.@jobcostume_cases[1], .@show_job_choices[1], getarraysize(.@show_job_choices));
+		setarray .@show_job_choices[0],		0, 1, 2, 3, 4, 5;
+		setarray .@jobcostume_actions[0],	0, 1, 2, 2, 1, 3;
 
 	} else if (countinarray(.@EXPANDED_CLASSES, .@SECOND_BASE)){
-		setarray .@show_job_choices[1], 1, 3, 6;
-		copyarray(.@jobcostume_cases[1], .@show_job_choices[1], getarraysize(.@show_job_choices));
+		setarray .@show_job_choices[0], 	0, 2, 5;
+		setarray .@jobcostume_actions[0],	0, 2, 3;
 
 	} else if (.@SECOND_BASE == roclass(EAJ_TAEKWON)){
-		setarray .@show_job_choices[1], 1, 8, 3, 6;
-		setarray .@jobcostume_cases[1], 1, 7, 3, 6;
+		setarray .@show_job_choices[0], 	0, 7, 2, 5;
+		setarray .@jobcostume_actions[0],	0, 4, 2, 3;
 
 	} else if (.@SECOND_BASE == roclass(EAJ_SUPER_NOVICE)){
-		setarray .@show_job_choices[1], 1, 9, 6;
-		setarray .@jobcostume_cases[1], 1, 8, 6;
+		setarray .@show_job_choices[0], 	0, 8, 5;
+		setarray .@jobcostume_actions[0],	0, 5, 3;
 
 	} else if (.@SECOND_BASE == roclass(EAJ_KNIGHT)){
-		setarray .@show_job_choices[1], 1, 2, 3, 7, 4, 6;
-		setarray .@jobcostume_cases[1], 1, 2, 3, 4, 5, 6;
+		setarray .@show_job_choices[0], 	0, 1, 2, 6, 3, 5;
+		setarray .@jobcostume_actions[0],	0, 1, 2, 2, 1, 3;
 		
 	} else { // Regular Trans Jobs
-		setarray .@show_job_choices[1], 1, 2, 3, 4, 6;
-		copyarray(.@jobcostume_cases[1], .@show_job_choices[1], getarraysize(.@show_job_choices));
+		setarray .@show_job_choices[0], 	0, 1, 2, 3, 5;
+		setarray .@jobcostume_actions[0],	0, 1, 2, 2, 3;
 	}
 
-	// Generate the menu options dynamically
+	// Generate the menu options and actions dynamically
     for (.@i = 0; .@i < getarraysize(.@show_job_choices); .@i++)
-		setarray .@jobcostume_menu_arr$[.@i], .@JOB_CHOICES$[.@show_job_choices[.@i+1]];
+		setarray .@jobcostume_menu_options$[.@i], .@JOB_CHOICES$[.@show_job_choices[.@i]];
 
-	// Prepare switch-case statement
-	// Actions will now be based on .@jobcostume_cases rather than the index of selection from the menu.
-	set .@jobcostume_menu$, implode(.@jobcostume_menu_arr$, ":");
-    switch (.@jobcostume_cases[select(.@jobcostume_menu$)]) {
-		case 1: //Proceed, will use default values
+	for (.@i = 0; .@i < getarraysize(.@jobcostume_actions); .@i++)
+		setarray .@jobcostume_menu_actions[.@i], .@JOB_CHOICES_ID[.@jobcostume_actions[.@i]];
+
+	// Prepare assignment of jobcostume_details
+	// Actions will be based on .@jobcostume_menu_actions rather than the index from select().
+	set .@jobcostume_menu$, implode(.@jobcostume_menu_options$, ":");
+	set .@job_choice, select(.@jobcostume_menu$)-1;
+
+	switch (.@show_job_choices[.@job_choice]) {
+		case 0: //Proceed, will use default values
 			set .@reset_costume, 1;
 			break;
-		case 2:
-			set .@job_id, .@SECOND_BASE;
-			break;
 		case 3:
-			set .@job_id, .@THIRD_JOBS;
-			break;
 		case 4:
-			set .@job_id, .@THIRD_JOBS; set .@bodystyle, 1;
-			break;
-		case 5:
-			set .@job_id, .@SECOND_BASE; set .@bodystyle, 1;
-			break;
 		case 6:
-			set .@job_id, .@FOURTH_JOBS;
-			break;
-		case 7:
-			set .@job_id, .@SECOND_TRANS;
-			break;
-		case 8:
-			set .@job_id, .@NOVICE_JOB;
+			set .@bodystyle, 1;
 			break;
     }
+	set .@job_id, .@jobcostume_menu_actions[.@job_choice];
 
 	//return can't pass a whole array, so combine it into 1 string
 	setarray .@jobcostume_details$[0], .@job_id, .@reset_costume, .@SECOND_BASE, .@bodystyle;
