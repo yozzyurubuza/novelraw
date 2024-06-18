@@ -224,8 +224,8 @@ function	script	set_jobcostume_flags	{
 function	script	change_jobcostume	{
 	set .@job_id, getarg(0); set .@costume_id, getarg(1); set .@bodystyle, getarg(2);
 
-	if (.@bodystyle) setlook LOOK_BODY2, .@bodystyle;
-	set .@costume_id, (.@costume_id ? 0 : .@job_id); //Reset costume if costume id has value
+	if (.@bodystyle) setlook LOOK_BODY2, .@bodystyle; //For alternate (jRO) and v3
+	set .@costume_id, (.@costume_id ? 0 : .@job_id); //Reset costume if costume_id has value
 	set baselook, .@costume_id; changebase .@job_id; //Save costume ID to DB, then transform
 	return;
 }
