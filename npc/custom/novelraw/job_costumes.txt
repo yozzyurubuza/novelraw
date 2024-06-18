@@ -212,7 +212,7 @@ function	script	set_jobcostume_flags	{
 	if(!countinarray(.@affected_jobs, .@selected_job_id)) return;
 
 	if(countinarray(.@mado_compatible, .@selected_job_id)) set mado_compatible, 1; 
-	else if(countinarray(.@dragon_compatible, .@selected_job_id) && .@bodystyle != 1) set rk_version, 1;
+	else if(countinarray(.@dragon_compatible, .@selected_job_id) && !.@bodystyle) set rk_version, 1;
 	else if(countinarray(.@dragon_compatible, .@selected_job_id)) set rk_version, 2;
 	else if(.@selected_job_id == roclass(EAJ_KNIGHT) && .@bodystyle == 1) set rk_version, 3;
 
