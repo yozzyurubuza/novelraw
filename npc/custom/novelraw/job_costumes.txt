@@ -127,7 +127,7 @@ function	script	prepare_jobcostume_choices	{
 
 	// Define all the list of possible choices in an array (0-8) (0-5)
 	// Start with [1] to align with switch-case numbering
-    setarray .@JOB_CHOICES$[0], "^0317fe[ Original ]^000000 - " + jobname(.@ORIGINAL_JOB),
+	setarray .@JOB_CHOICES$[0], "^0317fe[ Original ]^000000 - " + jobname(.@ORIGINAL_JOB),
 								jobname(.@SECOND_BASE),
 								jobname(.@THIRD_JOBS),
 								jobname(.@THIRD_JOBS) + " Alternate (jRO)",
@@ -167,7 +167,7 @@ function	script	prepare_jobcostume_choices	{
 	}
 
 	// Generate the menu options and actions dynamically
-    for (.@i = 0; .@i < getarraysize(.@show_job_choices); .@i++)
+	for (.@i = 0; .@i < getarraysize(.@show_job_choices); .@i++)
 		setarray .@jobcostume_menu_options$[.@i], .@JOB_CHOICES$[.@show_job_choices[.@i]];
 
 	for (.@i = 0; .@i < getarraysize(.@jobcostume_actions); .@i++)

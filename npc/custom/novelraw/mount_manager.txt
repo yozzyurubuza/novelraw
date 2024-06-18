@@ -127,7 +127,7 @@ izlude,88,148,5	script	Mount Manager	-1,{
 
 				if (ismounting()) {
 					mes .@NPC_NAME$;
-					mes "Looks like you¡¯ve got your "+.@MADOGEAR_COLORTXT$+" all set up!";
+					mes "Looks like you've got your "+.@MADOGEAR_COLORTXT$+" all set up!";
 					next;
 					callfunc("exit_speech_litzy", .@NPC_NAME$, .@BLACKSMITH_ID, .@MADOGEAR_COLORTXT$);
 				} else {
