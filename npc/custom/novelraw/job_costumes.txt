@@ -60,7 +60,7 @@ izlude,88,128,6	script	Celestia	-1,{
 			set .@jobcostume_details[.@i], atoi(.@jobcostume_details_str$[.@i]);
 
 		//Prepare character for Costume Change
-		//Job Costume Details: 0 = selected job id / 1 = change mode / 2 = second base job id / 3 = bodystyle
+		//Job Costume Details: 0 = selected job id / 1 = reset costume / 2 = second base job id / 3 = bodystyle
 		callfunc("reset_char_state", .@jobcostume_details[2]); // Remove mounts, skills, char variables
 		callfunc("change_jobcostume", .@jobcostume_details[0], .@jobcostume_details[1], .@jobcostume_details[3]);
 		callfunc("set_jobcostume_flags", .@jobcostume_details[0], .@jobcostume_details[3]); //char variables for mount
