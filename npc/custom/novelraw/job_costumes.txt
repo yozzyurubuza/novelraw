@@ -26,6 +26,7 @@ izlude,88,128,6	script	Celestia	-1,{
 		end;
 
 	OnClick:
+		set .@exit_scenario, 0;
 		cutin "celestia", 2;
 		mes .npcName$;
 		mes "Hello Adventurer!";
@@ -42,10 +43,10 @@ izlude,88,128,6	script	Celestia	-1,{
 		switch(select("Okay, proceed:I'll be right back")){
 			case 1:
 				set .@level_met, callfunc("check_lvl_req"); //Check level
-				if (!.@level_met) callfunc("exit_speech_celestia", .npcName$, 1);
+				if (!.@level_met) callfunc("exit_speech_celestia", .npcName$, .@exit_scenario);
 				break;
 			case 2:
-				callfunc("exit_speech_celestia", .npcName$, 2);
+				callfunc("exit_speech_celestia", .npcName$, .@exit_scenario);
 				break;
 		}
 		mes .npcName$;
@@ -53,37 +54,40 @@ izlude,88,128,6	script	Celestia	-1,{
 		next;
 
 		//Prepare costume choices dialogue
-		//Expand string into array using explode, then convert string array to int array
+		//Split values to array using explode, then convert the values to int.
 		explode(.@jobcostume_details_str$, callfunc("prepare_jobcostume_choices"), ",");
-		for (.@i = 0; .@i < getarraysize(.@jobcostume_details_str$); .@i++){ set .@jobcostume_details[.@i], atoi(.@jobcostume_details_str$[.@i]); }
+		for (.@i = 0; .@i < getarraysize(.@jobcostume_details_str$); .@i++) 
+			set .@jobcostume_details[.@i], atoi(.@jobcostume_details_str$[.@i]);
 
 		//Prepare character for Costume Change
-		//Remove mounts, some skills, bodystyle, clothes color - SECOND_BASE job ID
-		callfunc("reset_char_state", .@jobcostume_details[2]);
-		//Transform Job Costume - Selected Job ID / Change Mode
-		set .@get_bodystyle, callfunc("change_jobcostume", .@jobcostume_details[0], .@jobcostume_details[1]);
-		//Set variables for mount conditions - Selected Job ID / bodystyle
-		callfunc("set_jobcostume_flags", .@jobcostume_details[0], .@get_bodystyle);
+		//Job Costume Details: 0 = selected job id / 1 = change mode / 2 = second base job id / 3 = bodystyle
+		callfunc("reset_char_state", .@jobcostume_details[2]); // Remove mounts, skills, char variables
+		callfunc("change_jobcostume", .@jobcostume_details[0], .@jobcostume_details[1], .@jobcostume_details[3]);
+		callfunc("set_jobcostume_flags", .@jobcostume_details[0], .@jobcostume_details[3]); //char variables for mount
 
-		//Exit speech success
-		callfunc("exit_speech_celestia", .npcName$, 3);
+		//End
+		callfunc("exit_speech_celestia", .npcName$, .@exit_scenario);
 }
 
 function	script	exit_speech_celestia	{
-	mes getarg(0); //NPC name
-	set .@exit_scenario, getarg(1); // Scenario
+	set .@exit_scenario, getarg(1);
 
-	if(.@exit_scenario == 1){ //Level req failed
-		mes "Ah, it seems that you haven't reached the required level yet~";
-		mes "Stop by again once ready. ^_^";
-	} else if(.@exit_scenario == 2){ //Come back again later
-		mes "May the stars guide your path, dear adventurer.";
-		mes "I look forward to see you again soon. ^_^";
-	} else if(.@exit_scenario == 3){ //Change costume success
-		mes "Here you go!";
-		mes "Remember, it's not just the clothes, but also your heart that makes you great.";
-		mes "Have fun and have a nice day~";
-	}
+	mes getarg(0); //NPC name
+	switch (.@exit_scenario) {
+        case 0: // Level req failed
+            mes "Ah, it seems that you haven't reached the required level yet~";
+            mes "Stop by again once ready. ^_^";
+            break;
+        case 1: // Come back again later
+            mes "May the stars guide your path, dear adventurer.";
+            mes "I look forward to see you again soon. ^_^";
+            break;
+        case 2: // Change costume success
+            mes "Here you go!";
+            mes "Remember, it's not just the clothes, but also your heart that makes you great.";
+            mes "Have fun and have a nice day~";
+            break;
+    }
 	close3;
 }
 
@@ -93,13 +97,14 @@ function	script	check_lvl_req	{
 
 	if(BaseLevel < 99) return 0;
 	if(.@CURRENT_JOB == roclass(EAJ_SUPER_NOVICE) && JobLevel < 99) return 0; 
-	else if(inarray(.@GROUP_99_50, .@CURRENT_JOB) > -1 && JobLevel < 50) return 0;
-	else if(inarray(.@GROUP_99_50, .@CURRENT_JOB) == -1 && JobLevel < 70) return 0; //All other remaining jobs
+	else if(countinarray(.@GROUP_99_50, .@CURRENT_JOB) && JobLevel < 50) return 0;
+	else if(!countinarray(.@GROUP_99_50, .@CURRENT_JOB) && JobLevel < 70) return 0; //All other remaining jobs
 
 	dispbottom "Check Level Req: Passed";
 	return 1; //return true if it meets the level requirements
 }
 
+//This function will get the details needed for costume change
 function	script	prepare_jobcostume_choices	{
 	//Initialize Job Class values based from ea_job_system.txt
 	set @eac, eaclass();
@@ -116,166 +121,101 @@ function	script	prepare_jobcostume_choices	{
 	set .@SECOND_TRANS, roclass(@eac&EAJ_UPPERMASK|@SPECIAL_EAJ); //All Trans + 3rd jobs of Expanded jobs
 	set .@THIRD_JOBS, roclass(@eac&EAJ_UPPERMASK|@BASE_EXPAND_3RD_EAJ); //All 3rd jobs + Expanded jobs
 	set .@FOURTH_JOBS, roclass(@eac&EAJ_UPPERMASK|@BASE_EXPAND_4TH_EAJ|EAJL_THIRD|EAJL_FOURTH); //All 4th jobs + Expanded jobs
-
-	set .@NOVICE_JOB, roclass(EAJ_NOVICE); // For base novice costume
+	set .@NOVICE_JOB, roclass(EAJ_NOVICE); // For base Novice costume
 
 	//Array of Job classes for conditional statements
 	setarray .@CLASSES_WITH_V3[0], roclass(EAJ_WIZARD), roclass(EAJ_PRIEST);
 	setarray .@EXPANDED_CLASSES[0], roclass(EAJ_NINJA), roclass(EAJ_GUNSLINGER), roclass(EAJ_SOUL_LINKER), roclass(EAJ_STAR_GLADIATOR);
 
-	set .@cos_change_mode, 0;
-	dispbottom "My Job is " + jobname(.@SECOND_BASE) + " (" + "ID: " + .@SECOND_BASE + ")"; 
+	// Define all the list of possible choices in an array (1-9)
+	// Start with [1] to align with switch-case numbering
+    setarray .@JOB_CHOICES$[1], "^0317fe[ Original ]^000000 - " + jobname(.@ORIGINAL_JOB),
+								jobname(.@SECOND_BASE),
+								jobname(.@THIRD_JOBS),
+								jobname(.@THIRD_JOBS) + " Alternate (jRO)",
+								jobname(.@THIRD_JOBS) + " v3",
+								jobname(.@FOURTH_JOBS),
+								jobname(.@THIRD_JOBS) + " Legacy",
+								jobname(.@SECOND_TRANS),
+								jobname(.@NOVICE_JOB);
+	
+	//Set defaults
+	set .@job_id, .@ORIGINAL_JOB; set .@reset_costume, 0; set .@bodystyle, 0;
 
-	if (inarray(.@CLASSES_WITH_V3, .@SECOND_BASE) > -1){
-		switch(select(
-			"^0317fe[ Original ]^000000 - " + jobname(.@ORIGINAL_JOB) + ":" +
-			jobname(.@SECOND_BASE) + ":" +
-			jobname(.@THIRD_JOBS) + ":" +
-			jobname(.@THIRD_JOBS) + " Alternate (jRO)" + ":" +
-			jobname(.@THIRD_JOBS) + " v3" +
-			jobname(.@FOURTH_JOBS) + ":"
-			)){
-				case 1: 
-					set .@job_id, .@ORIGINAL_JOB;
-					break;
-				case 2:
-					set .@cos_change_mode, 1; set .@job_id, .@SECOND_BASE;
-					break;
-				case 3: 
-					set .@cos_change_mode, 2; set .@job_id, .@THIRD_JOBS;
-					break;
-				case 4: 
-					set .@cos_change_mode, 3; set .@job_id, .@THIRD_JOBS;
-					break;
-				case 5: //Warlock v3, Archbishop v3
-					set .@cos_change_mode, 4; set .@job_id, .@SECOND_BASE;
-					break;
-				case 6: 
-					set .@cos_change_mode, 2; set .@job_id, .@FOURTH_JOBS;
-					break;
-			} 
-	} else if (inarray(.@EXPANDED_CLASSES, .@SECOND_BASE) > -1){
-		switch(select(
-			"^0317fe[ Original ]^000000 - " + jobname(.@ORIGINAL_JOB) + ":" +
-			jobname(.@THIRD_JOBS) + ":" +
-			jobname(.@FOURTH_JOBS) + ":"
-			)){
-				case 1: 
-					set .@job_id, .@ORIGINAL_JOB;
-					break;
-				case 2: 
-					set .@cos_change_mode, 2; set .@job_id, .@THIRD_JOBS;
-					break;
-				case 3: 
-					set .@cos_change_mode, 2; set .@job_id, .@FOURTH_JOBS;
-					break;
-			}
+	if (countinarray(.@CLASSES_WITH_V3, .@SECOND_BASE)){
+		setarray .@show_job_choices[1], 1, 2, 3, 4, 5, 6;
+		copyarray(.@jobcostume_cases[1], .@show_job_choices[1], getarraysize(.@show_job_choices));
+
+	} else if (countinarray(.@EXPANDED_CLASSES, .@SECOND_BASE)){
+		setarray .@show_job_choices[1], 1, 3, 6;
+		copyarray(.@jobcostume_cases[1], .@show_job_choices[1], getarraysize(.@show_job_choices));
+
 	} else if (.@SECOND_BASE == roclass(EAJ_TAEKWON)){
-		switch(select(
-			"^0317fe[ Original ]^000000 - " + jobname(.@ORIGINAL_JOB) + ":" +
-			jobname(.@SECOND_TRANS) + ":" +
-			jobname(.@THIRD_JOBS) + ":" +
-			jobname(.@FOURTH_JOBS) + ":"
-			)){
-				case 1: 
-					set .@job_id, .@ORIGINAL_JOB;
-					break;
-				case 2: 
-					set .@cos_change_mode, 1; set .@job_id, .@SECOND_TRANS;
-					break;
-				case 3: 
-					set .@cos_change_mode, 2; set .@job_id, .@THIRD_JOBS;
-					break;
-				case 4: 
-					set .@cos_change_mode, 2; set .@job_id, .@FOURTH_JOBS;
-					break;
-			}
+		setarray .@show_job_choices[1], 1, 8, 3, 6;
+		setarray .@jobcostume_cases[1], 1, 7, 3, 6;
+
 	} else if (.@SECOND_BASE == roclass(EAJ_SUPER_NOVICE)){
-		switch(select(
-			"^0317fe[ Original ]^000000 - " + jobname(.@ORIGINAL_JOB) + ":" +
-			jobname(.@NOVICE_JOB) + ":" +
-			jobname(.@FOURTH_JOBS) + ":"
-			)){
-				case 1: 
-					set .@job_id, .@ORIGINAL_JOB;
-					break;
-				case 2:
-					set .@cos_change_mode, 2; set .@job_id, .@NOVICE_JOB;
-					break;
-				case 3: 
-					set .@cos_change_mode, 2; set .@job_id, .@FOURTH_JOBS;
-					break;
-			}
+		setarray .@show_job_choices[1], 1, 9, 6;
+		setarray .@jobcostume_cases[1], 1, 8, 6;
+
 	} else if (.@SECOND_BASE == roclass(EAJ_KNIGHT)){
-		switch(select(
-			"^0317fe[ Original ]^000000 - " + jobname(.@ORIGINAL_JOB) + ":" +
-			jobname(.@SECOND_BASE) + ":" +
-			jobname(.@THIRD_JOBS) + ":" +
-			jobname(.@THIRD_JOBS) + " Legacy" + ":" +
-			jobname(.@THIRD_JOBS) + " Alternate (jRO)" +
-			jobname(.@FOURTH_JOBS) + ":"
-			)){
-				case 1: 
-					set .@job_id, .@ORIGINAL_JOB;
-					break;
-				case 2:
-					set .@cos_change_mode, 1; set .@job_id, .@SECOND_BASE;
-					break;
-				case 3: 
-					set .@cos_change_mode, 2; set .@job_id, .@THIRD_JOBS;
-					break;
-				case 4: 
-					set .@cos_change_mode, 3; set .@job_id, .@THIRD_JOBS;
-					break;
-				case 5:
-					set .@cos_change_mode, 4; set .@job_id, .@SECOND_BASE;
-					break;
-				case 6: 
-					set .@cos_change_mode, 2; set .@job_id, .@FOURTH_JOBS;
-					break;
-			} 
+		setarray .@show_job_choices[1], 1, 2, 3, 7, 4, 6;
+		setarray .@jobcostume_cases[1], 1, 2, 3, 4, 5, 6;
+		
 	} else { // Regular Trans Jobs
-		switch(select(
-			"^0317fe[ Original ]^000000 - " + jobname(.@ORIGINAL_JOB) + ":" +
-			jobname(.@SECOND_BASE) + ":" +
-			jobname(.@THIRD_JOBS) + ":" +
-			jobname(.@THIRD_JOBS) + " Alternate (jRO)" + ":" +
-			jobname(.@FOURTH_JOBS) + ":"
-			)){
-				case 1: 
-					set .@job_id, .@ORIGINAL_JOB;
-					break;
-				case 2:
-					set .@cos_change_mode, 1; set .@job_id, .@SECOND_BASE;
-					break;
-				case 3: 
-					set .@cos_change_mode, 2; set .@job_id, .@THIRD_JOBS;
-					break;
-				case 4: 
-					set .@cos_change_mode, 3; set .@job_id, .@THIRD_JOBS;
-					break;
-				case 5: 
-					set .@cos_change_mode, 2; set .@job_id, .@FOURTH_JOBS;
-					break;
-			} 
+		setarray .@show_job_choices[1], 1, 2, 3, 4, 6;
+		copyarray(.@jobcostume_cases[1], .@show_job_choices[1], getarraysize(.@show_job_choices));
 	}
 
+	// Generate the menu options dynamically
+    for (.@i = 0; .@i < getarraysize(.@show_job_choices); .@i++)
+		setarray .@jobcostume_menu_arr$[.@i], .@JOB_CHOICES$[.@show_job_choices[.@i+1]];
 
-	//return can't pass a whole array, so combine it into 1 string.
-	set .@jobcostume_details_str$, .@job_id + "," + .@cos_change_mode + "," + .@SECOND_BASE;
-	return .@jobcostume_details_str$;
+	// Prepare switch-case statement
+	// Actions will now be based on .@jobcostume_cases rather than the index of selection from the menu.
+	set .@jobcostume_menu$, implode(.@jobcostume_menu_arr$, ":");
+    switch (.@jobcostume_cases[select(.@jobcostume_menu$)]) {
+        case 1: //Proceed, will use default values
+			set .@reset_costume, 1;
+            break;
+        case 2:
+            set .@job_id, .@SECOND_BASE;
+            break;
+        case 3:
+            set .@job_id, .@THIRD_JOBS;
+            break;
+        case 4:
+            set .@job_id, .@THIRD_JOBS; set .@bodystyle, 1;
+            break;
+        case 5:
+            set .@job_id, .@SECOND_BASE; set .@bodystyle, 1;
+            break;
+        case 6:
+            set .@job_id, .@FOURTH_JOBS;
+            break;
+		case 7:
+            set .@job_id, .@SECOND_TRANS;
+            break;
+        case 8:
+            set .@job_id, .@NOVICE_JOB;
+            break;
+    }
+
+	//return can't pass a whole array, so combine it into 1 string
+	setarray .@jobcostume_details$[0], .@job_id, .@reset_costume, .@SECOND_BASE, .@bodystyle;
+	return implode(.@jobcostume_details$, ",");
 }
 
-//Set certain conditions for obtaining mounts for RK and Mechanic
+//Set certain job conditions, usually for obtaining mounts for RK and Mechanic or retaining Novice job costume
 function	script	set_jobcostume_flags	{
 	set .@selected_job_id, getarg(0); set .@bodystyle, getarg(1);
 	setarray .@mado_compatible[0], roclass(EAJ_MECHANIC_T), roclass(EAJ_MEISTER);
 	setarray .@dragon_compatible[0], roclass(EAJ_RUNE_KNIGHT_T), roclass(EAJ_DRAGON_KNIGHT);
 
-	if(inarray(.@mado_compatible, .@selected_job_id) > -1) set mado_compatible, 1; 
-	else if(inarray(.@dragon_compatible, .@selected_job_id) > -1 && .@bodystyle != 1) set rk_version, 1;
-	else if(inarray(.@dragon_compatible, .@selected_job_id) > -1) set rk_version, 2;
-	else if(roclass(EAJ_KNIGHT) && .@bodystyle == 1) set rk_version, 3;
+	if(countinarray(.@mado_compatible, .@selected_job_id)) set mado_compatible, 1; 
+	else if(countinarray(.@dragon_compatible, .@selected_job_id) && .@bodystyle != 1) set rk_version, 1;
+	else if(countinarray(.@dragon_compatible, .@selected_job_id)) set rk_version, 2;
+	else if(.@selected_job_id == roclass(EAJ_KNIGHT) && .@bodystyle == 1) set rk_version, 3;
 	else if(.@selected_job_id == roclass(EAJ_NOVICE)) set novice_costume, 1;
 
 	return;
@@ -283,45 +223,12 @@ function	script	set_jobcostume_flags	{
 
 function	script	change_jobcostume	{
 	//Initialize variables passed to lessen confusion (getarg(0) is difficult to understand).
-	set .@job_id, getarg(0); set .@cos_change_mode, getarg(1); set .@bodystyle, 0;
+	set .@job_id, getarg(0); set .@costume_id, getarg(1); set .@bodystyle, getarg(2);
 
-	switch(.@cos_change_mode){
-		case 0: //Original Mode - Remove baselook
-			changebase .@job_id;
-			set baselook, 0;
-			dispbottom "Original mode";
-			break;
-		
-		case 1: //2nd base job
-			changebase .@job_id;
-			set baselook, .@job_id;
-			dispbottom "2nd base mode";
-			break;
-
-		case 2: // Normal Mode - 3rd jobs & 4th jobs
-			changebase .@job_id;
-			set baselook, .@job_id;
-			dispbottom "Normal Mode";
-			break;
-		
-		case 3: // jRO Mode - 3rd job alternate
-			changebase .@job_id;
-			set .@bodystyle, 1;
-			setlook LOOK_BODY2, .@bodystyle;
-			set baselook, .@job_id;
-			dispbottom "jRO Mode";
-			break;
-
-		case 4: //Extra Mode - 3rd jobs extra sprite (uses 2nd base job bodystyle)
-			changebase .@job_id;
-			set .@bodystyle, 1;
-			setlook LOOK_BODY2, .@bodystyle;
-			set baselook, .@job_id;
-			dispbottom "Extra mode";
-			break;
-		
-	}
-	return .@bodystyle;
+	if (.@bodystyle) setlook LOOK_BODY2, .@bodystyle;
+	set .@costume_id, (.@costume_id ? 0 : .@job_id); //Reset costume if costume id has value
+	set baselook, .@costume_id; changebase .@job_id; //Save costume ID to DB, then transform
+	return;
 }
 
 //Remove mounts, some skills, bodystyle, and clothes color upon changing job costumes
@@ -329,7 +236,7 @@ function	script	reset_char_state	{
 	setlook LOOK_BODY2, 0; setlook LOOK_CLOTHES_COLOR, 0;
 	if(ismounting()) setmounting; //Remove Halter Lead from all class
 
-	switch(getarg(0)){ // SECONDBASE_JOB
+	switch(getarg(0)){ // SECOND_BASE Job
 		case 7: //Knight Job ID
 			if(checkriding()) setriding 0;
 			if(checkdragon()) setdragon 0;
@@ -351,6 +258,7 @@ function	script	reset_char_state	{
 			if(getskilllv("RA_WUGMASTERY")) skill "RA_WUGMASTERY", 0, SKILL_PERM_GRANT;
 			if(getskilllv("RA_WUGRIDER")) skill "RA_WUGRIDER", 0, SKILL_PERM_GRANT;
 			return;
+
 		case 23: //Super novice
 			set novice_costume, 0;
 			return;
