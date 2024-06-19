@@ -9,13 +9,15 @@ izlude,88,148,5	script	Mount Manager	-1,{
 		end;
 
 	OnClick:
-		// Define variables
+		// Initialize variables
 		set .@NPC_NAME$, "^a39f00[ Litzy ]^000000";
 		set .@DRAGON_COLORTXT$, "^388E3CDragon^000000"; set .@MADOGEAR_COLORTXT$, "^ff6800Madogear^000000"; set .@WOLF_COLORTXT$, "^0288D1Wolf^000000";
 		set .@KNIGHT_ID, roclass(EAJ_KNIGHT); set .@BLACKSMITH_ID, roclass(EAJ_BLACKSMITH); set .@HUNTER_ID, roclass(EAJ_HUNTER);
-		setarray .@BASELOOK_KNIGHT[0], 4060, 4252; setarray .@BASELOOK_KNIGHT$[0], "Rune Knight", "Dragon Knight";  
-		setarray .@BASELOOK_BLACKSMITH[0], 4064, 4253; setarray .@BASELOOK_BLACKSMITH$[0], "Mechanic", "Meister";  
-		setarray .@BASELOOK_HUNTER[0], 4062, 4257; setarray .@BASELOOK_HUNTER$[0], "Ranger", "Windhawk";  
+		setarray .@BASELOOK_KNIGHT[0], 4060, 4252; 		setarray .@BASELOOK_KNIGHT$[0], "Rune Knight", "Dragon Knight";  
+		setarray .@BASELOOK_BLACKSMITH[0], 4064, 4253; 	setarray .@BASELOOK_BLACKSMITH$[0], "Mechanic", "Meister";  
+		setarray .@BASELOOK_HUNTER[0], 4062, 4257; 		setarray .@BASELOOK_HUNTER$[0], "Ranger", "Windhawk";  
+		set .@baselook, baselook;
+
 		// Start of dialogue
 		cutin "litzy", 2;
 		mes .@NPC_NAME$;
@@ -34,13 +36,12 @@ izlude,88,148,5	script	Mount Manager	-1,{
 					close3;
 				}
 			
-			case 1: //Dragon Mounts
-				set .@dragon_color, 1;
-
-				if (!rk_version){ // 1 = new default / 2 = legacy / 3 = JP
+			case 1: //Dragon Mounts, rk_version 1 = Default, 2 = Legacy, 3 = Alternate (jRO)
+				if (!countinarray(.@BASELOOK_KNIGHT, .@baselook) && !rk_version) {// Knight, LK not found
 					callfunc("check_job_costume", .@NPC_NAME$, .@BASELOOK_KNIGHT$[0], .@BASELOOK_KNIGHT$[1], .@DRAGON_COLORTXT$);
 				}
 
+				set .@dragon_color, 1;
 				if (getskilllv("KN_CAVALIERMASTERY") != 5){
 					mes .@NPC_NAME$;
 					mes "I'm sorry, you need to have";
@@ -84,12 +85,12 @@ izlude,88,148,5	script	Mount Manager	-1,{
 
 					specialeffect2 1218, SELF;
 					soundeffect "dragon_h.wav", 0;
-					callfunc("exit_speech", .@NPC_NAME$, .@KNIGHT_ID);
+					callfunc("exit_speech_litzy", .@NPC_NAME$, .@KNIGHT_ID, .@DRAGON_COLORTXT$);
 
 				} else if (getskilllv("RK_DRAGONTRAINING")){ // Just remount
 					specialeffect2 1803, SELF;
 					soundeffect "dragon_h.wav", 0;
-					callfunc("exit_speech", .@NPC_NAME$, .@KNIGHT_ID);
+					callfunc("exit_speech_litzy", .@NPC_NAME$, .@KNIGHT_ID, .@DRAGON_COLORTXT$);
 				}
 
 				// For rk_version 3, use pecopeco only
@@ -102,8 +103,8 @@ izlude,88,148,5	script	Mount Manager	-1,{
 				close3;
 
 			case 2: //Madogear Mounts
-				if (baselook != .@BASELOOK_BLACKSMITH[0] && baselook != .@BASELOOK_BLACKSMITH[1]){
-					callfunc("check_job_costume", .@NPC_NAME$, .@BASELOOK_BLACKSMITH$[0], .@BASELOOK_BLACKSMITH$[2], .@MADOGEAR_COLORTXT$);
+				if (!countinarray(.@BASELOOK_BLACKSMITH, .@baselook)) {// BS, WS not found
+					callfunc("check_job_costume", .@NPC_NAME$, .@BASELOOK_BLACKSMITH$[0], .@BASELOOK_BLACKSMITH$[1], .@MADOGEAR_COLORTXT$);
 				}
 				
 				if (!getskilllv("NC_MADOLICENCE")) {
@@ -126,15 +127,15 @@ izlude,88,148,5	script	Mount Manager	-1,{
 
 				if (ismounting()) {
 					mes .@NPC_NAME$;
-					mes "Looks like you¡¯ve got your "+.@MADOGEAR_COLORTXT$+" all set up!";
+					mes "Looks like you've got your "+.@MADOGEAR_COLORTXT$+" all set up!";
 					next;
-					callfunc("exit_speech", .@NPC_NAME$, .@BLACKSMITH_ID, .@MADOGEAR_COLORTXT$);
+					callfunc("exit_speech_litzy", .@NPC_NAME$, .@BLACKSMITH_ID, .@MADOGEAR_COLORTXT$);
 				} else {
 					setmounting();
 					specialeffect2 1835, SELF;
 					sc_start SC_SPEEDUP0, 180000, 25;
 					soundeffect "CD_FRAMEN.wav", 0;
-					callfunc("exit_speech", .@NPC_NAME$, .@BLACKSMITH_ID, .@MADOGEAR_COLORTXT$);
+					callfunc("exit_speech_litzy", .@NPC_NAME$, .@BLACKSMITH_ID, .@MADOGEAR_COLORTXT$);
 				}
 
 				// Give special mount item
@@ -149,7 +150,7 @@ izlude,88,148,5	script	Mount Manager	-1,{
 				close3;
 
 			case 3: // Wolf Mounts
-				if (baselook != .@BASELOOK_HUNTER[0] && baselook != .@BASELOOK_HUNTER[1]){
+				if (!countinarray(.@BASELOOK_HUNTER, .@baselook)){
 					callfunc("check_job_costume", .@NPC_NAME$, .@BASELOOK_HUNTER$[0], .@BASELOOK_HUNTER$[1], .@WOLF_COLORTXT$);
 				}
 
@@ -158,7 +159,7 @@ izlude,88,148,5	script	Mount Manager	-1,{
 					mes "I can tell that you're enjoying your time";
 					mes "with your "+ .@WOLF_COLORTXT$ +".";
 					next;
-					callfunc("exit_speech", .@NPC_NAME$, .@HUNTER_ID, .@WOLF_COLORTXT$);
+					callfunc("exit_speech_litzy", .@NPC_NAME$, .@HUNTER_ID, .@WOLF_COLORTXT$);
 				}
 
 				if (!getskilllv("RA_WUGMASTERY")) {
@@ -183,7 +184,7 @@ izlude,88,148,5	script	Mount Manager	-1,{
 					setoption Option_Wug;
 					specialeffect2 2338, SELF;
 					soundeffect "wolf_die.wav", 0;
-					callfunc("exit_speech", .@NPC_NAME$, .@HUNTER_ID, .@WOLF_COLORTXT$);
+					callfunc("exit_speech_litzy", .@NPC_NAME$, .@HUNTER_ID, .@WOLF_COLORTXT$);
 				} else if (getskilllv("RA_WUGMASTERY") && !checkoption(Option_Wugrider)) {
 					mes .@NPC_NAME$;
 					mes "Use the skill ^0063f8Warg Mastery^000000";
@@ -211,42 +212,45 @@ izlude,88,148,5	script	Mount Manager	-1,{
 }
 
 function	script	check_job_costume	{
+	set .@npc_name$, getarg(0); set .@job3_id$, getarg(1); set .@job4_id$, getarg(2); set .@mount_name$, getarg(3);
+
 	emotion ET_STARE_ABOUT;
-	mes getarg(0);
-	mes "You should be a ^F57C00"+ getarg(1) +"^000000 or";
-	mes "^F44336"+ getarg(2) +"^000000 to get a "+ getarg(3) +".";
+	mes .@npc_name$;
+	mes "You should be a ^F57C00"+ .@job3_id$ +"^000000 or";
+	mes "^F44336"+ .@job4_id$ +"^000000 to get a "+ .@mount_name$ +".";
 	mes "To change Job Costumes, please find";
 	mes "<NAVI>Celestia<INFO>izlude,88,128,0,000,0</INFO></NAVI>";
 	close3;
 }
 
 function	script	handle_rk_legacy_mount	{
+	set .@npc_name$, getarg(0); set .@mount_name$, getarg(1); set .@basejob_id, getarg(2);
 	// Check if dragon is present
 	if (!checkdragon()){
 		emotion ET_BIGTHROB;
-		mes getarg(0);
+		mes .@npc_name$;
 		mes "Oh!, the version of your costume";
 		mes "allows you to choose a";
 		mes "^8F00FFMystically Colored Dragon^000000~";
 		next;
 	} else {
-		mes getarg(0);
-		mes "Do you want change your "+ getarg(1) +"?";
+		mes .@npc_name$;
+		mes "Do you want change your "+ .@mount_name$ +"?";
 		next;
 		switch(select("Yes:No")){
 			case 1:
 				setdragon 0;
 				break;
 			case 2:
-				callfunc("exit_speech", getarg(0), getarg(2));
+				callfunc("exit_speech_litzy", .@npc_name$, .@basejob_id, .@mount_name$);
 				close3;
 		}
 	}
 
 	// RK Legacy: Choose color of your dragon
-	mes getarg(0);
+	mes .@npc_name$;
 	mes "What color do you want for your";
-	mes getarg(1)+ "?";
+	mes .@mount_name$+ "?";
 	next;
 	switch(select("^388E3CGreen (Default)^000000:^4E342EBrown^000000:^455A64Gray^000000:^0288D1Blue^000000:^D32F2FRed^000000")){
 		case 1:
@@ -263,17 +267,19 @@ function	script	handle_rk_legacy_mount	{
 }
 
 // Exit speech does not end or close the NPC
-function	script	exit_speech	{
-	switch(getarg(1)){
-		mes getarg(0); //NPC name
+function	script	exit_speech_litzy	{
+	set .@npc_name$, getarg(0); set .@basejob_id, getarg(1); set .@mount_name$, getarg(2);
+
+	switch(.@basejob_id){
+		mes .@npc_name$;
 		case 7: //Knight Class
 			emotion ET_GOODBOY;
-			mes "Keep it nourished and happy, and it will illuminate your path, even in the darkest dungeons~ ^_^";
+			mes "Keep your "+ .@mount_name$ +" nourished and happy, and it will illuminate your path, even in the darkest dungeons~ ^_^";
 			break;
 			
 		case 10: //Blacksmith Class
 			emotion ET_SPARK;
-			mes "This "+getarg(2)+" is more ";
+			mes "This "+.@mount_name$+" is more ";
 			mes "than a machine;";
 			mes "it's your steadfast companion. ";
 			mes "Together, you can explore anything~ ^_^";
@@ -281,7 +287,7 @@ function	script	exit_speech	{
 
 		case 11: //Hunter Class
 			emotion ET_BEST;
-			mes "With your "+getarg(2)+" by your side,";
+			mes "With your "+.@mount_name$+" by your side,";
 			mes "may you find both wisdom and wealth";
 			mes "on your path.";
 			mes "Like the cunning and wise wolf, Holo~ ^_^";
