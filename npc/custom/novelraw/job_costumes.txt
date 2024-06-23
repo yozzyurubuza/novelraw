@@ -23,6 +23,7 @@ izlude,88,128,6	script	Celestia	-1,{
 			setcart 12;
 			atcommand "@refresh";
 		}
+		if(checkoption(Option_Wug)) atcommand "@refresh"; //Makes the wug appear if it was summoned before logging out
 		end;
 
 	OnClick:
