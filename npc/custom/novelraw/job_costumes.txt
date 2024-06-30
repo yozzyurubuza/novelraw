@@ -231,7 +231,8 @@ function	script	change_jobcostume	{
 
 //Remove mounts, some skills, bodystyle, and clothes color upon changing job costumes
 function	script	reset_char_state	{
-	setlook LOOK_BODY2, 0; setlook LOOK_CLOTHES_COLOR, 0;
+	setlook LOOK_BODY2, 0; set colored_clothes, 0;
+	changelook LOOK_CLOTHES_COLOR, colored_clothes;
 	if(ismounting()) setmounting; //Remove Halter Lead from all class
 
 	switch(getarg(0)){ // SECOND_BASE Job
@@ -255,6 +256,10 @@ function	script	reset_char_state	{
 			}
 			if(getskilllv("RA_WUGMASTERY")) skill "RA_WUGMASTERY", 0, SKILL_PERM_GRANT;
 			if(getskilllv("RA_WUGRIDER")) skill "RA_WUGRIDER", 0, SKILL_PERM_GRANT;
+			return;
+
+		case 14: //Crusader
+			if(checkriding()) setriding 0;
 			return;
 
 		case 23: //Super novice
