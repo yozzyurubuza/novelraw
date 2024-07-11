@@ -242,7 +242,6 @@ function	script	generate_color_choices	{
 			set .@palette_array[.@i+1], atoi(.@palette_array_str$[.@i]); 
 	} 
 	
-	dispbottom "Selected Palette: " + .@palette_array[.@color_choice];
 	return .@palette_array[.@color_choice];
 }
 
