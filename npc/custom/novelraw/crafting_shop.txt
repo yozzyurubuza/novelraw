@@ -165,12 +165,12 @@ iz_craft,62,74,3	script	Siegil	-1,{
 	
 	OnInit:
 		initnpctimer;
-		callfunc("customizeNPCSprite", 4252, SEX_MALE, 6, 30, 2210, 0, 2227, 139, 98, 122);
+		callfunc("customizeNPCSprite", 4252, SEX_MALE, 5, 30, 1361, 0, 2272, 139, 98, 122, 0, 4, 0);
 		set .random_line_num, -1;
 		end;
 
 	OnTimer1000:
-		showscript("Headgear Rank 4");
+		// showscript("Headgear Rank 4");
 		setnpctimer 0;
 		end;
 
