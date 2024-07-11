@@ -146,6 +146,7 @@ Body:
         end;
       }
       if (ismounting()){
+        changelook LOOK_CLOTHES_COLOR, colored_clothes;
         setmounting();
         sc_end SC_SPEEDUP0;
         end;
@@ -153,3 +154,4 @@ Body:
       specialeffect2 1977;
       sc_start SC_SPEEDUP0, 180000, 25;
       setmounting();
+      changelook LOOK_CLOTHES_COLOR, colored_clothes_mado;

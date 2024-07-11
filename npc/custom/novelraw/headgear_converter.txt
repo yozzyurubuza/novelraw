@@ -60,7 +60,6 @@ izlude,94,125,3	script	Freyja#1	-1,{
 				break;
 			
 			case 3:
-				mes "Oh dear,";
 				mes "You must wear a ^000dddHeadgear^000000 for me to convert.";
 				break;
 			

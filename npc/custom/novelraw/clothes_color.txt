@@ -1,0 +1,393 @@
+izlude,88,140,6	script	Inferia	-1,{	
+	set .NPC_NAME$, "^ff681a[ Inferia ]^000000";
+	callsub OnClick;
+	end;
+	
+	OnInit:
+		initnpctimer;
+		callfunc("customizeNPCSprite", 4_EP21_LALAILA, 0, 0, 0, 0, 0, 0, 0, 89, 183, 0);
+		end;
+
+	OnTimer1000:
+		showscript("Clothes Color");
+		setnpctimer 0;
+		end;
+	
+	OnPCLoginEvent:
+		if (!colored_clothes) end;
+		set .@set_color, colored_clothes;
+		if (ismounting() && colored_clothes_mado) set .@set_color, colored_clothes_mado;
+		changelook LOOK_CLOTHES_COLOR, .@set_color;
+		end;
+
+	OnPCDieEvent:
+		if (colored_clothes_mado) changelook LOOK_CLOTHES_COLOR, colored_clothes;
+		end;
+
+	OnClick:
+		set .@show_req, 1;
+		cutin "inferia", 2;
+		mes .NPC_NAME$;
+		mes "Welcome.";
+		mes "You seem to be in need of a vibrant";
+		mes "touch in your life.";
+		next;
+
+		mes .NPC_NAME$;
+		mes "Shall we gracefully explore the " + rainbowmes("colours");
+		mes "that will best express your inner light?";
+		next;
+		
+		//Repeat dialogue
+		while (.@show_req == 1) set .@show_req, callfunc("show_clothes_requirements");
+		if (.@show_req == 3) callfunc("exit_speech_inferia", .NPC_NAME$, 1);
+
+		//Get baselook value (current Job Costume) or Job ID if baselook is unavailable
+		set .@job_id, baselook ? baselook : 
+					  novice_costume ? 0 : roclass(eaclass());
+
+		//Check if current job is allowed to change color
+		set .@check_job, callfunc("check_color_permission", .@job_id);
+		if(!.@check_job) callfunc("exit_speech_inferia", .NPC_NAME$, 3);
+
+		// Prepare Special case for RK Legacy
+		if (rk_version == 2) set .@rk_legacy_case, callfunc("rk_legacy_color_speech");
+		
+		//Proceed with change
+		mes .NPC_NAME$;
+		mes "What shade of colour best represents your attire today?";
+		next;
+
+		//Generate available color choices.
+		set .@palette_color, callfunc("generate_color_choices", .@job_id, .@rk_legacy_case);
+
+		//Apply and Save Color to DB
+		changelook LOOK_CLOTHES_COLOR, .@palette_color;
+		if (ismounting() && colored_clothes_mado) changelook LOOK_CLOTHES_COLOR, colored_clothes_mado;
+		set colored_clothes, .@palette_color;
+		callfunc("exit_speech_inferia", .NPC_NAME$, 2);
+		close3;
+}
+
+function	script	show_clothes_requirements	{
+	set .@choice, select(	"What are the requirements?:"+
+							"Okay, help me find my "+rainbowmes("true colours")+":"+
+							"I'll come back later");
+	if (.@choice == 1) {
+		opentips(3);
+		next;
+	}
+	return .@choice;
+}
+
+function	script	exit_speech_inferia	{
+	set .@exit_scenario, getarg(1);
+	mes getarg(0); //NPC Name
+	switch(.@exit_scenario){
+		case 1:
+			mes "I hope to see you again soon blooming with radiant hues~";
+			close3;
+		case 2:
+			mes "May your journey be filled ";
+			mes "with flying "+rainbowmes("colours")+"~";
+			mes "Return whenever you feel the need for a new splash of colour.";
+			close3;
+		case 3:
+			mes "Apologies, but colour changes aren't";
+			mes "available for your current job";
+			mes "Come back once you've changed class~";
+			close3;
+	}
+}
+
+function	script	check_color_permission	{
+	set .@job_id, getarg(0); set @eac, eaclass();
+	set .@ORIGINAL_JOB, roclass(@eac); //Original Job of the player
+	set .@FIRST_BASE_JOBS, roclass(@eac&EAJ_BASEMASK); //All 1st jobs
+	set .@FIRST_UPPER_JOBS, roclass(@eac&EAJ_BASEMASK|EAJL_UPPER); //All 1st rebirth jobs
+	
+	setarray .@ALLOWED_FIRST_JOBS[0], 24, 25, 4046; //Gunslinger, Ninja, Taekwon
+	setarray .@first_jobs[0], .@FIRST_BASE_JOBS, .@FIRST_UPPER_JOBS;
+
+	//If job_id does not belong to "allowed 1st jobs" 
+	//and belongs to 1st base or 1st trans job ID, do not allow color change.
+	if (!countinarray(.@ALLOWED_FIRST_JOBS, .@job_id) && countinarray(.@first_jobs, .@job_id))
+		return;
+	
+	//Do not allow Novice to change color unless it is a Super Novice
+	if (.@job_id == 0 && !novice_costume) return;
+
+	return 1;
+}
+
+function	script	rk_legacy_color_speech	{
+	set .@npc_name$, "^ff681a[ Inferia ]^000000"; set .@speech_scenario, getarg(0,0);
+	if (checkdragon() || checkriding()) set .@speech_scenario, 1;
+
+	// Override .@speech_scenario if function was passed with a value
+	if (getarg(0,0)) set .@speech_scenario, getarg(0);  
+	mes .@npc_name$;
+	switch(.@speech_scenario){
+		case 0:
+			mes "If you have a Dragon Mount,";
+			mes "I can accommodate you to select a";
+			mes "^8F00FFMystically Colored Dragon^000000.";
+			next;
+			mes .@npc_name$;
+			mes "This is separate from your clothes";
+			mes "color, exclusive only to";
+			mes "^04680bRune Knight Legacy~^000000";
+			next;
+			break;
+
+		case 1:
+			emotion ET_BIGTHROB;
+			mes "Oh!~ Did you know?";
+			mes "Your Job Costume exclusively allows";
+			mes "you to choose a ^8F00FFMystically Colored";
+			mes "Dragon^000000. This is separate from your clothes color.";
+			next;
+			break;
+
+		case 2:
+			mes "Then, what color do you want for your dragon?";
+			next;
+			break;
+	}
+
+	return .@speech_scenario;
+}
+
+
+//Gigantic switch-case for the colors
+function	script	generate_color_choices	{
+	set .@job_id, getarg(0); set .@rk_legacy_case, getarg(1);
+	set .@bodystyle, getlook(LOOK_BODY2); set .@gender, Sex;
+	
+	//Job Costume Variables - Assumming player is Trans / Expanded
+	set @eac, eaclass();
+	set @SPECIAL_EAJ, (!(@eac&EAJL_2) ? EAJL_2_1 : EAJL_UPPER); //Star Glad costume for Taekwon / Ninja/GS 3rd job / 2nd trans
+	set @BASE_EXPAND_3RD_EAJ, (roclass((@eac|EAJL_UPPER|EAJL_THIRD)) != -1 ? EAJL_UPPER|EAJL_THIRD : //Default Trans 3rd job
+								roclass((@eac&EAJ_UPPERMASK|EAJL_2_1|EAJL_THIRD)) != -1 ? EAJL_2_1|EAJL_THIRD : //Taekwon, Suno
+								roclass((@eac&EAJ_UPPERMASK|EAJL_2_1)) != -1 ? EAJL_2_1 : //Ninja/GS 3rd job
+								EAJL_THIRD); //Star Glad, Soul Linker
+	set @BASE_EXPAND_4TH_EAJ, (roclass(@eac|EAJL_2_1) != -1 ? EAJL_2_1|EAJL_UPPER : EAJL_UPPER); //Check whether 3rd job is from extended or 2nd trans
+	set .@THIRD_JOBS, roclass(@eac&EAJ_UPPERMASK|@BASE_EXPAND_3RD_EAJ); //All 3rd jobs + Expanded jobs
+	set .@FOURTH_JOBS, roclass(@eac&EAJ_UPPERMASK|@BASE_EXPAND_4TH_EAJ|EAJL_THIRD|EAJL_FOURTH); //All 4th jobs + Expanded jobs
+
+	setarray .@official_palette_group[0], .@THIRD_JOBS, .@FOURTH_JOBS;
+	setarray .@madogear_jobs[0], 4064, 4253;
+
+	//Identify which category the Job ID belongs for the list of choices to display
+	set .@palette_group, 0; //Kamishi = 0, Official = 1, Special = 2
+
+	if (countinarray(.@official_palette_group, .@job_id) || .@bodystyle || mado_compatible) set .@palette_group, 1; 
+	if (rk_version == 2) set .@palette_group, 2;
+
+	//Form choices based on the palette group
+	setarray .@palette_array[1], 0, 2, 3, 4, 5, 6, 7; //Default 
+	if (.@palette_group == 0){
+		set .@color_choices$, 	"Default:" +
+								"Red:" +
+								"Yellow:" +
+								"Green:" +
+								"Blue:" +
+								"Violet:" +
+								"Gray";
+
+	} else if (.@palette_group == 1){
+		set .@color_choices$, 	"Default:" +
+								"Color Style #2:" +
+								"Color Style #3:" +
+								"Color Style #4:" +
+								"Color Style #5:" +
+								"Color Style #6:" +
+								"Color Style #7";
+
+	} else if (.@palette_group == 2){
+		set .@color_choices$, 	"Default:" +
+								"Red:" +
+								"Yellow:" +
+								"Green:" +
+								"Blue:" +
+								"Violet:" +
+								"Black";
+
+		set .@color_dragon$, 	"Default:" +
+								"Brown:" +
+								"Gray:" +
+								"Blue:" +
+								"Red:" +
+								"Violet:";
+	}
+
+	// Make choices appear (regular)
+	set .@color_choice, select(.@color_choices$);
+
+	// Make choices appear again (RK legacy)
+	if (.@palette_group == 2 && .@rk_legacy_case) {
+		callfunc("rk_legacy_color_speech", 2);
+		set .@color_dragon_choice$, select(.@color_dragon$);
+		set .@color_choice$, .@color_choice;
+		return atoi(.@color_dragon_choice$ + .@color_choice$);
+		
+	} else if (countinarray(.@madogear_jobs[0], .@job_id)) { //Mechanic or Meister Job
+		set colored_clothes_mado, .@color_choice == 1 ? 0 : atoi("" + .@color_choice + "1");
+
+	} else if(.@palette_group != 1 && !.@rk_legacy_case){ // Kamishi Colors + RK Legacy Unmounted
+		//explode to convert string to string array, then atoi to convert string to int
+		//Change default palette array values
+		explode(.@palette_array_str$, callfunc("get_color_palette", .@job_id, .@gender), ",");			
+		for (.@i = 0; .@i <= getarraysize(.@palette_array_str$); .@i++)
+			set .@palette_array[.@i+1], atoi(.@palette_array_str$[.@i]); 
+	} 
+	
+	dispbottom "Selected Palette: " + .@palette_array[.@color_choice];
+	return .@palette_array[.@color_choice];
+}
+
+
+//Define unique palette # per Job ID
+//Color number list is based from Excel (NRO-302)
+function	script	get_color_palette	{
+	set .@job_id, getarg(0); set .@gender, getarg(1);
+	
+	//Default Sex values: 0 = female, 1 = male
+	set .@gender$, (.@gender ? "_m" : "_f"); 
+	setarray .@palette_array$[0], 0, 22, 3, 4, 5, 6, 7, 8; 
+
+	setarray .@novice_f$[0], 0, 21, 3, 41, 51, 61, 7, 8;
+	setarray .@novice_m$[0], 0, 21, 3, 42, 51, 61, 7, 8;
+
+	setarray .@super_novice_f$[0], 0, 21, 3, 4, 5, 6, 7, 8;
+	setarray .@super_novice_m$[0], 0, 2, 3, 4, 5, 6, 7, 8;
+
+	setarray .@knight_f$[0], 0, 23, 31, 42, 51, 61, 71, 81;
+	setarray .@knight_m$[0], 0, 23, 31, 42, 51, 61, 71, 81;
+
+	setarray .@lord_knight_f$[0], 0, 22, 3, 41, 5, 6, 7, 8;
+	setarray .@lord_knight_m$[0], 0, 22, 3, 4, 5, 6, 7, 8;
+
+	setarray .@crusader_f$[0], 0, 22, 3, 41, 5, 6, 72, 8;
+	setarray .@crusader_m$[0], 0, 22, 3, 4, 5, 6, 72, 8;
+
+	setarray .@paladin_f$[0], 0, 22, 3, 41, 5, 6, 7, 8;
+	setarray .@paladin_m$[0], 0, 22, 3, 4, 5, 6, 7, 8;
+
+	setarray .@priest_f$[0], 0, 22, 3, 4, 5, 6, 7, 8;
+	setarray .@priest_m$[0], 0, 22, 3, 41, 5, 6, 7, 8;
+
+	setarray .@high_priest_f$[0], 0, 2, 3, 41, 5, 6, 7, 8;
+	setarray .@high_priest_m$[0], 0, 22, 3, 4, 5, 6, 7, 8;
+
+	setarray .@monk_f$[0], 0, 22, 3, 4, 5, 6, 7, 8;
+	setarray .@monk_m$[0], 0, 22, 3, 4, 5, 6, 7, 8;
+
+	setarray .@champion_f$[0], 0, 22, 3, 41, 5, 6, 7, 8;
+	setarray .@champion_m$[0], 0, 22, 3, 4, 5, 6, 7, 8;
+
+	setarray .@wizard_f$[0], 0, 23, 3, 42, 51, 61, 71, 81;
+	setarray .@wizard_m$[0], 0, 22, 3, 4, 51, 6, 7, 8;
+
+	setarray .@high_wizard_f$[0], 0, 22, 3, 41, 5, 6, 7, 8;
+	setarray .@high_wizard_m$[0], 0, 22, 3, 4, 5, 6, 7, 8;
+
+	setarray .@sage_f$[0], 0, 22, 3, 41, 5, 6, 7, 8;
+	setarray .@sage_m$[0], 0, 22, 3, 4, 51, 6, 7, 8;
+
+	setarray .@professor_f$[0], 0, 21, 3, 4, 5, 6, 7, 8;
+	setarray .@professor_m$[0], 0, 22, 3, 4, 51, 6, 7, 8;
+
+	setarray .@blacksmith_f$[0], 0, 22, 3, 4, 5, 6, 7, 8;
+	setarray .@blacksmith_m$[0], 0, 22, 3, 4, 5, 6, 7, 8;
+
+	setarray .@whitesmith_f$[0], 0, 2, 3, 41, 5, 6, 7, 8;
+	setarray .@whitesmith_m$[0], 0, 2, 3, 4, 5, 6, 7, 8;
+
+	setarray .@alchemist_f$[0], 0, 21, 3, 42, 51, 61, 7, 8;
+	setarray .@alchemist_m$[0], 0, 22, 3, 4, 5, 6, 7, 8;
+
+	setarray .@creator_f$[0], 0, 21, 3, 4, 5, 6, 7, 8;
+	setarray .@creator_m$[0], 0, 22, 3, 4, 5, 6, 7, 8;
+
+	setarray .@hunter_f$[0], 0, 21, 3, 4, 5, 6, 7, 8;
+	setarray .@hunter_m$[0], 0, 22, 3, 4, 5, 6, 7, 8;
+
+	setarray .@sniper_f$[0], 0, 21, 3, 4, 5, 6, 7, 8;
+	setarray .@sniper_m$[0], 0, 2, 3, 4, 5, 6, 7, 8;
+	
+	setarray .@dancer_f$[0], 0, 23, 3, 42, 51, 61, 7, 8;
+	setarray .@bard_m$[0], 0, 23, 3, 42, 51, 61, 7, 8;
+
+	setarray .@gypsy_f$[0], 0, 21, 3, 41, 5, 6, 7, 8;
+	setarray .@clown_m$[0], 0, 22, 3, 4, 5, 6, 7, 8;
+
+	setarray .@assassin_f$[0], 0, 21, 3, 41, 5, 6, 7, 8;
+	setarray .@assassin_m$[0], 0, 2, 3, 41, 5, 6, 7, 8;
+
+	setarray .@assassin_cross_f$[0], 0, 22, 3, 41, 5, 6, 7, 8;
+	setarray .@assassin_cross_m$[0], 0, 22, 3, 4, 5, 6, 7, 8;
+
+	setarray .@rogue_f$[0], 0, 2, 3, 41, 5, 6, 7, 8;
+	setarray .@rogue_m$[0], 0, 2, 3, 4, 5, 6, 7, 8;
+
+	setarray .@stalker_f$[0], 0, 22, 3, 41, 5, 6, 7, 8;
+	setarray .@stalker_m$[0], 0, 22, 3, 4, 5, 6, 7, 8;
+
+	setarray .@gunslinger_f$[0], 0, 21, 3, 4, 5, 6, 7, 8;
+	setarray .@gunslinger_m$[0], 0, 22, 3, 4, 5, 6, 7, 8;
+
+	setarray .@ninja_f$[0], 0, 21, 3, 42, 5, 6, 7, 8;
+	setarray .@ninja_m$[0], 0, 22, 3, 4, 5, 6, 7, 8;
+
+	setarray .@taekwon_f$[0], 0, 2, 3, 41, 5, 6, 7, 8;
+	setarray .@taekwon_m$[0], 0, 2, 3, 4, 5, 6, 7, 8;
+
+	setarray .@star_gladiator_f$[0], 0, 2, 3, 41, 5, 6, 7, 8;
+	setarray .@star_gladiator_m$[0], 0, 2, 3, 41, 5, 6, 7, 8;
+
+	setarray .@soul_linker_f$[0], 0, 21, 3, 42, 5, 61, 7, 8;
+	setarray .@soul_linker_m$[0], 0, 22, 3, 42, 5, 61, 7, 8;
+
+	setarray .@rune_knight_legacy_f$[0], 10, 12, 13, 14, 15, 16, 17;
+	setarray .@rune_knight_legacy_m$[0], 10, 12, 13, 14, 15, 16, 17;
+
+		//Check job ID and set unique palette
+	if (.@job_id == 0) 		set .@job_palette$, ".@" + "novice" + .@gender$ + "$[0]";
+	else if (.@job_id == 23) 	set .@job_palette$, ".@" + "super_novice" + .@gender$ + "$[0]";
+	else if (.@job_id == 7) 	set .@job_palette$, ".@" + "knight" + .@gender$ + "$[0]";
+	else if (.@job_id == 4008) 	set .@job_palette$, ".@" + "lord_knight" + .@gender$ + "$[0]";
+	else if (.@job_id == 14) 	set .@job_palette$, ".@" + "crusader" + .@gender$ + "$[0]";
+	else if (.@job_id == 4015) 	set .@job_palette$, ".@" + "paladin" + .@gender$ + "$[0]";
+	else if (.@job_id == 8) 	set .@job_palette$, ".@" + "priest" + .@gender$ + "$[0]";
+	else if (.@job_id == 4009) 	set .@job_palette$, ".@" + "high_priest" + .@gender$ + "$[0]";
+	else if (.@job_id == 15) 	set .@job_palette$, ".@" + "monk" + .@gender$ + "$[0]";
+	else if (.@job_id == 4016) 	set .@job_palette$, ".@" + "champion" + .@gender$ + "$[0]";
+	else if (.@job_id == 9) 	set .@job_palette$, ".@" + "wizard" + .@gender$ + "$[0]";
+	else if (.@job_id == 4010) 	set .@job_palette$, ".@" + "high_wizard" + .@gender$ + "$[0]";
+	else if (.@job_id == 16) 	set .@job_palette$, ".@" + "sage" + .@gender$ + "$[0]";
+	else if (.@job_id == 4017) 	set .@job_palette$, ".@" + "professor" + .@gender$ + "$[0]";
+	else if (.@job_id == 10) 	set .@job_palette$, ".@" + "blacksmith" + .@gender$ + "$[0]";
+	else if (.@job_id == 4011) 	set .@job_palette$, ".@" + "whitesmith" + .@gender$ + "$[0]";
+	else if (.@job_id == 18) 	set .@job_palette$, ".@" + "alchemist" + .@gender$ + "$[0]";
+	else if (.@job_id == 4019) 	set .@job_palette$, ".@" + "creator" + .@gender$ + "$[0]";
+	else if (.@job_id == 11) 	set .@job_palette$, ".@" + "hunter" + .@gender$ + "$[0]";
+	else if (.@job_id == 4012) 	set .@job_palette$, ".@" + "sniper" + .@gender$ + "$[0]";
+	else if (.@job_id == 19) 	set .@job_palette$, ".@" + "bard" + .@gender$ + "$[0]";
+	else if (.@job_id == 4020) 	set .@job_palette$, ".@" + "clown" + .@gender$ + "$[0]";
+	else if (.@job_id == 20) 	set .@job_palette$, ".@" + "dancer" + .@gender$ + "$[0]";
+	else if (.@job_id == 4021) 	set .@job_palette$, ".@" + "gypsy" + .@gender$ + "$[0]";
+	else if (.@job_id == 12) 	set .@job_palette$, ".@" + "assassin" + .@gender$ + "$[0]";
+	else if (.@job_id == 4013) 	set .@job_palette$, ".@" + "assassin_cross" + .@gender$ + "$[0]";
+	else if (.@job_id == 17) 	set .@job_palette$, ".@" + "rogue" + .@gender$ + "$[0]";
+	else if (.@job_id == 4018) 	set .@job_palette$, ".@" + "stalker" + .@gender$ + "$[0]";
+	else if (.@job_id == 24) 	set .@job_palette$, ".@" + "gunslinger" + .@gender$ + "$[0]";
+	else if (.@job_id == 25) 	set .@job_palette$, ".@" + "ninja" + .@gender$ + "$[0]";
+	else if (.@job_id == 4046) 	set .@job_palette$, ".@" + "taekwon" + .@gender$ + "$[0]";
+	else if (.@job_id == 4047) 	set .@job_palette$, ".@" + "star_gladiator" + .@gender$ + "$[0]";
+	else if (.@job_id == 4049) 	set .@job_palette$, ".@" + "soul_linker" + .@gender$ + "$[0]";
+	else if (.@job_id == 4060) 	set .@job_palette$, ".@" + "rune_knight_legacy" + .@gender$ + "$[0]";
+
+	copyarray(.@palette_array$[0], getd(.@job_palette$), getarraysize(getd(.@job_palette$)));
+	return implode(.@palette_array$, ",");
+}

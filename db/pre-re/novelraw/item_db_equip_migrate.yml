@@ -227,3 +227,15 @@ Body:
       Costume_Head_Top: true
     ArmorLevel: 1
     View: 808
+  - Id: 20614
+    AegisName: C_Kyel_hyre_Ulti_TW
+    Name: Costume Ultimate Kiel Hyre's
+    Type: Armor
+    Locations:
+      Costume_Garment: true
+    ArmorLevel: 1
+    View: 102
+    Script: |
+      hateffect HAT_EF_C_Kyel_hyre_Ulti_TW,true;
+    UnEquipScript: |
+      hateffect HAT_EF_C_Kyel_hyre_Ulti_TW,false;
