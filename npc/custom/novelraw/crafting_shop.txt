@@ -170,7 +170,7 @@ iz_craft,62,74,3	script	Siegil	-1,{
 		end;
 
 	OnTimer1000:
-		// showscript("Headgear Rank 4");
+		showscript("Headgear Rank 4");
 		setnpctimer 0;
 		end;
 
