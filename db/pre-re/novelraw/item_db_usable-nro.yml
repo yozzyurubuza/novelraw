@@ -93,6 +93,8 @@ Body:
       NoMail: true
       NoAuction: true
     Script: |
+      setarray .@gunslinger_jobs[0], 24, 4215, 4306;
+      set .@current_job, roclass(eaclass());
       if (rk_version == 2 || mado_compatible == 1){
         showscript "This Job Costume cannot use Halter Lead.", getcharid(3), SELF;
         end;
@@ -101,7 +103,20 @@ Body:
         showscript "You can't use Halter Lead while the Wolf is present.", getcharid(3), SELF;
         end;
       }
+      if (countinarray(.@gunslinger_jobs, .@current_job) && !ismounting()){
+        specialeffect2 1906;
+        soundeffect "g카트부스트.wav", 0;
+        sc_start SC_SPEEDUP1,4000,50;
+      } else if (countinarray(.@gunslinger_jobs, .@current_job) && ismounting()){
+        showscript "Unmounting in 2...", getcharid(3), SELF;
+        sleep2 1000;
+        showscript "Unmounting in 1...", getcharid(3), SELF;
+        sleep2 1000;
+        showscript " ", getcharid(3), SELF;
+        sc_end SC_SPEEDUP1;
+      }
       setmounting();
+
   - Id: 12848
     AegisName: Falcon_Flute
     Name: Falcon Flute
@@ -128,7 +143,7 @@ Body:
     Flags:
       NoConsume: true
     Delay:
-      Duration: 3000
+      # Duration: 3000
       Status: All_Riding_Reuse_Limit
     Weight: 0
     Trade:
