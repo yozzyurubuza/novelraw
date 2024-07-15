@@ -1,11 +1,17 @@
 // NPC Script for handling mounts like Dragon, Madogear, and Wolf.
 
-izlude,88,148,5	script	Mount Manager	-1,{	
+izlude,88,148,5	script	Litzy	-1,{	
 	callsub OnClick;
 	end;
 
 	OnInit:
+		initnpctimer;
 		callfunc("customizeNPCSprite", 20388, 0, 0, 0, 0, 0, 0, 0, 53, 16);
+		end;
+
+	OnTimer1000:
+		showscript("Special Mounts");
+		setnpctimer 0;
 		end;
 
 	OnClick:
