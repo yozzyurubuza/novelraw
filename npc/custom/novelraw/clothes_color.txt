@@ -13,12 +13,6 @@ izlude,88,140,6	script	Inferia	-1,{
 		setnpctimer 0;
 		end;
 	
-	OnPCLoginEvent:
-		if (!colored_clothes) end;
-		set .@set_color, colored_clothes;
-		if (ismounting() && colored_clothes_mado) set .@set_color, colored_clothes_mado;
-		changelook LOOK_CLOTHES_COLOR, .@set_color;
-		end;
 
 	OnPCDieEvent:
 		if (colored_clothes_mado) changelook LOOK_CLOTHES_COLOR, colored_clothes;
@@ -62,9 +56,7 @@ izlude,88,140,6	script	Inferia	-1,{
 		set .@palette_color, callfunc("generate_color_choices", .@job_id, .@rk_legacy_case);
 
 		//Apply and Save Color to DB
-		changelook LOOK_CLOTHES_COLOR, .@palette_color;
-		if (ismounting() && colored_clothes_mado) changelook LOOK_CLOTHES_COLOR, colored_clothes_mado;
-		set colored_clothes, .@palette_color;
+		callfunc("change_clothes_color", .@palette_color);
 		callfunc("exit_speech_inferia", .NPC_NAME$, 2);
 		close3;
 }
@@ -246,6 +238,17 @@ function	script	generate_color_choices	{
 }
 
 
+function	script	change_clothes_color	{
+	set .@palette_color, getarg(0);
+	//Save clothes color to DB only if it is not the same as the current one
+	if (.@palette_color != colored_clothes) set colored_clothes, .@palette_color;
+	
+	changelook LOOK_CLOTHES_COLOR, .@palette_color;
+	if (ismounting() && colored_clothes_mado) changelook LOOK_CLOTHES_COLOR, colored_clothes_mado;
+	return;
+}
+
+
 //Define unique palette # per Job ID
 //Color number list is based from Excel (NRO-302)
 function	script	get_color_palette	{
@@ -255,8 +258,8 @@ function	script	get_color_palette	{
 	set .@gender$, (.@gender ? "_m" : "_f"); 
 	setarray .@palette_array$[0], 0, 22, 3, 4, 5, 6, 7, 8; 
 
-	setarray .@novice_f$[0], 0, 21, 3, 41, 51, 61, 7, 8;
-	setarray .@novice_m$[0], 0, 21, 3, 42, 51, 61, 7, 8;
+	setarray .@novice_f$[0], 0, 23, 3, 43, 51, 61, 71, 81;
+	setarray .@novice_m$[0], 0, 23, 3, 42, 51, 61, 71, 81;
 
 	setarray .@super_novice_f$[0], 0, 21, 3, 4, 5, 6, 7, 8;
 	setarray .@super_novice_m$[0], 0, 2, 3, 4, 5, 6, 7, 8;
@@ -264,31 +267,31 @@ function	script	get_color_palette	{
 	setarray .@knight_f$[0], 0, 23, 31, 42, 51, 61, 71, 81;
 	setarray .@knight_m$[0], 0, 23, 31, 42, 51, 61, 71, 81;
 
-	setarray .@lord_knight_f$[0], 0, 22, 3, 41, 5, 6, 7, 8;
-	setarray .@lord_knight_m$[0], 0, 22, 3, 4, 5, 6, 7, 8;
+	setarray .@lord_knight_f$[0], 0, 22, 3, 41, 5, 6, 71, 8;
+	setarray .@lord_knight_m$[0], 0, 22, 3, 4, 5, 6, 71, 8;
 
 	setarray .@crusader_f$[0], 0, 22, 3, 41, 5, 6, 72, 8;
-	setarray .@crusader_m$[0], 0, 22, 3, 4, 5, 6, 72, 8;
+	setarray .@crusader_m$[0], 0, 22, 3, 41, 5, 6, 72, 8;
 
-	setarray .@paladin_f$[0], 0, 22, 3, 41, 5, 6, 7, 8;
-	setarray .@paladin_m$[0], 0, 22, 3, 4, 5, 6, 7, 8;
+	setarray .@paladin_f$[0], 0, 22, 3, 41, 5, 6, 71, 8;
+	setarray .@paladin_m$[0], 0, 22, 3, 4, 5, 6, 71, 8;
 
-	setarray .@priest_f$[0], 0, 22, 3, 4, 5, 6, 7, 8;
+	setarray .@priest_f$[0], 0, 22, 3, 4, 5, 6, 71, 8;
 	setarray .@priest_m$[0], 0, 22, 3, 41, 5, 6, 7, 8;
 
-	setarray .@high_priest_f$[0], 0, 2, 3, 41, 5, 6, 7, 8;
+	setarray .@high_priest_f$[0], 0, 2, 3, 41, 5, 6, 71, 8;
 	setarray .@high_priest_m$[0], 0, 22, 3, 4, 5, 6, 7, 8;
 
-	setarray .@monk_f$[0], 0, 22, 3, 4, 5, 6, 7, 8;
+	setarray .@monk_f$[0], 0, 22, 3, 4, 5, 6, 71, 8;
 	setarray .@monk_m$[0], 0, 22, 3, 4, 5, 6, 7, 8;
 
-	setarray .@champion_f$[0], 0, 22, 3, 41, 5, 6, 7, 8;
+	setarray .@champion_f$[0], 0, 22, 3, 41, 5, 6, 71, 8;
 	setarray .@champion_m$[0], 0, 22, 3, 4, 5, 6, 7, 8;
 
 	setarray .@wizard_f$[0], 0, 23, 3, 42, 51, 61, 71, 81;
 	setarray .@wizard_m$[0], 0, 22, 3, 4, 51, 6, 7, 8;
 
-	setarray .@high_wizard_f$[0], 0, 22, 3, 41, 5, 6, 7, 8;
+	setarray .@high_wizard_f$[0], 0, 22, 3, 41, 5, 6, 71, 8;
 	setarray .@high_wizard_m$[0], 0, 22, 3, 4, 5, 6, 7, 8;
 
 	setarray .@sage_f$[0], 0, 22, 3, 41, 5, 6, 7, 8;
@@ -300,8 +303,8 @@ function	script	get_color_palette	{
 	setarray .@blacksmith_f$[0], 0, 22, 3, 4, 5, 6, 7, 8;
 	setarray .@blacksmith_m$[0], 0, 22, 3, 4, 5, 6, 7, 8;
 
-	setarray .@whitesmith_f$[0], 0, 2, 3, 41, 5, 6, 7, 8;
-	setarray .@whitesmith_m$[0], 0, 2, 3, 4, 5, 6, 7, 8;
+	setarray .@whitesmith_f$[0], 0, 22, 3, 41, 5, 6, 7, 8;
+	setarray .@whitesmith_m$[0], 0, 22, 3, 4, 5, 6, 7, 8;
 
 	setarray .@alchemist_f$[0], 0, 21, 3, 42, 51, 61, 7, 8;
 	setarray .@alchemist_m$[0], 0, 22, 3, 4, 5, 6, 7, 8;
@@ -333,8 +336,8 @@ function	script	get_color_palette	{
 	setarray .@stalker_f$[0], 0, 22, 3, 41, 5, 6, 7, 8;
 	setarray .@stalker_m$[0], 0, 22, 3, 4, 5, 6, 7, 8;
 
-	setarray .@gunslinger_f$[0], 0, 21, 3, 4, 5, 6, 7, 8;
-	setarray .@gunslinger_m$[0], 0, 22, 3, 4, 5, 6, 7, 8;
+	setarray .@gunslinger_f$[0], 0, 24, 31, 44, 52, 62, 72, 82;
+	setarray .@gunslinger_m$[0], 0, 24, 31, 44, 52, 62, 72, 82;
 
 	setarray .@ninja_f$[0], 0, 21, 3, 42, 5, 6, 7, 8;
 	setarray .@ninja_m$[0], 0, 22, 3, 4, 5, 6, 7, 8;
@@ -345,14 +348,14 @@ function	script	get_color_palette	{
 	setarray .@star_gladiator_f$[0], 0, 2, 3, 41, 5, 6, 7, 8;
 	setarray .@star_gladiator_m$[0], 0, 2, 3, 41, 5, 6, 7, 8;
 
-	setarray .@soul_linker_f$[0], 0, 21, 3, 42, 5, 61, 7, 8;
+	setarray .@soul_linker_f$[0], 0, 21, 3, 42, 51, 61, 7, 8;
 	setarray .@soul_linker_m$[0], 0, 22, 3, 42, 5, 61, 7, 8;
 
 	setarray .@rune_knight_legacy_f$[0], 10, 12, 13, 14, 15, 16, 17;
 	setarray .@rune_knight_legacy_m$[0], 10, 12, 13, 14, 15, 16, 17;
 
 		//Check job ID and set unique palette
-	if (.@job_id == 0) 		set .@job_palette$, ".@" + "novice" + .@gender$ + "$[0]";
+	if (.@job_id == 0) 			set .@job_palette$, ".@" + "novice" + .@gender$ + "$[0]";
 	else if (.@job_id == 23) 	set .@job_palette$, ".@" + "super_novice" + .@gender$ + "$[0]";
 	else if (.@job_id == 7) 	set .@job_palette$, ".@" + "knight" + .@gender$ + "$[0]";
 	else if (.@job_id == 4008) 	set .@job_palette$, ".@" + "lord_knight" + .@gender$ + "$[0]";
