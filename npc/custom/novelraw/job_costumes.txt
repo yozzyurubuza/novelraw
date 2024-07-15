@@ -16,14 +16,8 @@ izlude,88,128,6	script	Celestia	-1,{
 	//Change appearance of char upon login without changing the appearance in the login screen
 	//Changing the appearance in the login screen is buggy and inaccurate
 	OnPCLoginEvent:
-		if(baselook) changebase baselook; //Job ID
-		else if(novice_costume) { //Special condition to save Novice Costume
-			changebase 0;
-			if(!checkcart()) return;
-			setcart 12;
-			atcommand "@refresh";
-		}
-		if(checkoption(Option_Wug)) atcommand "@refresh"; //Makes the wug appear if it was summoned before logging out
+		if (baselook || novice_costume) callfunc("change_jobcostume", baselook, 0, getlook(LOOK_BODY2), novice_costume);
+		if (colored_clothes) callfunc("change_clothes_color", colored_clothes);
 		end;
 
 	OnClick:
@@ -62,8 +56,8 @@ izlude,88,128,6	script	Celestia	-1,{
 		//Prepare character for Costume Change
 		//Job Costume Details: 0 = selected job id / 1 = reset costume / 2 = second base job id / 3 = bodystyle
 		callfunc("reset_char_state", .@jobcostume_details[2]); // Remove mounts, skills, char variables
-		callfunc("change_jobcostume", .@jobcostume_details[0], .@jobcostume_details[1], .@jobcostume_details[3]);
 		callfunc("set_jobcostume_flags", .@jobcostume_details[0], .@jobcostume_details[3]); //char variables for mount
+		callfunc("change_jobcostume", .@jobcostume_details[0], .@jobcostume_details[1], .@jobcostume_details[3], novice_costume);
 
 		//End
 		callfunc("exit_speech_celestia", .npcName$, 2);
@@ -221,11 +215,53 @@ function	script	set_jobcostume_flags	{
 }
 
 function	script	change_jobcostume	{
-	set .@job_id, getarg(0); set .@costume_id, getarg(1); set .@bodystyle, getarg(2);
+	set .@job_id, getarg(0); set .@costume_id, getarg(1); 
+	set .@bodystyle, getarg(2); set .@novice_costume, getarg(3,0);
+	setarray .@WOLF_JOBS[0], 4062, 4257; setarray .@NOVICE_JOBS[0], 0, 23, 4045, 4307;
 
+	//Set costume whether it is original (reset), novice, or selected job
+	set .@costume_id, (.@costume_id ? 0 : .@novice_costume ? 0 : .@job_id); 
+	
+	//Save to DB if baselook only if it is not the same as the current one
+	if(.@costume_id != baselook) set baselook, .@costume_id; 
+	
+	changebase .@job_id; //Transform
 	if (.@bodystyle) setlook LOOK_BODY2, .@bodystyle; //For alternate (jRO) and v3
-	set .@costume_id, (.@costume_id ? 0 : .@job_id); //Reset costume if costume_id has value
-	set baselook, .@costume_id; changebase .@job_id; //Save costume ID to DB, then transform
+
+	//Reattach to fix visual bugs of changing Job Costumes
+	if (countinarray(.@NOVICE_JOBS, .@job_id) || .@novice_costume) callfunc("fix_novice_cart", .@novice_costume);
+	else if (countinarray(.@WOLF_JOBS, .@costume_id)) callfunc("fix_ranger_summons");
+	
+	return;
+}
+
+//Reattach Cart when changing Job Costumes
+function	script	fix_novice_cart	{
+	set .@novice_costume, getarg(0);
+
+	if (!checkcart()) return;
+	if (.@novice_costume) { //Base Novice Job
+		setcart 0; setcart 12;
+	} else if(!.@novice_costume) { //Super Novice, Super Baby Novice, Hyper Novice
+		setcart 0; setcart 12;
+	}
+
+	return;
+}
+
+function	script	fix_ranger_summons	{
+	if (!checkfalcon() && !checkwug()) return;
+	if (checkfalcon() && !checkoption(Option_Wugrider)) { //Reattach Falcon
+		setfalcon 0; setfalcon 1;
+	} else if (checkfalcon() && checkoption(Option_Wugrider)) { //Fix falcon when player is already riding
+		setoption Option_Wugrider, 0;
+		setfalcon 0; setfalcon 1;
+		setoption Option_Wugrider, 1;
+	}
+	if (checkwug() && !checkoption(Option_Wugrider)) { //Reatttach Wolf
+		setoption Option_Wug, 0; setoption Option_Wug, 1;
+	}
+
 	return;
 }
 
