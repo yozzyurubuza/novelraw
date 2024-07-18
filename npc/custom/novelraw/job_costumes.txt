@@ -16,10 +16,13 @@ izlude,88,128,6	script	Celestia	-1,{
 	//Change appearance of char upon login without changing the appearance in the login screen
 	//Changing the appearance in the login screen is buggy and inaccurate
 	OnPCLoginEvent:
-		if(baselook) changebase baselook; //Job ID
+		if (baselook || novice_costume) callfunc("change_jobcostume", baselook, 0, getlook(LOOK_BODY2), novice_costume);
+		if (colored_clothes) callfunc("change_clothes_color", colored_clothes);
 		end;
 
 	OnClick:
+		set .@exit_scenario, 0;
+		cutin "celestia", 2;
 		mes .npcName$;
 		mes "Hello Adventurer!";
 		mes "";
@@ -34,30 +37,73 @@ izlude,88,128,6	script	Celestia	-1,{
 		next;
 		switch(select("Okay, proceed:I'll be right back")){
 			case 1:
-				callfunc("prepareCostumes", .npcName$);
+				if (!callfunc("check_lvl_req")) callfunc("exit_speech_celestia", .npcName$, 0);
 				break;
 			case 2:
-				callfunc("cancelDialogue", .npcName$);
+				callfunc("exit_speech_celestia", .npcName$, 1);
 				break;
 		}
 		mes .npcName$;
-		mes "Here you go!";
-		mes "Remember, it's not just the clothes, but also your heart that makes you great.";
-		mes "Have fun and have a nice day~";
-		close3;
-		
+		mes "Which of these Job Costumes fancy to your liking?";
+		next;
+
+		//Prepare costume choices dialogue
+		//Split values to array using explode, then convert the values to int.
+		explode(.@jobcostume_details_str$, callfunc("prepare_jobcostume_choices"), ",");
+		for (.@i = 0; .@i < getarraysize(.@jobcostume_details_str$); .@i++) 
+			set .@jobcostume_details[.@i], atoi(.@jobcostume_details_str$[.@i]);
+
+		//Prepare character for Costume Change
+		//Job Costume Details: 0 = selected job id / 1 = reset costume / 2 = second base job id / 3 = bodystyle
+		callfunc("reset_char_state", .@jobcostume_details[2]); // Remove mounts, skills, char variables
+		callfunc("set_jobcostume_flags", .@jobcostume_details[0], .@jobcostume_details[3]); //char variables for mount
+		callfunc("change_jobcostume", .@jobcostume_details[0], .@jobcostume_details[1], .@jobcostume_details[3], novice_costume);
+
+		//End
+		callfunc("exit_speech_celestia", .npcName$, 2);
 }
 
-function	script	cancelDialogue	{
-	mes getarg(0);
-	mes "May the stars guide your path, dear adventurer.";
-	mes "I look forward to see you again soon. ^_^";
-	return;
+function	script	exit_speech_celestia	{
+	set .@npc_name$, getarg(0); set .@exit_scenario, getarg(1);
+
+	mes .@npc_name$;
+	switch (.@exit_scenario) {
+		case 0: // Level req failed
+			EMOTION ET_KEK;
+			mes "Ah, it seems that you haven't reached the required level yet~";
+			mes "Stop by again once ready. ^_^";
+			break;
+		case 1: // Come back again later
+			EMOTION ET_ENE;
+			mes "May the stars guide your path, dear adventurer.";
+			mes "I look forward to see you again soon. ^_^";
+			break;
+		case 2: // Change costume success
+			specialeffect2 2202; specialeffect2 2200; specialeffect2 2229;
+			EMOTION ET_BIGTHROB;
+			mes "Here you go!";
+			mes "Remember, it's not just the clothes, but also your heart that makes you great.";
+			mes "Have fun and have a nice day~";
+			break;
+	}
+	close3;
 }
 
-function	script	prepareCostumes	{
-	//Initialize Values
-	set .@CosChangeMode, 0;
+function	script	check_lvl_req	{
+	setarray .@GROUP_99_50[0], roclass(EAJ_TAEKWON), roclass(EAJ_STAR_GLADIATOR), roclass(EAJ_SOUL_LINKER);
+	set .@CURRENT_JOB, roclass(eaclass());
+
+	if(BaseLevel < 99) return 0;
+	if(.@CURRENT_JOB == roclass(EAJ_SUPER_NOVICE) && JobLevel < 99) return 0; 
+	else if(countinarray(.@GROUP_99_50, .@CURRENT_JOB) && JobLevel < 50) return 0;
+	else if(!countinarray(.@GROUP_99_50, .@CURRENT_JOB) && JobLevel < 70) return 0; //All other remaining jobs
+
+	return 1; //return true if it meets the level requirements
+}
+
+//This function will get the details needed for costume change
+function	script	prepare_jobcostume_choices	{
+	//Initialize Job Class values based from ea_job_system.txt
 	set @eac, eaclass();
 	set @SPECIAL_EAJ, (!(@eac&EAJL_2) ? EAJL_2_1 : EAJL_UPPER); //Star Glad costume for Taekwon / Ninja/GS 3rd job / 2nd trans
 	set @BASE_EXPAND_3RD_EAJ, (roclass((@eac|EAJL_UPPER|EAJL_THIRD)) != -1 ? EAJL_UPPER|EAJL_THIRD : //Default Trans 3rd job
@@ -67,109 +113,194 @@ function	script	prepareCostumes	{
 	set @BASE_EXPAND_4TH_EAJ, (roclass(@eac|EAJL_2_1) != -1 ? EAJL_2_1|EAJL_UPPER : EAJL_UPPER); //Check whether 3rd job is from extended or 2nd trans
 
 	//Costume Variables - Assumming player is Trans / Expanded
-	set .@OriginalJob, roclass(@eac); //Original Job of the player
-	set .@SecondBase, roclass(@eac&EAJ_UPPERMASK); //All 2nd base jobs + Expanded jobs + Star Glad (for Taekwon Base)
-	set .@SecondTrans, roclass(@eac&EAJ_UPPERMASK|@SPECIAL_EAJ); //All Trans + 3rd jobs of Expanded jobs
-	set .@ThirdJobs, roclass(@eac&EAJ_UPPERMASK|@BASE_EXPAND_3RD_EAJ); //All 3rd jobs + Expanded jobs
-	set .@FourthJobs, roclass(@eac&EAJ_UPPERMASK|@BASE_EXPAND_4TH_EAJ|EAJL_THIRD|EAJL_FOURTH); //All 4th jobs + Expanded jobs
+	set .@ORIGINAL_JOB, roclass(@eac); //Original Job of the player
+	set .@SECOND_BASE, roclass(@eac&EAJ_UPPERMASK); //All 2nd base jobs + Expanded jobs + Star Glad (for Taekwon Base)
+	set .@SECOND_TRANS, roclass(@eac&EAJ_UPPERMASK|@SPECIAL_EAJ); //All Trans + 3rd jobs of Expanded jobs
+	set .@THIRD_JOBS, roclass(@eac&EAJ_UPPERMASK|@BASE_EXPAND_3RD_EAJ); //All 3rd jobs + Expanded jobs
+	set .@FOURTH_JOBS, roclass(@eac&EAJ_UPPERMASK|@BASE_EXPAND_4TH_EAJ|EAJL_THIRD|EAJL_FOURTH); //All 4th jobs + Expanded jobs
+	set .@NOVICE_JOB, roclass(EAJ_NOVICE); // For base Novice costume
 
-	mes getarg(0);
-	mes "Which of these Job Costumes fancy to your liking?";
-	next;
-	switch(select(
-		"^0317fe[ Original ]^000000 - " + jobname(.@OriginalJob),
-		jobname(.@SecondBase),
-		jobname(.@SecondTrans),
-		jobname(.@ThirdJobs),
-		jobname(.@ThirdJobs) + " Alternate",
-		jobname(.@FourthJobs),
-		jobname(.@ThirdJobs) + " v3"
-	)){
-		case 1: 
-			callfunc("ChangeJobOutfit", .@OriginalJob, .@CosChangeMode);
-			break;
+	//Array of Job classes for conditional statements
+	setarray .@CLASSES_WITH_V3[0], roclass(EAJ_WIZARD), roclass(EAJ_PRIEST);
+	setarray .@EXPANDED_CLASSES[0], roclass(EAJ_NINJA), roclass(EAJ_GUNSLINGER), roclass(EAJ_SOUL_LINKER), roclass(EAJ_STAR_GLADIATOR);
 
-		case 2: 
-			callfunc("ChangeJobOutfit", .@SecondBase, .@CosChangeMode);
-			break;
+	// Define all the list of possible choices in an array (0-8) (0-5)
+	// Start with [1] to align with switch-case numbering
+	setarray .@JOB_CHOICES$[0], "^0317fe[ Original ]^000000 - " + jobname(.@ORIGINAL_JOB),
+								jobname(.@SECOND_BASE),
+								jobname(.@THIRD_JOBS),
+								jobname(.@THIRD_JOBS) + " Alternate (jRO)",
+								jobname(.@THIRD_JOBS) + " v3",
+								jobname(.@FOURTH_JOBS),
+								jobname(.@THIRD_JOBS) + " Legacy",
+								jobname(.@SECOND_TRANS),
+								jobname(.@NOVICE_JOB);
+	setarray .@JOB_CHOICES_ID[0], .@ORIGINAL_JOB, .@SECOND_BASE, .@THIRD_JOBS, .@FOURTH_JOBS, .@SECOND_TRANS,.@NOVICE_JOB;
+	
+	//Set defaults
+	set .@job_id, .@ORIGINAL_JOB; set .@reset_costume, 0; set .@bodystyle, 0;
 
-		case 3: 
-			callfunc("ChangeJobOutfit", .@SecondTrans, .@CosChangeMode);
-			break;
+	if (countinarray(.@CLASSES_WITH_V3, .@SECOND_BASE)){
+		setarray .@show_job_choices[0],		0, 1, 2, 3, 4, 5; //.@JOB_CHOICES$ Array
+		setarray .@jobcostume_actions[0],	0, 1, 2, 2, 1, 3; //.@JOB_CHOICES_ID Array
 
-		case 4: 
-			callfunc("ChangeJobOutfit", .@ThirdJobs, .@CosChangeMode);
-			break;
+	} else if (countinarray(.@EXPANDED_CLASSES, .@SECOND_BASE)){
+		setarray .@show_job_choices[0], 	0, 2, 5;
+		setarray .@jobcostume_actions[0],	0, 2, 3;
 
-		case 5: 
-			set .@CosChangeMode, 1;
-			callfunc("ChangeJobOutfit", .@ThirdJobs, .@CosChangeMode);
-			break;
+	} else if (.@SECOND_BASE == roclass(EAJ_TAEKWON)){
+		setarray .@show_job_choices[0], 	0, 7, 2, 5;
+		setarray .@jobcostume_actions[0],	0, 4, 2, 3;
 
-		case 6: 
-			callfunc("ChangeJobOutfit", .@FourthJobs, .@CosChangeMode);
-			break;
+	} else if (.@SECOND_BASE == roclass(EAJ_SUPER_NOVICE)){
+		setarray .@show_job_choices[0], 	0, 8, 5;
+		setarray .@jobcostume_actions[0],	0, 5, 3;
 
-		case 7: // Rune Knight v1, Warlock v3, Archbishop v3
-			set .@CosChangeMode, 2;
-			callfunc("ChangeJobOutfit", .@SecondBase, .@CosChangeMode);
-			break;
+	} else if (.@SECOND_BASE == roclass(EAJ_KNIGHT)){
+		setarray .@show_job_choices[0], 	0, 1, 2, 6, 3, 5;
+		setarray .@jobcostume_actions[0],	0, 1, 2, 2, 1, 3;
+		
+	} else { // Regular Trans Jobs
+		setarray .@show_job_choices[0], 	0, 1, 2, 3, 5;
+		setarray .@jobcostume_actions[0],	0, 1, 2, 2, 3;
 	}
+
+	// Generate the menu options and actions dynamically
+	for (.@i = 0; .@i < getarraysize(.@show_job_choices); .@i++)
+		setarray .@jobcostume_menu_options$[.@i], .@JOB_CHOICES$[.@show_job_choices[.@i]];
+
+	for (.@i = 0; .@i < getarraysize(.@jobcostume_actions); .@i++)
+		setarray .@jobcostume_menu_actions[.@i], .@JOB_CHOICES_ID[.@jobcostume_actions[.@i]];
+
+	// Prepare assignment of jobcostume_details
+	// Actions will be based on .@jobcostume_menu_actions rather than the index from select().
+	set .@jobcostume_menu$, implode(.@jobcostume_menu_options$, ":");
+	set .@job_choice, select(.@jobcostume_menu$)-1;
+
+	switch (.@show_job_choices[.@job_choice]) {
+		case 0: //Proceed, will use default values
+			set .@reset_costume, 1;
+			break;
+		case 3:
+		case 4:
+		case 6:
+			set .@bodystyle, 1;
+			break;
+    }
+	set .@job_id, .@jobcostume_menu_actions[.@job_choice];
+
+	//return can't pass a whole array, so combine it into 1 string
+	setarray .@jobcostume_details$[0], .@job_id, .@reset_costume, .@SECOND_BASE, .@bodystyle;
+	return implode(.@jobcostume_details$, ",");
+}
+
+//Set certain job conditions, usually for obtaining mounts for RK and Mechanic or retaining Novice job costume
+function	script	set_jobcostume_flags	{
+	set .@selected_job_id, getarg(0); set .@bodystyle, getarg(1);
+	setarray .@affected_jobs[0], roclass(EAJ_MECHANIC_T), roclass(EAJ_MEISTER), 
+								 roclass(EAJ_RUNE_KNIGHT_T), roclass(EAJ_DRAGON_KNIGHT),
+								 roclass(EAJ_KNIGHT);
+	setarray .@mado_compatible[0], roclass(EAJ_MECHANIC_T), roclass(EAJ_MEISTER);
+	setarray .@dragon_compatible[0], roclass(EAJ_RUNE_KNIGHT_T), roclass(EAJ_DRAGON_KNIGHT);
+
+	if(.@selected_job_id == roclass(EAJ_NOVICE)) set novice_costume, 1;
+	if(!countinarray(.@affected_jobs, .@selected_job_id)) return;
+
+	if(countinarray(.@mado_compatible, .@selected_job_id)) set mado_compatible, 1; 
+	else if(countinarray(.@dragon_compatible, .@selected_job_id) && !.@bodystyle) set rk_version, 1;
+	else if(countinarray(.@dragon_compatible, .@selected_job_id)) set rk_version, 2;
+	else if(.@selected_job_id == roclass(EAJ_KNIGHT) && .@bodystyle == 1) set rk_version, 3;
+
 	return;
 }
 
+function	script	change_jobcostume	{
+	set .@job_id, getarg(0); set .@costume_id, getarg(1); 
+	set .@bodystyle, getarg(2); set .@novice_costume, getarg(3,0);
+	setarray .@WOLF_JOBS[0], 4062, 4257; setarray .@NOVICE_JOBS[0], 0, 23, 4045, 4307;
 
-function	script	ChangeJobOutfit	{
-	//Always reset these parameters first
-	setlook LOOK_BODY2, 0;
-	setlook LOOK_CLOTHES_COLOR, 0;
+	//Set costume whether it is original (reset), novice, or selected job
+	set .@costume_id, (.@costume_id ? 0 : .@novice_costume ? 0 : .@job_id); 
+	
+	//Save to DB if baselook only if it is not the same as the current one
+	if(.@costume_id != baselook) set baselook, .@costume_id; 
+	
+	changebase .@job_id; //Transform
+	if (.@bodystyle) setlook LOOK_BODY2, .@bodystyle; //For alternate (jRO) and v3
 
-	switch(getarg(1)){
-		case 0: // Normal Mode
-			changebase getarg(0);
-			set baselook, getarg(0);
-			dispbottom "Normal Mode";
-			break;
-
-		case 1: // jRO Mode
-			if(!callfunc("HasjROCostume", getarg(0))) return;
-			changebase getarg(0);
-			setlook LOOK_BODY2, 1;
-			set baselook, getarg(0);
-			dispbottom "Alternate Mode";
-			break;
-
-		case 2: //Extra slot in base 2nd job
-			changebase getarg(0);
-			setlook LOOK_BODY2, 1;
-			set baselook, getarg(0);
-			dispbottom "Extra mode";
-			break;
-	}
+	//Reattach to fix visual bugs of changing Job Costumes
+	if (countinarray(.@NOVICE_JOBS, .@job_id) || .@novice_costume) callfunc("fix_novice_cart", .@novice_costume);
+	else if (countinarray(.@WOLF_JOBS, .@costume_id)) callfunc("fix_ranger_summons");
+	
 	return;
 }
 
-//Check if Job has alternate costume (Only 2-1 and 2-2)
-function	script	HasjROCostume	{
-	switch(getarg(0)){
-		//3-1 Jobs
-		case JOB_RUNE_KNIGHT_T:
-		case JOB_WARLOCK_T:
-		case JOB_RANGER_T:
-		case JOB_ARCH_BISHOP_T:
-		case JOB_MECHANIC_T:
-		case JOB_GUILLOTINE_CROSS_T:
-		//3-2 Jobs
-		case JOB_ROYAL_GUARD_T:
-		case JOB_SORCERER_T:
-		case JOB_MINSTREL_T:
-		case JOB_WANDERER_T:
-		case JOB_SURA_T:
-		case JOB_GENETIC_T:
-		case JOB_SHADOW_CHASER_T:
-			return 1;
-		default:
-			dispbottom "No jRO Costume found.";
-			return 0;
+//Reattach Cart when changing Job Costumes
+function	script	fix_novice_cart	{
+	set .@novice_costume, getarg(0);
+
+	if (!checkcart()) return;
+	if (.@novice_costume) { //Base Novice Job
+		setcart 0; setcart 12;
+	} else if(!.@novice_costume) { //Super Novice, Super Baby Novice, Hyper Novice
+		setcart 0; setcart 12;
 	}
+
+	return;
+}
+
+function	script	fix_ranger_summons	{
+	if (!checkfalcon() && !checkwug()) return;
+	if (checkfalcon() && !checkoption(Option_Wugrider)) { //Reattach Falcon
+		setfalcon 0; setfalcon 1;
+	} else if (checkfalcon() && checkoption(Option_Wugrider)) { //Fix falcon when player is already riding
+		setoption Option_Wugrider, 0;
+		setfalcon 0; setfalcon 1;
+		setoption Option_Wugrider, 1;
+	}
+	if (checkwug() && !checkoption(Option_Wugrider)) { //Reatttach Wolf
+		setoption Option_Wug, 0; setoption Option_Wug, 1;
+	}
+
+	return;
+}
+
+//Remove mounts, some skills, bodystyle, and clothes color upon changing job costumes
+function	script	reset_char_state	{
+	setlook LOOK_BODY2, 0; set colored_clothes, 0;
+	changelook LOOK_CLOTHES_COLOR, colored_clothes;
+	if(ismounting()) setmounting; //Remove Halter Lead from all class
+
+	switch(getarg(0)){ // SECOND_BASE Job ID
+		case 7: //Knight Job ID
+			if(checkriding()) setriding 0;
+			if(checkdragon()) setdragon 0;
+			if(getskilllv("RK_DRAGONTRAINING")) skill "RK_DRAGONTRAINING", 0, SKILL_PERM_GRANT;
+			set rk_version, 0;
+			return;
+
+		case 10: //Blacksmith
+			if(getskilllv("NC_MADOLICENCE")) skill "NC_MADOLICENCE", 0, SKILL_PERM_GRANT;
+			set mado_compatible, 0; set colored_clothes_mado, 0;
+			return;
+
+		case 11: //Hunter
+			if(checkfalcon()) setfalcon 0;
+			if(checkwug()) {
+				setoption Option_Wugrider, 0;
+				setoption Option_Wug, 0;
+			}
+			if(getskilllv("RA_WUGMASTERY")) skill "RA_WUGMASTERY", 0, SKILL_PERM_GRANT;
+			if(getskilllv("RA_WUGRIDER")) skill "RA_WUGRIDER", 0, SKILL_PERM_GRANT;
+			return;
+
+		case 14: //Crusader
+			if(checkriding()) setriding 0;
+			return;
+
+		case 23: //Super novice
+			set novice_costume, 0;
+			return;
+	}
+	return;
 }

@@ -3,9 +3,9 @@
 
 #include "npc.hpp"
 
-#include <errno.h>
+#include <cerrno>
+#include <cstdlib>
 #include <map>
-#include <stdlib.h>
 #include <vector>
 
 #include <common/cbasetypes.hpp>
@@ -4130,7 +4130,7 @@ static const char* npc_parse_shop(char* w1, char* w2, char* w3, char* w4, const 
 			ShowWarning("npc_parse_shop: Item %s [%u] is being sold for FREE in file '%s', line '%d'.\n",
 				id->name.c_str(), nameid2, filepath, strline(buffer,start-buffer));
 		}
-		if( type == NPCTYPE_SHOP && value*0.75 < id->value_sell*1.24 ) { // Exploit possible: you can buy and sell back with profit
+		if( ( type == NPCTYPE_SHOP || type == NPCTYPE_MARKETSHOP ) && value*0.75 < id->value_sell*1.24 ) { // Exploit possible: you can buy and sell back with profit
 			ShowWarning("npc_parse_shop: Item %s [%u] discounted buying price (%d->%d) is less than overcharged selling price (%d->%d) at file '%s', line '%d'.\n",
 				id->name.c_str(), nameid2, value, (int)(value*0.75), id->value_sell, (int)(id->value_sell*1.24), filepath, strline(buffer,start-buffer));
 		}
@@ -4930,6 +4930,19 @@ static void npc_market_fromsql(void) {
 		Sql_GetData(mmysql_handle, 3, &data, NULL); list.qty = atoi(data);
 		Sql_GetData(mmysql_handle, 4, &data, NULL); list.flag = atoi(data);
 
+		std::shared_ptr<item_data> id = item_db.find(list.nameid);
+
+		if (id == nullptr) {
+			ShowWarning("npc_market_fromsql: Invalid sell item in table '%s' (id '%u').\n", market_table, list.nameid);
+			continue;
+		}
+
+		if (list.value * 0.75 < id->value_sell * 1.24) { // Exploit possible: you can buy and sell back with profit
+			ShowWarning("npc_market_fromsql: Item %s [%u] discounted buying price (%d->%d) is less than overcharged selling price (%d->%d) in table '%s'. Assigning to current sell value.\n",
+						id->name.c_str(), list.nameid, list.value, (int)(list.value * 0.75), id->value_sell, (int)(id->value_sell * 1.24), market_table);
+			list.value = id->value_sell;
+		}
+
 		RECREATE(market->list, struct npc_item_list, market->count+1);
 		market->list[market->count++] = list;
 		count++;
@@ -5155,10 +5168,7 @@ static const char* npc_parse_function(char* w1, char* w2, char* w3, char* w4, co
 		struct script_code *oldscript = (struct script_code*)db_data2ptr(&old_data);
 
 		ShowInfo("npc_parse_function: Overwriting user function [%s] (%s:%d)\n", w3, filepath, strline(buffer,start-buffer));
-		script_stop_scriptinstances(oldscript);
-		script_free_vars(oldscript->local.vars);
-		aFree(oldscript->script_buf);
-		aFree(oldscript);
+		script_free_code( oldscript );
 	}
 
 	return end;
@@ -5620,13 +5630,14 @@ int npc_parsesrcfile(const char* filepath)
 
 	// parse buffer
 	for ( const char* p = skip_space(buffer); p && *p ; p = skip_space(p) ) {
-		int pos[9];
+		size_t pos[9];
 		lines++;
 
 		// w1<TAB>w2<TAB>w3<TAB>w4
-		int count = sv_parse(p, len+buffer-p, 0, '\t', pos, ARRAYLENGTH(pos), (e_svopt)(SV_TERMINATE_LF|SV_TERMINATE_CRLF));
+		bool error;
+		size_t count = sv_parse( p, len + buffer - p, 0, '\t', pos, ARRAYLENGTH( pos ), SV_TERMINATE_LF|SV_TERMINATE_CRLF, error );
 
-		if (count < 0) {
+		if( error ){
 			ShowError("npc_parsesrcfile: Parse error in file '%s', line '%d'. Stopping...\n", filepath, strline(buffer,p-buffer));
 			break;
 		}

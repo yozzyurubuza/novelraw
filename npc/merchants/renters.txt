@@ -34,7 +34,7 @@ prontera,55,350,5	script	Peco Peco Breeder#knt	105,{
 	if(Upper==2) set .@price,2500; //Baby Peco
 
 	mes "[Peco Peco Breeder]";
-	if (BaseJob == Job_Knight && Class < Job_Rune_Knight) {
+	if (BaseJob == Job_Knight && Class < Job_Rune_Knight && !rk_version) {
 		mes "Welcome.";
 		mes "Honorable Knight,";
 		mes "would you like to rent";
