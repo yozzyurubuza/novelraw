@@ -1,11 +1,17 @@
 // NPC Script for handling mounts like Dragon, Madogear, and Wolf.
 
-izlude,88,148,5	script	Mount Manager	-1,{	
+izlude,88,148,5	script	Litzy	-1,{	
 	callsub OnClick;
 	end;
 
 	OnInit:
+		initnpctimer;
 		callfunc("customizeNPCSprite", 20388, 0, 0, 0, 0, 0, 0, 0, 53, 16);
+		end;
+
+	OnTimer1000:
+		showscript("Special Mounts");
+		setnpctimer 0;
 		end;
 
 	OnClick:
@@ -41,7 +47,6 @@ izlude,88,148,5	script	Mount Manager	-1,{
 					callfunc("check_job_costume", .@NPC_NAME$, .@BASELOOK_KNIGHT$[0], .@BASELOOK_KNIGHT$[1], .@DRAGON_COLORTXT$);
 				}
 
-				set .@dragon_color, 1;
 				if (getskilllv("KN_CAVALIERMASTERY") != 5){
 					mes .@NPC_NAME$;
 					mes "I'm sorry, you need to have";
@@ -52,11 +57,20 @@ izlude,88,148,5	script	Mount Manager	-1,{
 
 				// Intro speech for special dragons
 				if (rk_version == 2){
-					set .@dragon_color, callfunc("handle_rk_legacy_mount", .@NPC_NAME$, .@DRAGON_COLORTXT$, .@KNIGHT_ID);
+					emotion ET_SCISSOR;
+					mes .@NPC_NAME$;
+					mes "Oh!, the version of your costume";
+					mes "allows you to choose a";
+					mes "^8F00FFMystically Colored Dragon^000000~";
+					next;
+					mes .@NPC_NAME$;
+					mes "To find out more about it, talk to";
+					mes "<NAVI>Inferia<INFO>izlude,90,140,0,000,0</INFO></NAVI>"; 
+					next;
 				}
 
 				// RK Version not legacy
-				if ((checkdragon() && rk_version != 2) || (checkriding() && rk_version == 3)){
+				if ((checkdragon()) || (checkriding() && rk_version == 3)){
 					emotion ET_OK;
 					mes .@NPC_NAME$;
 					mes "You already have a " +.@DRAGON_COLORTXT$+ ".";
@@ -99,7 +113,7 @@ izlude,88,148,5	script	Mount Manager	-1,{
 					close3;
 				}
 				// Finally, apply dragon mount here
-				setdragon .@dragon_color;
+				setdragon 1;
 				close3;
 
 			case 2: //Madogear Mounts
@@ -132,6 +146,7 @@ izlude,88,148,5	script	Mount Manager	-1,{
 					callfunc("exit_speech_litzy", .@NPC_NAME$, .@BLACKSMITH_ID, .@MADOGEAR_COLORTXT$);
 				} else {
 					setmounting();
+					changelook LOOK_CLOTHES_COLOR, colored_clothes_mado;
 					specialeffect2 1835, SELF;
 					sc_start SC_SPEEDUP0, 180000, 25;
 					soundeffect "CD_FRAMEN.wav", 0;
@@ -221,49 +236,6 @@ function	script	check_job_costume	{
 	mes "To change Job Costumes, please find";
 	mes "<NAVI>Celestia<INFO>izlude,88,128,0,000,0</INFO></NAVI>";
 	close3;
-}
-
-function	script	handle_rk_legacy_mount	{
-	set .@npc_name$, getarg(0); set .@mount_name$, getarg(1); set .@basejob_id, getarg(2);
-	// Check if dragon is present
-	if (!checkdragon()){
-		emotion ET_BIGTHROB;
-		mes .@npc_name$;
-		mes "Oh!, the version of your costume";
-		mes "allows you to choose a";
-		mes "^8F00FFMystically Colored Dragon^000000~";
-		next;
-	} else {
-		mes .@npc_name$;
-		mes "Do you want change your "+ .@mount_name$ +"?";
-		next;
-		switch(select("Yes:No")){
-			case 1:
-				setdragon 0;
-				break;
-			case 2:
-				callfunc("exit_speech_litzy", .@npc_name$, .@basejob_id, .@mount_name$);
-				close3;
-		}
-	}
-
-	// RK Legacy: Choose color of your dragon
-	mes .@npc_name$;
-	mes "What color do you want for your";
-	mes .@mount_name$+ "?";
-	next;
-	switch(select("^388E3CGreen (Default)^000000:^4E342EBrown^000000:^455A64Gray^000000:^0288D1Blue^000000:^D32F2FRed^000000")){
-		case 1:
-			return 1; //Default Color
-		case 2:
-			return 2;
-		case 3:
-			return 3;
-		case 4:
-			return 4;
-		case 5:
-			return 5;
-	}
 }
 
 // Exit speech does not end or close the NPC

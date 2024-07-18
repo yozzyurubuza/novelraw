@@ -4,7 +4,7 @@ izlude,94,125,3	script	Freyja#1	-1,{
 
 	OnInit:
 		initnpctimer;
-		callfunc("customizeNPCSprite", JOB_TROUVERE, SEX_FEMALE, 8, 27, 1980, 0, 1996, 5);
+		callfunc("customizeNPCSprite", JOB_TROUVERE, SEX_FEMALE, 8, 27, 1980, 0, 1996, 5, 0, 0, 0, 2);
 		end;
 	
 	OnTimer1000:
@@ -60,13 +60,12 @@ izlude,94,125,3	script	Freyja#1	-1,{
 				break;
 			
 			case 3:
-				mes "Oh dear,";
 				mes "You must wear a ^000dddHeadgear^000000 for me to convert.";
 				break;
 			
 			case 4:
 				mes "Oh dear,";
-				mes "You must wear a ^6000ddCostume-converted Headgear^000000 for me to convert.";
+				mes "You must wear a ^6000ddCostume-converted Headgear^000000 for me to restore.";
 				break;
 
 			case 5:
