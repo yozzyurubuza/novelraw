@@ -17,6 +17,8 @@ function	script	customizeNPCSprite	{
 	hateffect getarg(8,0), true, getnpcid(0);
 	hateffect getarg(9,0), true, getnpcid(0);
 	hateffect getarg(10,0), true, getnpcid(0);
+	setunitdata getnpcid(0), UNPC_CLOTHCOLOR, getarg(11,0);
+	setunitdata getnpcid(0), UNPC_BODY2, getarg(12,0);
 }
 
 //NRO-222: Allows 3 unique dialogues with randomization without repeating the last said line

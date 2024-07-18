@@ -4934,6 +4934,54 @@ BUILDIN_FUNC(mes)
 	return SCRIPT_CMD_SUCCESS;
 }
 
+//Rainbow-colored text
+BUILDIN_FUNC(rainbowmes)
+{
+    const char* rainbow_colors[] = {
+        "^e81416",  // Red
+        "^ffa500",  // Orange
+        "^f8d72f",  // Yellow
+        "^79c314",  // Green
+        "^487de7",  // Blue
+        "^4b369d",  // Indigo
+        "^70369d"   // Violet
+    };
+
+    const char* input_str = script_getstr(st, 2);  // Get the input string from the script stack
+    int input_len = strlen(input_str);
+    int color_count = sizeof(rainbow_colors) / sizeof(rainbow_colors[0]);
+
+    // Calculate the buffer size needed
+    int output_buffer_size = input_len * 10 + 10;  // Each character might be prefixed with a color code, plus extra for reset color
+
+    // Allocate memory dynamically
+    char* output_str = (char*)aMalloc(output_buffer_size);
+    if (!output_str) {
+        // Temporary buffer for error message
+        char error_msg[] = "Memory allocation failed.";
+        // Push error message to script stack
+        script_pushstr(st, error_msg);
+        return SCRIPT_CMD_FAILURE;
+    }
+
+    // Initialize the output string
+    output_str[0] = '\0';
+
+    // Loop through each character of the input string
+    for (int i = 0; i < input_len; ++i) {
+        // Append the color code and character to the output string
+        snprintf(output_str + strlen(output_str), output_buffer_size - strlen(output_str), "%s%c", rainbow_colors[i % color_count], input_str[i]);
+    }
+
+    // Append the reset color code to the end
+    snprintf(output_str + strlen(output_str), output_buffer_size - strlen(output_str), "^000000");
+
+    // Push the colored string onto the script stack
+    // Memory is managed by the script engine after pushing, no need to free it here
+    script_pushstr(st, output_str);
+
+    return SCRIPT_CMD_SUCCESS;
+}
 /// Displays the button 'next' in the npc dialog.
 /// The dialog text is cleared and the script continues when the button is pressed.
 ///
@@ -27417,6 +27465,7 @@ BUILDIN_FUNC(preg_match) {
 struct script_function buildin_func[] = {
 	// NPC interaction
 	BUILDIN_DEF(mes,"s*"),
+	BUILDIN_DEF(rainbowmes, "s"),
 	BUILDIN_DEF(next,""),
 	BUILDIN_DEF(clear,""),
 	BUILDIN_DEF(close,""),
