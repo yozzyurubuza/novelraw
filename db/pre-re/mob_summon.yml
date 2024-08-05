@@ -101,30 +101,30 @@ Body:
         Rate: 500000
       - Mob: LADY_TANEE
         Rate: 500000
-      - Mob: THANATOS
-        Rate: 500000
+      # - Mob: THANATOS
+      #   Rate: 500000
       - Mob: DETALE
         Rate: 500000
       - Mob: KIEL_
         Rate: 500000
       - Mob: RANDGRIS
         Rate: 500000
-      - Mob: GLOOMUNDERNIGHT
-        Rate: 500000
-      - Mob: KTULLANUX
-        Rate: 500000
-      - Mob: ATROCE
-        Rate: 1000000
-      - Mob: IFRIT
-        Rate: 500000
-      - Mob: FALLINGBISHOP
-        Rate: 500000
-      - Mob: BEELZEBUB
-        Rate: 500000
-      - Mob: GOPINICH
-        Rate: 500000
-      - Mob: S_NYDHOG
-        Rate: 500000
+      # - Mob: GLOOMUNDERNIGHT
+      #   Rate: 500000
+      # - Mob: KTULLANUX
+      #   Rate: 500000
+      # - Mob: ATROCE
+      #   Rate: 1000000
+      # - Mob: IFRIT
+      #   Rate: 500000
+      # - Mob: FALLINGBISHOP
+      #   Rate: 500000
+      # - Mob: BEELZEBUB
+      #   Rate: 500000
+      # - Mob: GOPINICH
+      #   Rate: 500000
+      # - Mob: S_NYDHOG
+      #   Rate: 500000
   - Group: Branch_Of_Dead_Tree
     Default: SCORPION
     Summon:
@@ -798,10 +798,10 @@ Body:
         Rate: 71428
       - Mob: CHUNG_E_
         Rate: 71428
-      - Mob: GREMLIN
-        Rate: 71428
-      - Mob: BEHOLDER
-        Rate: 71428
+      # - Mob: GREMLIN
+      #   Rate: 71428
+      # - Mob: BEHOLDER
+      #   Rate: 71428
       - Mob: SEYREN
         Rate: 71428
       - Mob: EREMES
@@ -878,16 +878,16 @@ Body:
         Rate: 71428
       - Mob: ANCIENT_MIMIC
         Rate: 71428
-      - Mob: SOLACE
-        Rate: 71428
-      - Mob: THA_ODIUM
-        Rate: 71428
-      - Mob: THA_DESPERO
-        Rate: 71428
-      - Mob: THA_MAERO
-        Rate: 71428
-      - Mob: THA_DOLOR
-        Rate: 71428
+      # - Mob: SOLACE
+      #   Rate: 71428
+      # - Mob: THA_ODIUM
+      #   Rate: 71428
+      # - Mob: THA_DESPERO
+      #   Rate: 71428
+      # - Mob: THA_MAERO
+      #   Rate: 71428
+      # - Mob: THA_DOLOR
+      #   Rate: 71428
       - Mob: ACIDUS
         Rate: 71428
       - Mob: FERUS
@@ -916,144 +916,144 @@ Body:
         Rate: 71428
       - Mob: SKEGGIOLD_
         Rate: 71428
-      - Mob: AGAV
-        Rate: 71428
-      - Mob: ECHIO
-        Rate: 71428
-      - Mob: VANBERK
-        Rate: 71428
-      - Mob: ISILLA
-        Rate: 71428
-      - Mob: HODREMLIN
-        Rate: 71428
-      - Mob: SEEKER
-        Rate: 71428
-      - Mob: SNOWIER
-        Rate: 71428
-      - Mob: SIROMA
-        Rate: 71428
-      - Mob: ICE_TITAN
-        Rate: 71428
-      - Mob: GAZETI
-        Rate: 71428
-      - Mob: MUSCIPULAR
-        Rate: 71428
-      - Mob: DROSERA
-        Rate: 71428
-      - Mob: ROWEEN
-        Rate: 71428
-      - Mob: GALION
-        Rate: 71428
-      - Mob: STAPO
-        Rate: 142857
-      - Mob: ICEICLE
-        Rate: 71428
-      - Mob: AUNOE
-        Rate: 142857
-      - Mob: FANAT
-        Rate: 142857
-      - Mob: SWORD_GUARDIAN
-        Rate: 71428
-      - Mob: BOW_GUARDIAN
-        Rate: 71428
-      - Mob: SALAMANDER
-        Rate: 71428
-      - Mob: KASA
-        Rate: 71428
-      - Mob: MAGMARING
-        Rate: 214285
-      - Mob: IMP
-        Rate: 71428
-      - Mob: KNOCKER
-        Rate: 71428
-      - Mob: BYORGUE
-        Rate: 71428
-      - Mob: ZOMBIE_SLAUGHTER
-        Rate: 71428
-      - Mob: RAGGED_ZOMBIE
-        Rate: 71428
-      - Mob: HELL_POODLE
-        Rate: 71428
-      - Mob: BANSHEE
-        Rate: 71428
-      - Mob: FLAME_SKULL
-        Rate: 71428
+      # - Mob: AGAV
+      #   Rate: 71428
+      # - Mob: ECHIO
+      #   Rate: 71428
+      # - Mob: VANBERK
+      #   Rate: 71428
+      # - Mob: ISILLA
+      #   Rate: 71428
+      # - Mob: HODREMLIN
+      #   Rate: 71428
+      # - Mob: SEEKER
+      #   Rate: 71428
+      # - Mob: SNOWIER
+      #   Rate: 71428
+      # - Mob: SIROMA
+      #   Rate: 71428
+      # - Mob: ICE_TITAN
+      #   Rate: 71428
+      # - Mob: GAZETI
+      #   Rate: 71428
+      # - Mob: MUSCIPULAR
+      #   Rate: 71428
+      # - Mob: DROSERA
+      #   Rate: 71428
+      # - Mob: ROWEEN
+      #   Rate: 71428
+      # - Mob: GALION
+      #   Rate: 71428
+      # - Mob: STAPO
+      #   Rate: 142857
+      # - Mob: ICEICLE
+      #   Rate: 71428
+      # - Mob: AUNOE
+      #   Rate: 142857
+      # - Mob: FANAT
+      #   Rate: 142857
+      # - Mob: SWORD_GUARDIAN
+      #   Rate: 71428
+      # - Mob: BOW_GUARDIAN
+      #   Rate: 71428
+      # - Mob: SALAMANDER
+      #   Rate: 71428
+      # - Mob: KASA
+      #   Rate: 71428
+      # - Mob: MAGMARING
+      #   Rate: 214285
+      # - Mob: IMP
+      #   Rate: 71428
+      # - Mob: KNOCKER
+      #   Rate: 71428
+      # - Mob: BYORGUE
+      #   Rate: 71428
+      # - Mob: ZOMBIE_SLAUGHTER
+      #   Rate: 71428
+      # - Mob: RAGGED_ZOMBIE
+      #   Rate: 71428
+      # - Mob: HELL_POODLE
+      #   Rate: 71428
+      # - Mob: BANSHEE
+      #   Rate: 71428
+      # - Mob: FLAME_SKULL
+      #   Rate: 71428
       - Mob: NECROMANCER
         Rate: 71428
-      - Mob: BEELZEBUB_FLY
-        Rate: 71428
-      - Mob: WOOD_GOBLIN
-        Rate: 71428
-      - Mob: LES
-        Rate: 71428
-      - Mob: VAVAYAGA
-        Rate: 71428
-      - Mob: UZHAS
-        Rate: 71428
-      - Mob: MAVKA
-        Rate: 71428
-      - Mob: MOROCC_1
-        Rate: 71428
-      - Mob: MOROCC_2
-        Rate: 71428
-      - Mob: MOROCC_3
-        Rate: 71428
-      - Mob: MOROCC_4
-        Rate: 71428
-      - Mob: BANSHEE_MASTER
-        Rate: 71428
-      - Mob: BEHOLDER_MASTER
-        Rate: 71428
-      - Mob: COBALT_MINERAL
-        Rate: 71428
-      - Mob: HEAVY_METALING
-        Rate: 71428
-      - Mob: HELL_APOCALIPS
-        Rate: 71428
-      - Mob: ZAKUDAM
-        Rate: 71428
-      - Mob: TATACHO
-        Rate: 71428
-      - Mob: CENTIPEDE
-        Rate: 71428
-      - Mob: NEPENTHES
-        Rate: 71428
-      - Mob: HILLSRION
-        Rate: 71428
-      - Mob: HARDROCK_MOMMOTH
-        Rate: 71428
-      - Mob: TENDRILRION
-        Rate: 71428
-      - Mob: CORNUS
-        Rate: 71428
-      - Mob: NAGA
-        Rate: 71428
-      - Mob: LUCIOLA_VESPA
-        Rate: 71428
-      - Mob: PINGUICULA
-        Rate: 71428
-      - Mob: CENTIPEDE_LARVA
-        Rate: 71428
-      - Mob: DRACO
-        Rate: 71428
-      - Mob: PINGUICULA_D
-        Rate: 71428
-      - Mob: AQUA_ELEMENTAL
-        Rate: 71428
-      - Mob: RATA
-        Rate: 71428
-      - Mob: DUNEYRR
-        Rate: 71428
-      - Mob: ANCIENT_TREE
-        Rate: 71428
-      - Mob: RHYNCHO
-        Rate: 71428
-      - Mob: PHYLLA
-        Rate: 71428
-      - Mob: DARK_SHADOW
-        Rate: 71428
-      - Mob: BRADIUM_GOLEM
-        Rate: 71428
+      # - Mob: BEELZEBUB_FLY
+      #   Rate: 71428
+      # - Mob: WOOD_GOBLIN
+      #   Rate: 71428
+      # - Mob: LES
+      #   Rate: 71428
+      # - Mob: VAVAYAGA
+      #   Rate: 71428
+      # - Mob: UZHAS
+      #   Rate: 71428
+      # - Mob: MAVKA
+      #   Rate: 71428
+      # - Mob: MOROCC_1
+      #   Rate: 71428
+      # - Mob: MOROCC_2
+      #   Rate: 71428
+      # - Mob: MOROCC_3
+      #   Rate: 71428
+      # - Mob: MOROCC_4
+      #   Rate: 71428
+      # - Mob: BANSHEE_MASTER
+      #   Rate: 71428
+      # - Mob: BEHOLDER_MASTER
+      #   Rate: 71428
+      # - Mob: COBALT_MINERAL
+      #   Rate: 71428
+      # - Mob: HEAVY_METALING
+      #   Rate: 71428
+      # - Mob: HELL_APOCALIPS
+      #   Rate: 71428
+      # - Mob: ZAKUDAM
+      #   Rate: 71428
+      # - Mob: TATACHO
+      #   Rate: 71428
+      # - Mob: CENTIPEDE
+      #   Rate: 71428
+      # - Mob: NEPENTHES
+      #   Rate: 71428
+      # - Mob: HILLSRION
+      #   Rate: 71428
+      # - Mob: HARDROCK_MOMMOTH
+      #   Rate: 71428
+      # - Mob: TENDRILRION
+      #   Rate: 71428
+      # - Mob: CORNUS
+      #   Rate: 71428
+      # - Mob: NAGA
+      #   Rate: 71428
+      # - Mob: LUCIOLA_VESPA
+      #   Rate: 71428
+      # - Mob: PINGUICULA
+      #   Rate: 71428
+      # - Mob: CENTIPEDE_LARVA
+      #   Rate: 71428
+      # - Mob: DRACO
+      #   Rate: 71428
+      # - Mob: PINGUICULA_D
+      #   Rate: 71428
+      # - Mob: AQUA_ELEMENTAL
+      #   Rate: 71428
+      # - Mob: RATA
+      #   Rate: 71428
+      # - Mob: DUNEYRR
+      #   Rate: 71428
+      # - Mob: ANCIENT_TREE
+      #   Rate: 71428
+      # - Mob: RHYNCHO
+      #   Rate: 71428
+      # - Mob: PHYLLA
+      #   Rate: 71428
+      # - Mob: DARK_SHADOW
+      #   Rate: 71428
+      # - Mob: BRADIUM_GOLEM
+      #   Rate: 71428
   - Group: Classchange
     Default: BAPHOMET
     Summon:
