@@ -14,5 +14,5 @@
 //= 1.0 Moved Dorian to pre-re/re paths.
 //============================================================ 
 
-izlude_in,110,64,3	duplicate(Dorian_izlude)	Dorian	878,2,2
-izlude_in,113,66,0	duplicate(StrangeMachine_izlude)	Strange Machine	111
+izlude_in,57,92,3	duplicate(Dorian_izlude)	Dorian	878,2,2
+izlude_in,58,90,1	duplicate(StrangeMachine_izlude)	Strange Machine	111

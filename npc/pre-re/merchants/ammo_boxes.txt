@@ -14,7 +14,7 @@
 //= 2.1 Fixes Issue #1482, where Rebellion jobs cannot use this npc. [Limestone]
 //============================================================
 
-que_ng,187,149,3	script	Magazine Dealer Kenny::mdk	4_M_01,{
+izlude,155,135,3	script	Magazine Dealer Kenny::mdk	4_M_01,{
 	mes "[Kenny]";
 	if (BaseClass == Job_Gunslinger) {
 		mes "Welcome to my Magazine Shop.";
@@ -108,21 +108,20 @@ S_Casing:
 			}
 		} else {
 			mes "Sorry, but you don't";
-			mes "have enough zeny for";
-			mes "this Magazine exchange.";
-			mes "Come back to my shop";
-			mes "after you've saved up";
-			mes "some more money.";
-		}
-	} else {
-		mes "Sorry, but you don't";
-		mes "have enough bullets for";
-		mes "this Magazine exchange.";
-		mes "Maybe you should double";
+
 		mes "check your Inventory, and";
 		mes "then come back to me later.";
 	}
 	close;
 }
+}
+// //izlude,171,127,3	duplicate(mdk)	Magazine Dealer Kenny#iz	4_M_01
 
-izlude,171,127,3	duplicate(mdk)	Magazine Dealer Kenny#iz	4_M_01
+// 		mes "check your Inventory, and";
+// 		mes "then come back to me later.";
+// 	}
+// 	close;
+// }
+
+//PRE-RE--izlude,171,127,3	duplicate(mdk)	Magazine Dealer Kenny#iz	4_M_01
+//-RENEWAL--izlude,155,135,3	duplicate(mdk)	Magazine Dealer Kenny#iz	4_M_01

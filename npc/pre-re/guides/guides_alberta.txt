@@ -157,3 +157,5 @@ alberta,23,238,4	script	Guide#alb::AlbGuide	105,{
 }
 
 alberta,120,60,3	duplicate(AlbGuide)	Guide#2alb	105
+//added another guide from renewal map
+alberta,184,143,4	duplicate(AlbGuide)	Guide#03alb	105
