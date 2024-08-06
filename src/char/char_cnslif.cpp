@@ -3,14 +3,14 @@
 
 #include "char_cnslif.hpp"
 
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
-#include "../common/cli.hpp"
-#include "../common/ers.hpp"
-#include "../common/showmsg.hpp"
-#include "../common/socket.hpp"
-#include "../common/timer.hpp"
+#include <common/cli.hpp>
+#include <common/ers.hpp>
+#include <common/showmsg.hpp>
+#include <common/socket.hpp>
+#include <common/timer.hpp>
 
 #include "char.hpp"
 
@@ -47,7 +47,7 @@ TIMER_FUNC(cnslif_console_timer){
 	memset(buf,0,MAX_CONSOLE_IN); //clear out buf
 
 	if(cli_hasevent()){
-		if(fgets(buf, MAX_CONSOLE_IN, stdin)==NULL)
+		if(fgets(buf, MAX_CONSOLE_IN, stdin)==nullptr)
 			return -1;
 		else if(strlen(buf)>MIN_CONSOLE_IN)
 			cnslif_parse(buf);

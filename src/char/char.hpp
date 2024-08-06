@@ -4,13 +4,15 @@
 #ifndef CHAR_HPP
 #define CHAR_HPP
 
+#include <memory>
+#include <unordered_map>
 #include <vector>
 
-#include "../common/core.hpp" // CORE_ST_LAST
-#include "../common/mmo.hpp"
-#include "../common/msg_conf.hpp"
-#include "../common/timer.hpp"
-#include "../config/core.hpp"
+#include <common/core.hpp> // CORE_ST_LAST
+#include <common/mmo.hpp>
+#include <common/msg_conf.hpp>
+#include <common/timer.hpp>
+#include <config/core.hpp>
 
 #include "packets.hpp"
 
@@ -149,6 +151,7 @@ struct Char_Config {
 	char unknown_char_name[NAME_LENGTH]; // Name to use when the requested name cannot be determined
 	char char_name_letters[1024]; // list of letters/symbols allowed (or not) in a character name. by [Yor]
 	int char_name_option; // Option to know which letters/symbols are authorised in the name of a character (0: all, 1: only those in char_name_letters, 2: all EXCEPT those in char_name_letters) by [Yor]
+	uint8 char_name_min_length; // Minimum character name length (default: 4)
 	int char_del_option;	// Character deletion type, email = 1, birthdate = 2 (default)
 	int char_del_restriction;	// Character deletion restriction (0: none, 1: if the character is in a party, 2: if the character is in a guild, 3: if the character is in a party or a guild)
 	bool char_rename_party;	// Character renaming in a party
@@ -184,7 +187,7 @@ struct CharServ_Config {
 	int log_inter;	// loggin inter or not [devil]
 	int char_check_db;	///cheking sql-table at begining ?
 
-	struct point start_point[MAX_STARTPOINT], start_point_doram[MAX_STARTPOINT]; // Initial position the player will spawn on the server
+	struct s_point_str start_point[MAX_STARTPOINT], start_point_doram[MAX_STARTPOINT]; // Initial position the player will spawn on the server
 	short start_point_count, start_point_count_doram; // Number of positions read
 	struct startitem start_items[MAX_STARTITEM], start_items_doram[MAX_STARTITEM]; // Initial items the player with spawn with on the server
 	uint32 start_status_points;
@@ -195,10 +198,6 @@ struct CharServ_Config {
 	int start_zeny;
 	int guild_exp_rate;
 
-	char default_map[MAP_NAME_LENGTH];
-	unsigned short default_map_x;
-	unsigned short default_map_y;
-
 	int clan_remove_inactive_days;
 	int mail_return_days;
 	int mail_delete_days;
@@ -206,6 +205,7 @@ struct CharServ_Config {
 	int mail_return_empty;
 
 	int allowed_job_flag;
+	int clear_parties;
 };
 extern struct CharServ_Config charserv_config;
 
@@ -215,7 +215,7 @@ struct mmo_map_server {
 	uint32 ip;
 	uint16 port;
 	int users;
-	std::vector<uint16> map;
+	std::vector<std::string> maps;
 };
 extern struct mmo_map_server map_server[MAX_MAP_SERVERS];
 
@@ -232,7 +232,8 @@ struct auth_node {
 	unsigned changing_mapservers : 1;
 	uint8 version;
 };
-DBMap* char_get_authdb(); // uint32 account_id -> struct auth_node*
+
+std::unordered_map<uint32, std::shared_ptr<struct auth_node>>& char_get_authdb();
 
 struct online_char_data {
 	uint32 account_id;
@@ -241,8 +242,12 @@ struct online_char_data {
 	int waiting_disconnect;
 	short server; // -2: unknown server, -1: not connected, 0+: id of server
 	bool pincode_success;
+
+public: 
+	online_char_data( uint32 account_id );
 };
-DBMap* char_get_onlinedb(); // uint32 account_id -> struct online_char_data*
+
+std::unordered_map<uint32, std::shared_ptr<struct online_char_data>>& char_get_onlinedb();
 
 struct char_session_data {
 	bool auth; // whether the session is authed or not
@@ -262,6 +267,7 @@ struct char_session_data {
 	uint32 pincode_seed;
 	time_t pincode_change;
 	uint16 pincode_try;
+	bool pincode_correct;
 	// Addon system
 	unsigned int char_moves[MAX_CHARS]; // character moves left
 	uint8 isvip;
@@ -270,9 +276,7 @@ struct char_session_data {
 	uint8 flag; // &1 - Retrieving guild bound items
 };
 
-
-struct mmo_charstatus;
-DBMap* char_get_chardb(); // uint32 char_id -> struct mmo_charstatus*
+std::unordered_map<uint32, std::shared_ptr<struct mmo_charstatus>>& char_get_chardb();
 
 //Custom limits for the fame lists. [Skotlex]
 extern int fame_list_size_chemist;
@@ -286,12 +290,11 @@ extern struct fame_list taekwon_fame_list[MAX_FAME_LIST];
 #define DEFAULT_AUTOSAVE_INTERVAL 300*1000
 #define MAX_CHAR_BUF sizeof( struct CHARACTER_INFO ) //Max size (for WFIFOHEAD calls)
 
-int char_search_mapserver(unsigned short map, uint32 ip, uint16 port);
+int char_search_mapserver( const std::string& map, uint32 ip, uint16 port );
 int char_lan_subnetcheck(uint32 ip);
 
 int char_count_users(void);
-DBData char_create_online_data(DBKey key, va_list args);
-int char_db_setoffline(DBKey key, DBData *data, va_list ap);
+void char_db_setoffline( std::shared_ptr<struct online_char_data> character, int server );
 void char_set_char_online(int map_id, uint32 char_id, uint32 account_id);
 void char_set_char_offline(uint32 char_id, uint32 account_id);
 void char_set_all_offline(int id);
@@ -317,7 +320,7 @@ int char_family(int pl1,int pl2,int pl3);
 int char_loadName(uint32 char_id, char* name);
 int char_check_char_name(char * name, char * esc_name);
 
-void char_pincode_decrypt( uint32 userSeed, char* pin );
+bool char_pincode_decrypt( uint32 userSeed, char* pin );
 int char_pincode_compare( int fd, struct char_session_data* sd, char* pin );
 void char_auth_ok(int fd, struct char_session_data *sd);
 void char_set_charselect(uint32 account_id);
