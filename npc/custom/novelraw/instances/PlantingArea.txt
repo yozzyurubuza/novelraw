@@ -9,7 +9,7 @@ izlude,109,140,5	script	Shiitake	-1,{
 	end;
 
 	OnInit:
-		callfunc("customizeNPCSprite", 4304, SEX_MALE, 0, 26, 1730, 1116, 1729, 0);
+		callfunc("customizeNPCSprite", 4304, SEX_MALE, 0, 26, 1730, 1116, 1729, 0, HAT_EF_MANYSTARS);
 		end;
 
 	OnClick:
