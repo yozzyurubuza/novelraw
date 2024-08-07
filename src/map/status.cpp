@@ -1965,18 +1965,18 @@ bool status_check_skilluse(struct block_list *src, struct block_list *target, ui
 		if (src->type != BL_PC && status_isdead(src))
 			return false;
 		status = status_get_status_data(src);
-	}else{
-		status = &dummy_status;
-	}
 
-	// Add check for Wug Rider status using sd->sc.option
-	if (src->type == BL_PC) {
-		struct map_session_data *sd = BL_CAST(BL_PC, src);
-		if (sd && (sd->sc.option & OPTION_WUGRIDER)) {
-			if (skill_id != RA_WUGRIDER) {
-				return false; // Block all skills except RA_WUGRIDER
+		// Add check for Wug Rider status using sd->sc.option
+		if (src->type == BL_PC) {
+			struct map_session_data *sd = BL_CAST(BL_PC, src);
+			if (sd && (sd->sc.option & OPTION_WUGRIDER)) {
+				if (skill_id != RA_WUGRIDER) {
+					return false; // Block all skills except RA_WUGRIDER
+				}
 			}
 		}
+	} else {
+		status = &dummy_status;
 	}
 
 	status_change *sc = status_get_sc(src);
