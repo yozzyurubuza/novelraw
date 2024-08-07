@@ -24486,7 +24486,7 @@ BUILDIN_FUNC(costume)
 	}
 	log_pick_pc(sd, LOG_TYPE_SCRIPT, -1, &sd->inventory.u.items_inventory[i]);
 	pc_unequipitem(sd, i, 2);
-	clif_delitem(sd, i, 1, 3);
+	clif_delitem(*sd, i, 1, 3);
 	// --------------------------------------------------------------------
 	sd->inventory.u.items_inventory[i].refine = 0;
 	sd->inventory.u.items_inventory[i].attribute = 0;
@@ -24504,7 +24504,7 @@ BUILDIN_FUNC(costume)
 
 	clif_additem(sd, i, 1, 0);
 	pc_equipitem(sd, i, ep);
-	clif_misceffect(&sd->bl, 3);
+	clif_misceffect(sd->bl, NOTIFYEFFECT_REFINE_SUCCESS);
 
 	return SCRIPT_CMD_SUCCESS;
 }
