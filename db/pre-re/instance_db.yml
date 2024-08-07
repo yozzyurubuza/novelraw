@@ -85,25 +85,7 @@ Body:
     Name: Planting Area
     TimeLimit: 7200
     Enter:
-      Map: 1@cata
-      X: 100
-      Y: 224
-    AdditionalMaps:
-      2@cata: true
-  - Id: 3
-    Name: Orc's Memory
-    Enter:
-      Map: 1@orcs
-      X: 179
-      Y: 15
-    AdditionalMaps:
-      2@orcs: true
-  - Id: 4
-    Name: Nidhoggur's Nest
-    TimeLimit: 14400
-    Enter:
-      Map: 1@nyd
-      X: 32
-      Y: 36
-    AdditionalMaps:
-      2@nyd: true
+      Map: 1@exds
+      X: 120
+      Y: 154
+
