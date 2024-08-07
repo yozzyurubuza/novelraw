@@ -36,8 +36,8 @@ cmd_fild02,0,0	monster	Raggler	1254,30
 cmd_fild02,94,85,40,80	monster	Raggler	1254,2,60000
 cmd_fild02,95,89,40,80	monster	Cornutus	1067,5,180000
 cmd_fild02,279,78,100,20	monster	Cornutus	1067,10,60000
-cmd_fild02,0,0	monster	Shellfish	1074,35
-cmd_fild02,93,82,40,80	monster	Shellfish	1074,5,180000
+cmd_fild02,0,0	monster	Shellfish	1074,100
+cmd_fild02,93,82,40,80	monster	Shellfish	1074,10,180000
 cmd_fild02,0,0	monster	Mobster	1313,1
 cmd_fild02,200,130,150,40	monster	Seal	1317,18
 cmd_fild02,93,82,40,80	monster	Seal	1317,2,180000
@@ -62,7 +62,7 @@ cmd_fild04,221,120,120,40	monster	Aster	1266,45
 cmd_fild04,0,0	monster	Alligator	1271,40
 cmd_fild04,0,0	monster	Crab	1073,20
 cmd_fild04,0,0	monster	Raggler	1254,20
-cmd_fild04,0,0	monster	Shellfish	1074,20
+cmd_fild04,0,0	monster	Shellfish	1074,100
 cmd_fild04,221,120,120,40	monster	Sea Otter	1323,20
 
 //==================================================

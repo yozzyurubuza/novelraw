@@ -1,265 +1,342 @@
-//===== rAthena Script =======================================
-//= Euphy's Quest Shop
-//===== By: ==================================================
-//= Euphy
-//===== Current Version: =====================================
-//= 1.6c
-//===== Compatible With: =====================================
-//= rAthena Project
-//===== Description: =========================================
-//= A dynamic quest shop based on Lunar's, with easier config.
-//= Includes support for multiple shops & cashpoints.
-//= Item Preview script by ToastOfDoom.
-//===== Additional Comments: =================================
-//= 1.0 Initial script.
-//= 1.2 Added category support.
-//= 1.3 More options and fixes.
-//= 1.4 Added debug settings.
-//= 1.5 Replaced categories with shop IDs.
-//= 1.6 Added support for purchasing stackables.
-//= 1.6a Added support for previewing costumes and robes.
-//= 1.6b Added 'disable_items' command.
-//= 1.6c Replaced function 'A_An' with "F_InsertArticle".
-//= 1.7 Modified by j
-//= 1.7a Removed some lines of code
-//= 1.7b Change the variable naming for clarity
-//==============================================
+// Headgear Crafting (New)
 
-izlude,127,168,4	script	Sindri#1	-1,{
-	doevent "trig_craft::OnMenu";
-	
-	OnInit:
-		callfunc("customizeNPCSprite", JOB_MEISTER, SEX_MALE, 6, 27, 1760, 1715, 1920, 7);
-		end;
-}
-
-	// Core code
--	script	trig_craft	-1,{
-	function Add;
-	function Chk;
-	function Slot;
+iz_craft,26,65,5	script	Sindri	-1,{	
+	callsub OnClick;
+	end;
 
 	OnInit:
-		set .Announce,1;	// Announce quest completion? (1: yes / 0: no)
-		set .ShowSlot,2;	// Show item slots? (2: all equipment / 1: if slots > 0 / 0: never)
-		set .ShowID,1;  	// Show item IDs? (1: yes / 0: no)
-		set .ShowZeny,0;	// Show Zeny cost, if any? (1: yes / 0: no)
-		set .MaxStack,1;	// Max number of quest items purchased at one time.
-
-		// When adding new shop options go to the bottom of this file and follow the format.
-		setarray .Shops$[1],
-		"Headgears",	// Shop Named 1
-		"Weapons";		// Shop Named 2
-
-		// Go to the bottom of the code to add the items
-		callsub ItemList;
-
-		set .menu$,"";
-		//.@shopCount = indicate where where to start reading the array
-		for (.@shopCount = 1; .@shopCount <= getarraysize(.Shops$); .@shopCount++) {
-			//set .menu = create a window
-			//.menu$+.Shops$[.@shopCount] = display the Shops (Headgear, Weapon, Others) inside the created window
-			set .menu$, .menu$ + .Shops$[.@shopCount] + ":";
-			//By default there's placeholder (jellopy) inside the shop to be able to call it, see the bottom of this code.
-			//This code deletes the jellopy
-			npcshopdelitem "craft" + .@shopCount,909;
-		}
+		initnpctimer;
+		callfunc("customizeNPCSprite", JOB_MEISTER, SEX_MALE, 7, 28, 2427, 2169, 2374, 107);
 		end;
 
-	OnMenu:
-		mes "[Sindri]";
+	OnTimer1000:
+		showscript("Headgear Rank 1");
+		setnpctimer 0;
+		end;
+
+	OnClick:
+		cutin "sindri", 2;
+		mes "^ff0000[ Sindri ]^000000";
 		mes "Welcome!";
+		mes "";
 		mes "Enter, seeker of power.";
 		mes "Together, we forge legends";
+		specialeffect EF_HEAT_BARREL;
 		next;
-		//This part of code is responsible for the arrangement of items inside the shop
-		set .@size, getarraysize(@itemCount);
-		if (!.@size){
-			set @shop_index, select(.menu$);
-		} else {
-			message strcharinfo(0),"An error has occurred.";
-			end;
-		}
-		
-		mes "[Sindri]";
+
+		set .@shop_index, select("Headgears - Upper:Headgears - Middle:Headgears - Lower:Headgears - Mixed:Cancel");
+		if (.@shop_index == 5) close3;
+
+		mes "^ff0000[ Sindri ]^000000";
 		mes "Step forward, seeker of power,";
 		mes "as I wield the flames that shapes";
 		mes "the unrivaled strength you crave.";
 		close2;
-		dispbottom "Select one item at a time.";
-		//Display the list of items in the Shop
-		callshop "craft" + @shop_index, 1;
-		//Responsible for displaying and getting the required items
-		npcshopattach "craft" + @shop_index;
+		cutin "", 255;
+		
+		callshop "headgears_r1_option" + .@shop_index;
+}
+
+
+iz_craft,35,74,5	script	Shiki	-1,{	
+	callsub OnClick;
+	end;
+	
+	OnInit:
+		initnpctimer;
+		callfunc("customizeNPCSprite", 4_JP_16TH, 0, 0, 0, 0, 0, 0, 0, HAT_EF_SNOWFLAKE_TIARA, 186);
+		set .random_line_num, -1;
 		end;
 
-	OnBuyItem:
-		// .@q[] : RewardID, BoughtAmt, RewardAmt, BaseAmt, ReqZeny, ReqPts, { ReqItem, ReqAmt, ... }
-		// Checks and copy the requiments
-		setarray .@requiredItem[0], @bought_nameid[0], ((@bought_quantity[0] > .MaxStack) ? .MaxStack : @bought_quantity[0]);
-	 	copyarray .@requiredItem[3], getd(".q_" + @shop_index + "_" + .@requiredItem[0] + "[0]"), getarraysize(getd(".q_" + @shop_index + "_" + .@requiredItem[0]));
-		//Number of selected items
-		set .@requiredItem[2],.@requiredItem[1];
+	OnTimer1000:
+		showscript("Headgear Rank 2");
+		setnpctimer 0;
+		end;
 
-		// Display this error when player craft an item greater than the maximum storage limit
-		if (!.@requiredItem[2] || .@requiredItem[2] > 30000) {
-			message strcharinfo(0), "You can't purchase that many " + getitemname(.@requiredItem[0]) + ".";
-			end;
+	OnClick:
+		set .random_line_num, callfunc("randomNumWithoutRepeat", .random_line_num);
+		cutin "shiki01", 2;
+		mes "^1873f7[ Shiki ]^000000";
+		switch(.random_line_num){
+			case 0:
+				mes "Ah, welcome adventurer!";
+				mes "";
+				mes "The path of adventure is long and winding, isn't it?";
+				mes "How may I assist you today?";
+				break;
+
+			case 1:
+				mes "Greetings!";
+				mes "";
+				mes "A sturdy headgear can be like";
+				mes "a trusted friend, keeping you";
+				mes "safe from your adventures.";
+				mes "Shall we craft one together?";
+				break;
+			
+			case 2:
+				mes "Oh, hello dear adventurer!";
+				mes "";
+				mes "How's your farming going?";
+				mes "I've recently learned a few";
+				mes "new crafting techniques.";
+				mes "Would you like to try a new one?";
+				break;
 		}
-
-		mes "[Sindri]";
-		// Display Selected item
-		mes "Selected Item: ^0055FF" + Slot(.@requiredItem[0]) + "^000000";
-		mes "Requirements:";
-
-		//Display Requirements
-		if (.@requiredItem[4]){
-			mes " > Zeny: " + Chk(Zeny, .@requiredItem[4] * .@requiredItem[1]) + (.@requiredItem[4] * .@requiredItem[1]);
-		}
-
-		if (.@requiredItem[5]){
-			for(.@reqList = 5; .@reqList < getarraysize(.@requiredItem); .@reqList += 2){
-				mes " > ^000000"
-				+ Slot(.@requiredItem[.@reqList]) + "^000000"	//Item Name
-				+ ((.ShowID)?" : [^0055FF" + .@requiredItem[.@reqList] + "^000000]":"")	//ItemID
-				+ " ^000000(" + Chk(countitem(.@requiredItem[.@reqList]), .@requiredItem[.@reqList+1] * .@requiredItem[1]) + countitem(.@requiredItem[.@reqList]) // Item you have
-				+ "/"
-				+ (.@requiredItem[.@reqList+1] * .@requiredItem[1]) + "^000000)";	//Item Required
-			}
-		}
-
 		next;
 
-		while(1) {
-			// Create a navi buttons (purchase, cancel)
-			switch(select(" ~ Purchase ^0055FF" + getitemname(.@requiredItem[0]) + ": ~ ^777777Cancel^000000")) {
-			case 1:
-				// Check if the items required are incomplete
-				if (@reqCheck[0]) {
-					mes "[Sindri]";
-					mes "You're missing one or more quest requirements.";
-					close;
-				}
+		set .@shop_index, select("Headgears - Upper:Headgears - Middle:Headgears - Lower:Headgears - Mixed:Cancel");
+		if (.@shop_index == 5) close3;
 
-				// Display when the player overweight
-				if (!checkweight(.@requiredItem[0],.@requiredItem[2])) {
-					mes "[Sindri]";
-					mes "^FF0000You need " + (((.@requiredItem[2] * getiteminfo(.@requiredItem[0], ITEMINFO_WEIGHT)) + Weight - MaxWeight) / 10)
-					+ " additional weight capacity to complete this trade.^000000";
-					close;
-				}
+		cutin "shiki02", 2;
+		mes "^1873f7[ Shiki ]^000000";
+		mes "Sure thing, I'm carefully curating the list of headgears just for you.";
+		close2;
+		cutin "", 255;
 
-				// If the item required is complete
-				if (.@requiredItem[4]){
-					set Zeny, Zeny - (.@requiredItem[4] * .@requiredItem[1]);
-				}
+		callshop "headgears_r2_option" + .@shop_index;
+}
 
-				if (.@requiredItem[5]){
-					for(.@numReq = 5; .@numReq < getarraysize(.@requiredItem); .@numReq += 2){
-						// Delete the required items
-						delitem .@requiredItem[.@numReq], .@requiredItem[.@numReq+1] * .@requiredItem[1];
-					}
-					// Player gets the selected item
-					getitem .@requiredItem[0], .@requiredItem[2];
-
-					// Display a message the craft is complete
-					if (.Announce){
-						announce strcharinfo(0) + " has created " + ((.@requiredItem[2] > 1) ? .@requiredItem[2]
-						+ "x " + getitemname(.@requiredItem[0]) : callfunc("F_InsertArticle", getitemname(.@requiredItem[0]))) + "!",0;
-						specialeffect2 EF_FLOWERLEAF;
-					}
-					close;
-				}
-				
-			case 2:
-				close;
-			}
-		}
+iz_craft,49,78,4	script	Sylvie	-1,{	
+	callsub OnClick;
 	end;
+	
+	OnInit:
+		callfunc("customizeNPCSprite", AB_PRINCESS_1, 0, 0, 0, 0, 0, 0, 0, 136, 44, 152);
+		set .random_line_num, -1;
+		end;
 
-// Adding custom items
-function Add {
-	// Check if the item ID is valid
-	if (getitemname(getarg(1)) == "null") {
-		debugmes "Quest reward #" + getarg(1) + " invalid (skipped).";
-		return;
-	}
-	//The value of .@itemOtherReqs[0] will be the Reward amount and Zeny cost
-	setarray .@itemOtherReqs[0], getarg(2), getarg(3);
-	for(.@argCount = 4; .@argCount < getargcount(); .@argCount += 2) {
-		// Check if the requirement IDs are valid
-		if (getitemname(getarg(.@argCount)) == "null") {
-			debugmes "Quest requirement #" + getarg(.@argCount) + " invalid (skipped).";
-			return;
-		} else
-			setarray .@itemOtherReqs[.@argCount - 2], getarg(.@argCount), getarg(.@argCount + 1);
-	}
-	//Will shuffle a lot of data between arrays. Ex. .q_1_5389[0], .@itemOtherReqs[0], getarraysize(.@itemOtherReqs)
-	copyarray getd(".q_" + getarg(0) + "_"+getarg(1) + "[0]"), .@itemOtherReqs[0], getarraysize(.@itemOtherReqs);
-	//Will add the item inside the shop craft#
-	npcshopadditem "craft" + getarg(0), getarg(1), ((.ShowZeny) ? getarg(3) : 0);
-	return;
+	OnClick:
+		set .random_line_num, callfunc("randomNumWithoutRepeat", .random_line_num);
+		cutin "princess_meer", 2;
+		mes "^0047AB[ Sylvie ]^000000";
+		switch(.random_line_num){
+			case 0:
+				mes "Hello there!";
+				mes "";
+				mes "The road ahead is fraught with danger, but also opportunities for glory.";
+				mes "I can craft you headgears that are an adventurer's dream";
+				break;
+
+			case 1:
+				mes "Hello adventurer!";
+				mes "";
+				mes "You look like someone who could use a fine piece of headgear.";
+				mes "Care to see what I can craft?";
+				break;
+			
+			case 2:
+				mes "Greetings, brave one.";
+				mes "";
+				mes "I can see you've been through";
+				mes "some battles.";
+				mes "How about we up your game with"; 
+				mes "a cut above headgears?";
+				break;
+		}
+		next;
+
+		set .@shop_index, select("Headgears - Upper:Headgears - Middle:Headgears - Lower:Headgears - Mixed:Cancel");
+		if (.@shop_index == 5) close3;
+
+		cutin "princess_meer2", 2;
+		mes "^0047AB[ Sylvie ]^000000";
+		mes "Hang on, I'm putting together a list that'll make even my sister ^1873f7Shiki^000000 jealous!";
+		close2;
+		cutin "", 255;
+
+		callshop "headgears_r3_option" + .@shop_index;
 }
 
-// Change color of Requirement
-function Chk {
-	if (getarg(0) < getarg(1)) {
-		set @reqCheck[0], 1;
-		// Color of requirement when incomplete.
-		return "^FF0000";
-	}
+iz_craft,49,79,3	script	Rank	CLEAR_NPC,{	
+	OnInit:
+		initnpctimer;
+		end;
 
-	// Color of requirement when completed
-	set @reqCheck[0], 0;
-	return "^008000";
+	OnTimer1000:
+		showscript("Headgear Rank 3");
+		setnpctimer 0;
+		end;
 }
 
-// Check item slot
-function Slot {
-	set .@slotCount$, getitemname(getarg(0));
-	switch(.ShowSlot) {
-		case 1:
-			//Item with 0 slot
-			if (!getitemslots(getarg(0))){
-				return .@slotCount$;
-			}
+iz_craft,62,74,3	script	Siegil	-1,{	
+	callsub OnClick;
+	end;
+	
+	OnInit:
+		initnpctimer;
+		callfunc("customizeNPCSprite", 4252, SEX_MALE, 5, 30, 1361, 0, 2272, 139, 98, 122, 0, 4, 0);
+		set .random_line_num, -1;
+		end;
 
-		case 2:
-			/*
-			IT_HEALING = 0	IT_UNKNOWN = 1	IT_USABLE = 2	IT_ETC = 3	IT_ARMOR = 4	IT_WEAPON = 5		IT_CARD = 6		IT_PETEGG = 7
-			IT_PETARMOR = 8	IT_UNKNOWN2 = 9	IT_AMMO = 10	IT_DELAYCONSUME = 11		IT_SHADOWGEAR = 12	IT_CASH = 18	IT_MAX = N/A
-			*/
-			if (getiteminfo(getarg(0), ITEMINFO_TYPE) == IT_ARMOR || getiteminfo(getarg(0), ITEMINFO_TYPE) == IT_WEAPON){
-				return .@slotCount$+" [" + getitemslots(getarg(0))+"]";
-			}
+	OnTimer1000:
+		showscript("Headgear Rank 4");
+		setnpctimer 0;
+		end;
 
-		default:
-			return .@slotCount$;
-	}
+	OnClick:
+		set .random_line_num, callfunc("randomNumWithoutRepeat", .random_line_num);
+		cutin "siegil", 2;
+		mes "^4169E1[ Siegil ]^000000";
+		switch(.random_line_num){
+			case 0:
+				mes "If you seek the pinnacle of craftsmanship, you've come";
+				mes "to the right place.";
+				mes "";
+				mes "My sisters ^0047ABSylvie^000000 and ^1873f7Shiki^000000 are talented, but mine is an art form.";
+				break;
+
+			case 1:
+				mes "Greetings.";
+				mes "";
+				mes "I can see you've been around, ";
+				mes "perhaps even met my sisters. ";
+				mes "Ready to experience the epitome of headgear crafting?";
+				break;
+			
+			case 2:
+				mes "Ah, a new adventurer"; 
+				mes "graces my workshop.";
+				mes "";
+				mes "Time to experience what";
+				mes "true mastery can create.";
+				mes "Interested?";
+				break;
+		}
+		next;
+
+		set .@shop_index, select("Headgears - Upper:Headgears - Middle:Headgears - Lower:Headgears - Mixed:Cancel");
+		if (.@shop_index == 5) close3;
+
+		mes "^4169E1[ Siegil ]^000000";
+		mes "Just a moment. I'm preparing to show you headgears that are nothing short of works of art.";
+		close2;
+		cutin "", 255;
+
+		callshop "headgears_r4_option" + .@shop_index;
 }
 
-ItemList:
-	//==============================
-	// ADD THE CRAFTABLE ITEMS HERE 
-	//==============================
-	// Warning: Do not add dupplicated item ID or IT WILL NOT WORK!
-	// Syntax: Add(<shop ID>,<reward ID>,<reward amount>,<Zeny cost>,<required item ID>,<required item amount>{,...});
 
-	// Shop 1
-	Add(1,5389,1,999,2226,1,984,10,985,40,4081,1,732,2);
 
-	// Shop 2
-	Add(2,1599,1,0,7086,1,969,10,999,40,1003,50,984,2);
-	Add(2,1208,1,0,909,1);
+iz_craft,43,48,5	script	Spica#iz_craft	-1,{
+	callsub OnClick;
+	end;
+	
+	OnInit:
+		initnpctimer;
+		callfunc("customizeNPCSprite", 4_ep16_spica, 0, 0, 0, 0, 0, 0, 0, 0, 188, 29);
+		set .random_line_num, -1;
+		end;
 
-	return;
- }
-//=========
-// WARNING
-//=========
-//Shop tells the system that this is a shop
-//craft1 is the name of the shop
-//-1 the shop will have an invisible sprite
-//909:-1 this is required to display the shop properly. (Jellopy with -1 selling price)
--	shop	craft1	-1,909:-1
--	shop	craft2	-1,909:-1
+	OnTimer1000:
+		showscript("Teleporter");
+		setnpctimer 0;
+		end;
+
+	OnClick:
+		set .random_line_num, callfunc("randomNumWithoutRepeat", .random_line_num);
+		cutin "spica_tele", 2;
+		mes "^0069ff[ Spica ]^000000";
+		switch(.random_line_num){
+			case 0:
+				mes "Enjoyed your time among the artisans?"; 
+				mes "";
+				mes "Shall we make our way back";
+				mes "to ^ff0004Izlude Academy^000000?";
+				break;
+			
+			case 1:
+				mes "Had enough of the local crafts? ";
+				mes "";
+				mes "Ready to return to the halls" ;
+				mes "of ^ff0004Izlude Academy^000000?";
+				break;
+			
+			case 2:
+				mes "I hope you found";
+				mes "the Artisans' Quarter inspiring!";
+				mes "";
+				mes "Ready to head back";
+				mes "to ^ff0004Izlude Academy^000000?";
+			
+		}
+		
+		next;
+		set .@tele_index, select("Yes:I'll stay here for a while");
+		switch(.@tele_index){
+			case 1:
+				warp "iz_ac01", 100,36;
+				break;
+
+			case 2:
+				mes "^0069ff[ Spica ]^000000";
+				mes "Okay~";
+				mes "";
+				mes "Feel free to roam around and check their crafts. =^_^=";
+
+			default:
+				close3;
+				break;
+		} 
+}
+
+iz_ac01,96,44,5	script	Spica#iz_ac01	-1,{
+	callsub OnClick;
+	end;
+	
+	OnInit:
+		initnpctimer;
+		callfunc("customizeNPCSprite", 4_ep16_spica, 0, 0, 0, 0, 0, 0, 0, 0, 188, 29);
+		set .random_line_num, -1;
+		end;
+
+	OnTimer1000:
+		showscript("Equipment Craft");
+		setnpctimer 0;
+		end;
+
+	OnClick:
+		set .random_line_num, callfunc("randomNumWithoutRepeat", .random_line_num);
+		cutin "spica_tele", 2;
+		mes "^0069ff[ Spica ]^000000";
+		switch(.random_line_num){
+			case 0:
+				mes "Welcome!";
+				mes "";
+				mes "How about a journey";
+				mes "to the heart of creativity itself,";
+				mes "the ^6500ffIzlude Artisans' Quarter?^000000";
+				break;
+			
+			case 1:
+				mes "Hi!";
+				mes "";
+				mes "Care to discover the hidden gems";
+				mes "of the ^6500ffIzlude Artisans' Quarter^000000 today?";
+				break;
+			
+			case 2:
+				mes "Hello there!";
+				mes "";
+				mes "Ready to be amazed by the handiwork";
+				mes "at the ^6500ffIzlude Artisans' Quarter?^000000";
+		}
+		
+		next;
+		set .@tele_index, select("Yes, Let's go!:No, maybe some other time");
+		switch(.@tele_index){
+			case 1:
+				warp "iz_craft", 47,45;
+				break;
+
+			case 2:
+				mes "^0069ff[ Spica ]^000000";
+				mes "Okay~";
+				mes "";
+				mes "See you around! =^_^=";
+
+			default:
+				close3;
+				break;
+		}
+}

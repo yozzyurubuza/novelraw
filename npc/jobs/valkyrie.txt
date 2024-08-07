@@ -66,7 +66,8 @@ valkyrie,48,86,4	script	Valkyrie#	811,{
 		mes "begin an entirely new life.";
 		mes "Honor to the warriors!";
 		next;
-		if (Weight > 0 || Zeny > 0 || checkcart() != 0 || checkfalcon() != 0 || checkriding() != 0) {
+		// Actual Weight is x10 to accommodate items with 0.1 weight
+		if (Weight/10 >= 200 || checkcart() != 0 || checkfalcon() != 0 || checkriding() != 0) {
 			mes "[Valkyrie]";
 			mes "There are a few things you must";
 			mes "do before we start. You must";
@@ -75,7 +76,9 @@ valkyrie,48,86,4	script	Valkyrie#	811,{
 			mes "all your selfish desires...";
 			next;
 			mes "[Valkyrie]";
-			mes "You cannot take anything with you to the next life. Your items, zeny, pets and Pushcart all have to be left behind.";
+			mes "You cannot take some things with you to the next life.";
+			mes "Your weight should be below ^0000FF200^000000.";
+			mes "Then Pets, Mounts, and Pushcart all have to be left behind.";
 			next;
 			mes "[Valkyrie]";
 			mes "When you are ready";
@@ -95,17 +98,6 @@ valkyrie,48,86,4	script	Valkyrie#	811,{
 			mes "[Valkyrie]";
 			mes "That's an admirable attitude for an adventurer such as yourself. Honor comes when you abandon all personal desires for the sake of mankind.";
 			next;
-			if (SkillPoint) {
-				mes "[Valkyrie]";
-				mes "Hmm... I sense that you have";
-				mes "some lingering attachment or";
-				mes "unfinished business in your";
-				mes "current life. Take care of that,";
-				mes "and bring closure to your present life.";
-				close2;
-				warp "yuno_in02",93,205;
-				end;
-			}
 			mes "[Valkyrie]";
 			mes "Now, let me remove all";
 			mes "of your present memories...";
@@ -162,7 +154,9 @@ valkyrie,48,86,4	script	Valkyrie#	811,{
 			mes "Please take these small gifts";
 			mes "in preparation for your new adventures.";
 			getitem 1202,1; //Knife_
-			getitem 2302,1; //Cotton_Shirt_
+			getitem 2302,1; //Cotton_Shirt_ 
+			getitem 12107, 1;
+			rentitem 70000, 604800;
 			next;
 			mes "[Valkyrie]";
 			mes "I wish that the release the goddess Urd has granted you proves to be a blessing. I hope that the memories Verdandi has recorded will always honor you.";
@@ -174,7 +168,7 @@ valkyrie,48,86,4	script	Valkyrie#	811,{
 			case 4008:
 			case 4015:
 				if (checkre(0)) warp "izlude",129,97;
-				else warp "izlude",129,97;
+				else warp "izlude",128,124;
 				break;
 			case 4009:
 			case 4016:
@@ -381,7 +375,7 @@ valkyrie,44,33,5	script	Teleporter	124,{
 		case 5: callsub S_Warpchar,"alberta",117,56;
 		case 6:
 			if (checkre(0)) callsub S_Warpchar,"izlude",129,97;
-			else callsub S_Warpchar,"izlude",129,97;
+			else callsub S_Warpchar,"izlude",128,124;
 		case 7: callsub S_Warpchar,"aldebaran",91,105;
 		case 8: callsub S_Warpchar,"comodo",209,143;
 		case 9: callsub S_Warpchar,"yuno",328,101;

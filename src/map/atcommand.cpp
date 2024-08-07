@@ -1379,7 +1379,7 @@ ACMD_FUNC(healap)
 ACMD_FUNC(item)
 {
 	char item_name[100];
-	int number = 0, bound = BOUND_NONE;
+	int number = 0, bound = BOUND_NONE, costume = 0;
 	char flag = 0;
 	char *itemlist;
 
@@ -1436,6 +1436,28 @@ ACMD_FUNC(item)
 	for( const auto& item : items ){
 		t_itemid item_id = item->nameid;
 
+		if (!strcmpi(command + 1, "costumeitem"))
+        {
+            if (!battle_config.reserved_costume_id)
+            {
+                clif_displaymessage(fd, "Costume conversion is disabled. Set a value for reserved_costume_id on your battle.conf file.");
+                return -1;
+            }
+            if (!(item->equip&EQP_HEAD_LOW) &&
+                !(item->equip&EQP_HEAD_MID) &&
+                !(item->equip&EQP_HEAD_TOP) &&
+                !(item->equip&EQP_COSTUME_HEAD_LOW) &&
+                !(item->equip&EQP_COSTUME_HEAD_MID) &&
+                !(item->equip&EQP_COSTUME_HEAD_TOP) &&
+                !(item->equip&EQP_GARMENT) &&
+                !(item->equip&EQP_COSTUME_GARMENT))
+            {
+                clif_displaymessage(fd, "You cannot costume this item. Costumes only work for headgears.");
+                return -1;
+            }
+            costume = 1;
+        }
+
 		//Check if it's stackable.
 		if( !itemdb_isstackable2( item.get() ) ){
 			get_count = 1;
@@ -1448,6 +1470,11 @@ ACMD_FUNC(item)
 
 				item_tmp.nameid = item_id;
 				item_tmp.identify = 1;
+				if (costume == 1) { // Costume item
+					item_tmp.card[0] = CARD0_CREATE;
+					item_tmp.card[2] = GetWord(battle_config.reserved_costume_id, 0);
+					item_tmp.card[3] = GetWord(battle_config.reserved_costume_id, 1);
+				}
 				item_tmp.bound = bound;
 				if ((flag = pc_additem(sd, &item_tmp, get_count, LOG_TYPE_COMMAND)))
 					clif_additem(sd, 0, 0, flag);
@@ -1889,10 +1916,10 @@ ACMD_FUNC(bodystyle)
 
 	memset(atcmd_output, '\0', sizeof(atcmd_output));
 
-	if ( (sd->class_ & JOBL_FOURTH) || !(sd->class_ & JOBL_THIRD) || (sd->class_ & MAPID_THIRDMASK) == MAPID_SUPER_NOVICE_E || (sd->class_ & MAPID_THIRDMASK) == MAPID_STAR_EMPEROR || (sd->class_ & MAPID_THIRDMASK) == MAPID_SOUL_REAPER) {
-		clif_displaymessage(fd, msg_txt(sd,740));	// This job has no alternate body styles.
-		return -1;
-	}
+	// if ( (sd->class_ & JOBL_FOURTH) || !(sd->class_ & JOBL_THIRD) || (sd->class_ & MAPID_THIRDMASK) == MAPID_SUPER_NOVICE_E || (sd->class_ & MAPID_THIRDMASK) == MAPID_STAR_EMPEROR || (sd->class_ & MAPID_THIRDMASK) == MAPID_SOUL_REAPER) {
+	// 	clif_displaymessage(fd, msg_txt(sd,740));	// This job has no alternate body styles.
+	// 	return -1;
+	// }
 
 	if (!message || !*message || sscanf(message, "%d", &body_style) < 1) {
 		sprintf(atcmd_output, msg_txt(sd,739), MIN_BODY_STYLE, MAX_BODY_STYLE);		// Please enter a body style (usage: @bodystyle <body ID: %d-%d>).
@@ -11295,6 +11322,7 @@ void atcommand_basecommands(void) {
 		ACMD_DEF(clonestat),
 		ACMD_DEF(bodystyle),
 		ACMD_DEF(adopt),
+		ACMD_DEF2("costumeitem", item),
 		ACMD_DEF(agitstart3),
 		ACMD_DEF(agitend3),
 		ACMD_DEFR(limitedsale, ATCMD_NOCONSOLE|ATCMD_NOAUTOTRADE),

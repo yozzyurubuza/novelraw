@@ -15,8 +15,8 @@
 //==================================================
 // alde_dun01 - Clock Tower B1
 //==================================================
-alde_dun01,0,0	monster	Arclouze	1194,50
-alde_dun01,0,0	monster	Drainliar	1111,40
+alde_dun01,0,0	monster	Arclouze	1194,80
+alde_dun01,0,0	monster	Drainliar	1111,140
 
 //==================================================
 // alde_dun02 - Clock Tower B2

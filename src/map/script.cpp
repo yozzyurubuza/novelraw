@@ -4934,6 +4934,54 @@ BUILDIN_FUNC(mes)
 	return SCRIPT_CMD_SUCCESS;
 }
 
+//Rainbow-colored text
+BUILDIN_FUNC(rainbowmes)
+{
+    const char* rainbow_colors[] = {
+        "^e81416",  // Red
+        "^ffa500",  // Orange
+        "^f8d72f",  // Yellow
+        "^79c314",  // Green
+        "^487de7",  // Blue
+        "^4b369d",  // Indigo
+        "^70369d"   // Violet
+    };
+
+    const char* input_str = script_getstr(st, 2);  // Get the input string from the script stack
+    int input_len = strlen(input_str);
+    int color_count = sizeof(rainbow_colors) / sizeof(rainbow_colors[0]);
+
+    // Calculate the buffer size needed
+    int output_buffer_size = input_len * 10 + 10;  // Each character might be prefixed with a color code, plus extra for reset color
+
+    // Allocate memory dynamically
+    char* output_str = (char*)aMalloc(output_buffer_size);
+    if (!output_str) {
+        // Temporary buffer for error message
+        char error_msg[] = "Memory allocation failed.";
+        // Push error message to script stack
+        script_pushstr(st, error_msg);
+        return SCRIPT_CMD_FAILURE;
+    }
+
+    // Initialize the output string
+    output_str[0] = '\0';
+
+    // Loop through each character of the input string
+    for (int i = 0; i < input_len; ++i) {
+        // Append the color code and character to the output string
+        snprintf(output_str + strlen(output_str), output_buffer_size - strlen(output_str), "%s%c", rainbow_colors[i % color_count], input_str[i]);
+    }
+
+    // Append the reset color code to the end
+    snprintf(output_str + strlen(output_str), output_buffer_size - strlen(output_str), "^000000");
+
+    // Push the colored string onto the script stack
+    // Memory is managed by the script engine after pushing, no need to free it here
+    script_pushstr(st, output_str);
+
+    return SCRIPT_CMD_SUCCESS;
+}
 /// Displays the button 'next' in the npc dialog.
 /// The dialog text is cleared and the script continues when the button is pressed.
 ///
@@ -22575,34 +22623,65 @@ BUILDIN_FUNC(checkdragon) {
  * - 4 : Blue Dragon
  * - 5 : Red Dragon
  **/
-BUILDIN_FUNC(setdragon) {
-	TBL_PC* sd;
-	int color = script_hasdata(st,2) ? script_getnum(st,2) : 0;
 
-	if (!script_charid2sd(3,sd))
-		return SCRIPT_CMD_FAILURE;
-	if( !pc_checkskill(sd,RK_DRAGONTRAINING) || (sd->class_&MAPID_THIRDMASK) != MAPID_RUNE_KNIGHT )
-		script_pushint(st,0);//Doesn't have the skill or it's not a Rune Knight
-	else if ( pc_isridingdragon(sd) ) {//Is mounted; release
-		pc_setoption(sd, sd->sc.option&~OPTION_DRAGON);
-		script_pushint(st,1);
-	} else {//Not mounted; Mount now.
-		unsigned int option = OPTION_DRAGON1;
-		if( color ) {
-			option = ( color == 1 ? OPTION_DRAGON1 :
-					   color == 2 ? OPTION_DRAGON2 :
-					   color == 3 ? OPTION_DRAGON3 :
-					   color == 4 ? OPTION_DRAGON4 :
-					   color == 5 ? OPTION_DRAGON5 : 0);
-			if( !option ) {
-				ShowWarning("script_setdragon: Unknown Color %d used; changing to green (1)\n",color);
-				option = OPTION_DRAGON1;
-			}
-		}
-		pc_setoption(sd, sd->sc.option|option);
-		script_pushint(st,1);
+BUILDIN_FUNC(setdragon) {
+    TBL_PC* sd;
+    int color = script_hasdata(st,2) ? script_getnum(st,2) : 0;
+
+    if (!script_charid2sd(3,sd))
+        return SCRIPT_CMD_FAILURE;
+
+    // Database interaction to fetch the base look
+    char* error;
+    int baselook = 0, result = 0;
+    SqlStmt* stmt = SqlStmt_Malloc(mmysql_handle);
+    if (stmt == NULL) {
+        ShowError("script:setdragon: Out of memory!\n");
+        return SCRIPT_CMD_FAILURE;
+    }
+
+    if (SQL_ERROR == SqlStmt_Prepare(stmt, "SELECT value FROM `char_reg_num` WHERE `char_id` = %d AND `key` = 'baselook'", sd->status.char_id) ||
+        SQL_ERROR == SqlStmt_Execute(stmt) ||
+        SQL_ERROR == SqlStmt_BindColumn(stmt, 0, SQLDT_INT, &baselook, 0, NULL, NULL) ||
+        SQL_ERROR == SqlStmt_NextRow(stmt)) {
+        ShowError("script:setdragon: Database error!\n");
+        SqlStmt_Free(stmt);
+        return SCRIPT_CMD_FAILURE;
+    }
+    SqlStmt_Free(stmt);
+
+	unsigned short baselook_mapid = pc_jobid2mapid(baselook);
+	if ((baselook_mapid & MAPID_THIRDMASK) != MAPID_RUNE_KNIGHT) {
+		script_pushint(st, 0);
+		ShowError("Baselook %d does not match MAPID_RUNE_KNIGHT (%d).\n", baselook_mapid, MAPID_RUNE_KNIGHT);
+		return SCRIPT_CMD_SUCCESS;
 	}
-	return SCRIPT_CMD_SUCCESS;
+
+    if( !pc_checkskill(sd,RK_DRAGONTRAINING) ) {
+        script_pushint(st,0); // Doesn't have the skill
+        return SCRIPT_CMD_SUCCESS;
+    }
+
+    if ( pc_isridingdragon(sd) ) { // Is mounted; release
+        pc_setoption(sd, sd->sc.option & ~OPTION_DRAGON);
+        script_pushint(st,1);
+    } else { // Not mounted; Mount now.
+        unsigned int option = OPTION_DRAGON1;
+        if( color ) {
+            option = ( color == 1 ? OPTION_DRAGON1 :
+                       color == 2 ? OPTION_DRAGON2 :
+                       color == 3 ? OPTION_DRAGON3 :
+                       color == 4 ? OPTION_DRAGON4 :
+                       color == 5 ? OPTION_DRAGON5 : 0);
+            if( !option ) {
+                ShowWarning("script_setdragon: Unknown Color %d used; changing to green (1)\n", color);
+                option = OPTION_DRAGON1;
+            }
+        }
+        pc_setoption(sd, sd->sc.option | option);
+        script_pushint(st,1);
+    }
+    return SCRIPT_CMD_SUCCESS;
 }
 
 /**
@@ -24458,6 +24537,116 @@ BUILDIN_FUNC(getexp2) {
 		pc_gainexp(sd, nullptr, 0, job_exp, 2);
 	else if (job_exp < 0)
 		pc_lostexp(sd, 0, job_exp * -1);
+	return SCRIPT_CMD_SUCCESS;
+}
+
+/*==========================================
+* Costume Items
+*------------------------------------------*/
+BUILDIN_FUNC(costume)
+{
+	int i = -1, num, ep;
+	TBL_PC *sd;
+
+	num = script_getnum(st, 2); // Equip Slot
+
+	if (!script_rid2sd(sd))
+		return SCRIPT_CMD_FAILURE;
+
+	if (equip_index_check(num))
+		i = pc_checkequip(sd, equip_bitmask[num]);
+	if (i < 0)
+		return SCRIPT_CMD_FAILURE;
+
+	ep = sd->inventory.u.items_inventory[i].equip;
+	if (!(ep&EQP_HEAD_LOW) && !(ep&EQP_HEAD_MID) && !(ep&EQP_HEAD_TOP) && !(ep&EQP_GARMENT)) {
+		ShowError("buildin_costume: Attempted to convert non-cosmetic item to costume.");
+		return SCRIPT_CMD_FAILURE;
+	}
+	log_pick_pc(sd, LOG_TYPE_SCRIPT, -1, &sd->inventory.u.items_inventory[i]);
+	pc_unequipitem(sd, i, 2);
+	clif_delitem(*sd, i, 1, 3);
+	// --------------------------------------------------------------------
+	sd->inventory.u.items_inventory[i].refine = 0;
+	sd->inventory.u.items_inventory[i].attribute = 0;
+	sd->inventory.u.items_inventory[i].card[0] = CARD0_CREATE;
+	sd->inventory.u.items_inventory[i].card[1] = 0;
+	sd->inventory.u.items_inventory[i].card[2] = GetWord(battle_config.reserved_costume_id, 0);
+	sd->inventory.u.items_inventory[i].card[3] = GetWord(battle_config.reserved_costume_id, 1);
+
+	if (ep&EQP_HEAD_TOP) { ep &= ~EQP_HEAD_TOP; ep |= EQP_COSTUME_HEAD_TOP; }
+	if (ep&EQP_HEAD_LOW) { ep &= ~EQP_HEAD_LOW; ep |= EQP_COSTUME_HEAD_LOW; }
+	if (ep&EQP_HEAD_MID) { ep &= ~EQP_HEAD_MID; ep |= EQP_COSTUME_HEAD_MID; }
+	if (ep&EQP_GARMENT) { ep &= EQP_GARMENT; ep |= EQP_COSTUME_GARMENT; }
+	// --------------------------------------------------------------------
+	log_pick_pc(sd, LOG_TYPE_SCRIPT, 1, &sd->inventory.u.items_inventory[i]);
+
+	clif_additem(sd, i, 1, 0);
+	pc_equipitem(sd, i, ep);
+	clif_misceffect(sd->bl, NOTIFYEFFECT_REFINE_SUCCESS);
+
+	return SCRIPT_CMD_SUCCESS;
+}
+
+/*===============================
+ * getcostumeitem <item id>;
+ * getcostumeitem <"item name">;
+ *===============================*/
+BUILDIN_FUNC(getcostumeitem)
+{
+	unsigned short nameid;
+	struct item item_tmp;
+	TBL_PC *sd;
+	struct script_data *data;
+
+	if (!script_rid2sd(sd))
+	{	// No player attached.
+		script_pushint(st, 0);
+		return SCRIPT_CMD_SUCCESS;
+	}
+
+	data = script_getdata(st, 2);
+	get_val(st, data);
+	if (data_isstring(data)) {
+		int ep;
+		const char *name = conv_str(st, data);
+        std::map<t_itemid, std::shared_ptr<item_data>> items;
+        itemdb_searchname_array(items, MAX_SEARCH, name);
+        if (items.empty())
+        {
+            script_pushint(st, 0);
+            return SCRIPT_CMD_SUCCESS;
+        }
+        auto item_data = items.begin()->second.get();
+		ep = item_data->equip;
+		if (!(ep&EQP_HEAD_LOW) && !(ep&EQP_HEAD_MID) && !(ep&EQP_HEAD_TOP) && !(ep&EQP_GARMENT)){
+			ShowError("buildin_getcostumeitem: Attempted to convert non-cosmetic item to costume.");
+			return SCRIPT_CMD_FAILURE;
+		}
+		nameid = item_data->nameid;
+	}
+	else
+		nameid = conv_num(st, data);
+
+	if (!item_db.exists(nameid))
+	{	// Item does not exist.
+		script_pushint(st, 0);
+		return SCRIPT_CMD_SUCCESS;
+	}
+
+	memset(&item_tmp, 0, sizeof(item_tmp));
+	item_tmp.nameid = nameid;
+	item_tmp.amount = 1;
+	item_tmp.identify = 1;
+	item_tmp.card[0] = CARD0_CREATE;
+	item_tmp.card[2] = GetWord(battle_config.reserved_costume_id, 0);
+	item_tmp.card[3] = GetWord(battle_config.reserved_costume_id, 1);
+	if (pc_additem(sd, &item_tmp, 1, LOG_TYPE_SCRIPT)) {
+		script_pushint(st, 0);
+		return SCRIPT_CMD_SUCCESS;	//Failed to add item, we will not drop if they don't fit
+	}
+
+	script_pushint(st, 1);
 	return SCRIPT_CMD_SUCCESS;
 }
 
@@ -27457,6 +27646,7 @@ BUILDIN_FUNC(preg_match) {
 struct script_function buildin_func[] = {
 	// NPC interaction
 	BUILDIN_DEF(mes,"s*"),
+	BUILDIN_DEF(rainbowmes, "s"),
 	BUILDIN_DEF(next,""),
 	BUILDIN_DEF(clear,""),
 	BUILDIN_DEF(close,""),
@@ -28043,6 +28233,8 @@ struct script_function buildin_func[] = {
 	BUILDIN_DEF(getguildalliance,"ii"),
 	BUILDIN_DEF(adopt,"vv"),
 	BUILDIN_DEF(getexp2,"ii?"),
+	BUILDIN_DEF(costume, "i"),
+	BUILDIN_DEF(getcostumeitem, "v"),
 	BUILDIN_DEF(recalculatestat,""),
 	BUILDIN_DEF(hateffect,"ii?"),
 	BUILDIN_DEF(getrandomoptinfo, "i"),
