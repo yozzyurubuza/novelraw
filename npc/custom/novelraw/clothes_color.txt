@@ -55,6 +55,10 @@ izlude,88,140,6	script	Inferia	-1,{
 		//Generate available color choices.
 		set .@palette_color, callfunc("generate_color_choices", .@job_id, .@rk_legacy_case);
 
+		//Apply special effects
+		specialeffect2 1805; specialeffect2 1831;
+		soundeffect "violy_stand2.wav", 0;
+
 		//Apply and Save Color to DB
 		callfunc("change_clothes_color", .@palette_color);
 		callfunc("exit_speech_inferia", .NPC_NAME$, 2);
