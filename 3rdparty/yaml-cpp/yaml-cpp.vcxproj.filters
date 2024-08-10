@@ -89,9 +89,6 @@
     <ClCompile Include="src\convert.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\depthguard.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\directives.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

@@ -3,9 +3,13 @@
 
 #include "timer.hpp"
 
-#include <cstdlib>
-#include <cstring>
-#include <utility>
+#include <stdlib.h>
+#include <string.h>
+
+#ifdef WIN32
+#include "winapi.hpp" // GetTickCount()
+#else
+#endif
 
 #include "cbasetypes.hpp"
 #include "db.hpp"
@@ -13,9 +17,6 @@
 #include "nullpo.hpp"
 #include "showmsg.hpp"
 #include "utils.hpp"
-#ifdef WIN32
-#include "winapi.hpp" // GetTickCount()
-#endif
 
 // If the server can't handle processing thousands of monsters
 // or many connected clients, please increase TIMER_MIN_INTERVAL.
@@ -25,12 +26,12 @@ const t_tick TIMER_MIN_INTERVAL = 20;
 const t_tick TIMER_MAX_INTERVAL = 1000;
 
 // timers (array)
-static struct TimerData* timer_data = nullptr;
+static struct TimerData* timer_data = NULL;
 static int timer_data_max = 0;
 static int timer_data_num = 0;
 
 // free timers (array)
-static int* free_timer_list = nullptr;
+static int* free_timer_list = NULL;
 static int free_timer_list_max = 0;
 static int free_timer_list_pos = 0;
 
@@ -58,7 +59,7 @@ struct timer_func_list {
 	struct timer_func_list* next;
 	TimerFunc func;
 	char* name;
-} *tfl_root = nullptr;
+} *tfl_root = NULL;
 
 /// Sets the name of a timer function.
 int add_timer_func_list(TimerFunc func, const char* name)
@@ -66,7 +67,7 @@ int add_timer_func_list(TimerFunc func, const char* name)
 	struct timer_func_list* tfl;
 
 	if (name) {
-		for( tfl=tfl_root; tfl != nullptr; tfl=tfl->next )
+		for( tfl=tfl_root; tfl != NULL; tfl=tfl->next )
 		{// check suspicious cases
 			if( func == tfl->func )
 				ShowWarning("add_timer_func_list: duplicating function %p(%s) as %s.\n",tfl->func,tfl->name,name);
@@ -87,7 +88,7 @@ const char* search_timer_func_list(TimerFunc func)
 {
 	struct timer_func_list* tfl;
 
-	for( tfl=tfl_root; tfl != nullptr; tfl=tfl->next )
+	for( tfl=tfl_root; tfl != NULL; tfl=tfl->next )
 		if (func == tfl->func)
 			return tfl->name;
 
@@ -154,7 +155,7 @@ static t_tick tick(void)
 	return tval.tv_sec * 1000 + tval.tv_nsec / 1000000;
 #else
 	struct timeval tval;
-	gettimeofday(&tval, nullptr);
+	gettimeofday(&tval, NULL);
 	return tval.tv_sec * 1000 + tval.tv_usec / 1000;
 #endif
 }
@@ -202,7 +203,7 @@ t_tick gettick(void)
 static void push_timer_heap(int tid)
 {
 	BHEAP_ENSURE(timer_heap, 1, 256);
-	BHEAP_PUSH(timer_heap, tid, DIFFTICK_MINTOPCMP);
+	BHEAP_PUSH(timer_heap, tid, DIFFTICK_MINTOPCMP, SWAP);
 }
 
 /*==========================
@@ -286,7 +287,7 @@ int add_timer_interval(t_tick tick, TimerFunc func, int id, intptr_t data, int i
 /// Retrieves internal timer data
 const struct TimerData* get_timer(int tid)
 {
-	return ( tid >= 0 && tid < timer_data_num ) ? &timer_data[tid] : nullptr;
+	return ( tid >= 0 && tid < timer_data_num ) ? &timer_data[tid] : NULL;
 }
 
 /// Marks a timer specified by 'id' for immediate deletion once it expires.
@@ -305,7 +306,7 @@ int delete_timer(int tid, TimerFunc func)
 		return -2;
 	}
 
-	timer_data[tid].func = nullptr;
+	timer_data[tid].func = NULL;
 	timer_data[tid].type = TIMER_ONCE_AUTODEL;
 
 	return 0;
@@ -339,9 +340,9 @@ t_tick settick_timer(int tid, t_tick tick)
 		return tick;// nothing to do, already in propper position
 
 	// pop and push adjusted timer
-	BHEAP_POPINDEX(timer_heap, i, DIFFTICK_MINTOPCMP);
+	BHEAP_POPINDEX(timer_heap, i, DIFFTICK_MINTOPCMP, SWAP);
 	timer_data[tid].tick = tick;
-	BHEAP_PUSH(timer_heap, tid, DIFFTICK_MINTOPCMP);
+	BHEAP_PUSH(timer_heap, tid, DIFFTICK_MINTOPCMP, SWAP);
 	return tick;
 }
 
@@ -361,7 +362,7 @@ t_tick do_timer(t_tick tick)
 			break; // no more expired timers to process
 
 		// remove timer
-		BHEAP_POP(timer_heap, DIFFTICK_MINTOPCMP);
+		BHEAP_POP(timer_heap, DIFFTICK_MINTOPCMP, SWAP);
 		timer_data[tid].type |= TIMER_REMOVE_HEAP;
 
 		if( timer_data[tid].func )
@@ -406,7 +407,7 @@ t_tick do_timer(t_tick tick)
 
 unsigned long get_uptime(void)
 {
-	return (unsigned long)difftime(time(nullptr), start_time);
+	return (unsigned long)difftime(time(NULL), start_time);
 }
 
 /**
@@ -460,7 +461,7 @@ void split_time(int timein, int* year, int* month, int* day, int* hour, int* min
 double solve_time(char* modif_p) {
 	double totaltime = 0;
 	struct tm then_tm;
-	time_t now = time(nullptr);
+	time_t now = time(NULL);
 	time_t then = now;
 	then_tm = *localtime(&then);
 	
@@ -521,7 +522,7 @@ void timer_final(void)
 	struct timer_func_list *tfl;
 	struct timer_func_list *next;
 
-	for( tfl=tfl_root; tfl != nullptr; tfl = next ) {
+	for( tfl=tfl_root; tfl != NULL; tfl = next ) {
 		next = tfl->next;	// copy next pointer
 		aFree(tfl->name);	// free structures
 		aFree(tfl);

@@ -4,9 +4,9 @@
 #ifndef MMO_HPP
 #define MMO_HPP
 
-#include <ctime>
+#include <time.h>
 
-#include <config/core.hpp>
+#include "../config/core.hpp"
 
 #include "cbasetypes.hpp"
 #include "db.hpp"
@@ -52,7 +52,7 @@
 		#define INVENTORY_EXPANSION_SIZE 0
 	#endif
 #endif
-#define MAX_INVENTORY 250
+
 #ifndef MAX_INVENTORY
 	#define MAX_INVENTORY ( INVENTORY_BASE_SIZE + INVENTORY_EXPANSION_SIZE ) // Maximum items in player inventory (in total)
 #else
@@ -81,17 +81,10 @@ typedef uint32 t_itemid;
 #define MAX_AMOUNT 30000 ////Max amount of a single stacked item
 #define MAX_ZENY INT_MAX ///Max zeny
 #define MAX_BANK_ZENY SINT32_MAX ///Max zeny in Bank
-#ifndef MAX_CASHPOINT
-	#define MAX_CASHPOINT INT_MAX
-#endif
-#ifndef MAX_KAFRAPOINT
-	#define MAX_KAFRAPOINT INT_MAX
-#endif
 #define MAX_FAME 1000000000 ///Max fame points
 #define MAX_CART 100 ///Maximum item in cart
-#define MAX_SKILL 1623 ///Maximum skill can be hold by Player, Homunculus, & Mercenary (skill list) AND skill_db limit
-#define DEFAULT_WALK_SPEED 150 ///Default walk speed (other than NPC)
-#define DEFAULT_NPC_WALK_SPEED 200 ///Default NPC walk speed
+#define MAX_SKILL 1454 ///Maximum skill can be hold by Player, Homunculus, & Mercenary (skill list) AND skill_db limit
+#define DEFAULT_WALK_SPEED 150 ///Default walk speed
 #define MIN_WALK_SPEED 20 ///Min walk speed
 #define MAX_WALK_SPEED 1000 ///Max walk speed
 #define MAX_STORAGE 600 ///Max number of storage slots a player can have
@@ -115,10 +108,7 @@ typedef uint32 t_itemid;
 #define MAX_CLAN 500
 #define MAX_CLANALLIANCE 6
 #ifndef MAX_BARTER_REQUIREMENTS
-	#define MAX_BARTER_REQUIREMENTS 6
-#endif
-#ifndef WEB_AUTH_TOKEN_LENGTH
-	#define WEB_AUTH_TOKEN_LENGTH 16+1
+	#define MAX_BARTER_REQUIREMENTS 5
 #endif
 
 enum e_enchantgrade : uint16{
@@ -152,7 +142,7 @@ const t_itemid WEDDING_RING_F = 2635;
 //For character names, title names, guilds, maps, etc.
 //Includes null-terminator as it is the length of the array.
 #define NAME_LENGTH (23 + 1)
-#define PASSWD_LENGTH (32 + 1)
+#define PASSWD_LENGTH (32+1)
 //NPC names can be longer than it's displayed on client (NAME_LENGTH).
 #define NPC_NAME_LENGTH 50
 // <NPC_NAME_LENGTH> for npc name + 2 for a "::" + <NAME_LENGTH> for label + 1 for EOS
@@ -183,11 +173,11 @@ const t_itemid WEDDING_RING_F = 2635;
 
 //Base Homun skill.
 #define HM_SKILLBASE 8001
-#define MAX_HOMUNSKILL 59
+#define MAX_HOMUNSKILL 43
 #define MAX_HOMUNCULUS_CLASS	52	//[orn], Increased to 60 from 16 to allow new Homun-S.
 #define HM_CLASS_BASE 6001
 #define HM_CLASS_MAX (HM_CLASS_BASE+MAX_HOMUNCULUS_CLASS-1)
-		
+
 //Mail System
 #define MAIL_MAX_INBOX 30
 #define MAIL_TITLE_LENGTH 40
@@ -363,13 +353,8 @@ enum equip_pos : uint32 {
 };
 
 struct point {
-	uint16 map;
-	uint16 x,y;
-};
-
-struct s_point_str{
-	char map[MAP_NAME_LENGTH_EXT];
-	uint16 x,y;
+	unsigned short map;
+	short x,y;
 };
 
 struct startitem {
@@ -598,18 +583,14 @@ struct mmo_charstatus {
 	uint32 mapip;
 	uint16 mapport;
 
-	struct s_point_str last_point;
-	int32 last_point_instanceid;
-	struct s_point_str save_point;
-	struct s_point_str memo_point[MAX_MEMOPOINTS];
+	struct point last_point,save_point,memo_point[MAX_MEMOPOINTS];
 	struct s_skill skill[MAX_SKILL];
 
 	struct s_friend friends[MAX_FRIENDS]; //New friend system [Skotlex]
 #ifdef HOTKEY_SAVING
 	struct hotkey hotkeys[MAX_HOTKEYS_DB];
 #endif
-	bool show_equip, disable_call;
-	bool disable_partyinvite;
+	bool show_equip,allow_party, disable_call;
 	short rename;
 
 	time_t delete_date;
@@ -697,7 +678,7 @@ struct party_member {
 	uint32 char_id;
 	char name[NAME_LENGTH];
 	unsigned short class_;
-	char map[MAP_NAME_LENGTH_EXT];
+	unsigned short map;
 	unsigned short lv;
 	unsigned leader : 1,
 	         online : 1;
@@ -748,7 +729,7 @@ struct guild_skill {
 };
 
 struct Channel;
-struct mmo_guild {
+struct guild {
 	int guild_id;
 	short guild_lv, connect_member, max_member, average_lv;
 	t_exp exp;
@@ -763,14 +744,14 @@ struct mmo_guild {
 	struct guild_alliance alliance[MAX_GUILDALLIANCE];
 	struct guild_expulsion expulsion[MAX_GUILDEXPULSION];
 	struct guild_skill skill[MAX_GUILDSKILL];
+	struct Channel *channel;
+	int instance_id;
 	time_t last_leader_change;
-};
 
-enum e_woe_type{
-	WOE_FIRST_EDITION = 1,
-	WOE_SECOND_EDITION,
-	WOE_THIRD_EDITION,
-	WOE_MAX
+	/* Used by char-server to save events for guilds */
+	unsigned short save_flag;
+
+	int32 chargeshout_flag_id;
 };
 
 struct guild_castle {
@@ -778,13 +759,6 @@ struct guild_castle {
 	int mapindex;
 	char castle_name[NAME_LENGTH];
 	char castle_event[NPC_NAME_LENGTH];
-	e_woe_type type;
-	uint16 client_id;
-	bool warp_enabled;
-	uint16 warp_x;
-	uint16 warp_y;
-	uint32 zeny;
-	uint32 zeny_siege;
 	int guild_id;
 	int economy;
 	int defense;
@@ -1124,8 +1098,8 @@ enum e_pc_reg_loading {
 enum e_party_member_withdraw {
 	PARTY_MEMBER_WITHDRAW_LEAVE,	  ///< /leave
 	PARTY_MEMBER_WITHDRAW_EXPEL,	  ///< Kicked
-	PARTY_MEMBER_WITHDRAW_CANT_LEAVE, ///< Cannot /leave
-	PARTY_MEMBER_WITHDRAW_CANT_EXPEL, ///< Cannot be kicked
+	PARTY_MEMBER_WITHDRAW_CANT_LEAVE, ///< TODO: Cannot /leave
+	PARTY_MEMBER_WITHDRAW_CANT_EXPEL, ///< TODO: Cannot be kicked
 };
 
 enum e_rank {

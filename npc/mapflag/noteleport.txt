@@ -15,11 +15,6 @@
 //============================================================
 
 //============================================================
-// NovelRaw Custom Maps
-//============================================================
-iz_craft	mapflag	noteleport
-
-//============================================================
 // Municipality (Cities/Towns/Villages)
 //============================================================
 ayo_in01	mapflag	noteleport
@@ -357,11 +352,6 @@ turbo_e_8	mapflag	noteleport
 turbo_e_16	mapflag	noteleport
 
 //============================================================
-// Planting Area
-//============================================================
-1@exds	mapflag	noteleport
-
-//============================================================
 // Monster Races
 //============================================================
 p_track01	mapflag	noteleport
@@ -436,7 +426,7 @@ bat_a01	mapflag	noteleport
 bat_a02	mapflag	noteleport
 
 //============================================================
-// Episode 13.2
+// Episode 13
 //============================================================
 mid_campin	mapflag	noteleport
 moc_fild22b	mapflag	noteleport
@@ -447,11 +437,6 @@ arug_que01	mapflag	noteleport
 man_in01	mapflag	noteleport
 spl_in01	mapflag	noteleport
 spl_in02	mapflag	noteleport
-
-//============================================================
-// Brasilis
-//============================================================
-bra_in01	mapflag	noteleport
 
 //============================================================
 // Orc's Memory

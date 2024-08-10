@@ -248,14 +248,10 @@ Flags: Various status flags for specific status change events.
 	NonPlayer             - Sends the NPC_SHOWEFST_UPDATE packet. Used to send effects to NPC/monsters.
 
 	RequireWeapon         - Status requires a weapon to be equipped.
-	RequireNoWeapon       - Status requires that no weapons be equipped.
 	RequireShield         - Status requires a shield to be equipped.
 
 	SuperNoviceAngel      - Status that is given from Super Novice Angel.
 	TaekwonAngel          - Status that is given from Taekwon Angel.
-
-	RemoveFromHomOnWarp    - Removes the status from the Homunculus when teleporting or warping to another map.
-	RemoveFromHomOnMapWarp - Removes the status from the Homunculus when warping to another map.
 
 ---------------------------------------
 

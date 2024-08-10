@@ -5,14 +5,14 @@
 
 #include <unordered_map>
 
-#include <common/cbasetypes.hpp>
-#include <common/malloc.hpp>
-#include <common/nullpo.hpp>
-#include <common/random.hpp>
-#include <common/showmsg.hpp>
-#include <common/strlib.hpp>
-#include <common/timer.hpp>
-#include <common/utilities.hpp>
+#include "../common/cbasetypes.hpp"
+#include "../common/malloc.hpp"
+#include "../common/nullpo.hpp"
+#include "../common/random.hpp"
+#include "../common/showmsg.hpp"
+#include "../common/strlib.hpp"
+#include "../common/timer.hpp"
+#include "../common/utilities.hpp"
 
 #include "battle.hpp"
 #include "clif.hpp"
@@ -261,11 +261,6 @@ uint64 BattlegroundDatabase::parseBodyNode(const ryml::NodeRef& node) {
 					this->invalidWarning(location["Map"], "Invalid battleground map name %s, skipping.\n", map_name.c_str());
 					return 0;
 				}
-
-				if( map_mapindex2mapid( map_entry.mapindex ) < 0 ){
-					// Ignore silently, the map is on another mapserver
-					return 0;
-				}
 			}
 
 			if (this->nodeExists(location, "StartEvent")) {
@@ -303,45 +298,13 @@ uint64 BattlegroundDatabase::parseBodyNode(const ryml::NodeRef& node) {
 					}
 
 					if (this->nodeExists(team[team_name], "RespawnX")) {
-						uint16 warp_x;
-
-						if (!this->asUInt16(team[team_name], "RespawnX", warp_x))
+						if (!this->asInt16(team[team_name], "RespawnX", team_ptr->warp_x))
 							return 0;
-
-						if (warp_x == 0) {
-							this->invalidWarning(node["RespawnX"], "RespawnX has to be greater than zero.\n");
-							return 0;
-						}
-
-						map_data *md = map_getmapdata(map_mapindex2mapid(map_entry.mapindex));
-
-						if (warp_x >= md->xs) {
-							this->invalidWarning(node["RespawnX"], "RespawnX has to be smaller than %hu.\n", md->xs);
-							return 0;
-						}
-
-						team_ptr->warp_x = warp_x;
 					}
 
 					if (this->nodeExists(team[team_name], "RespawnY")) {
-						uint16 warp_y;
-
-						if (!this->asUInt16(team[team_name], "RespawnY", warp_y))
+						if (!this->asInt16(team[team_name], "RespawnY", team_ptr->warp_y))
 							return 0;
-
-						if (warp_y == 0) {
-							this->invalidWarning(node["RespawnY"], "RespawnY has to be greater than zero.\n");
-							return 0;
-						}
-
-						map_data *md = map_getmapdata(map_mapindex2mapid(map_entry.mapindex));
-
-						if (warp_y >= md->ys) {
-							this->invalidWarning(node["RespawnY"], "RespawnY has to be smaller than %hu.\n", md->ys);
-							return 0;
-						}
-
-						team_ptr->warp_y = warp_y;
 					}
 
 					if (this->nodeExists(team[team_name], "DeathEvent")) {
@@ -584,7 +547,7 @@ int bg_team_leave(map_session_data *sd, bool quit, bool deserter)
 					if (member->entry_point.map != 0 && !map_getmapflag(map_mapindex2mapid(member->entry_point.map), MF_NOSAVE))
 						pc_setpos(sd, member->entry_point.map, member->entry_point.x, member->entry_point.y, CLR_TELEPORT);
 					else
-						pc_setpos( sd, mapindex_name2id( sd->status.save_point.map ), sd->status.save_point.x, sd->status.save_point.y, CLR_TELEPORT ); // Warp to save point if the entry map has no save flag.
+						pc_setpos(sd, sd->status.save_point.map, sd->status.save_point.x, sd->status.save_point.y, CLR_TELEPORT); // Warp to save point if the entry map has no save flag.
 
 					bgteam->members.erase(member);
 					break;
@@ -612,7 +575,7 @@ int bg_team_leave(map_session_data *sd, bool quit, bool deserter)
 				sc_start(nullptr, &sd->bl, SC_ENTRY_QUEUE_NOTIFY_ADMISSION_TIME_OUT, 100, 1, static_cast<t_tick>(bg->deserter_time) * 1000); // Deserter timer
 		}
 
-		return static_cast<int>( bgteam->members.size() );
+		return bgteam->members.size();
 	}
 
 	return -1;
@@ -720,7 +683,7 @@ int bg_team_get_id(struct block_list *bl)
  * @param mes: Message
  * @param len: Message length
  */
-void bg_send_message(map_session_data *sd, const char *mes, size_t len)
+void bg_send_message(map_session_data *sd, const char *mes, int len)
 {
 	nullpo_retv(sd);
 
@@ -1097,7 +1060,7 @@ void bg_queue_join_guild(const char *name, map_session_data *sd)
 		return; // Someone has bypassed the client check for being in a guild
 	}
 	
-	if (strcmp(sd->status.name, sd->guild->guild.master) != 0) {
+	if (strcmp(sd->status.name, sd->guild->master) != 0) {
 		clif_bg_queue_apply_result(BG_APPLY_PARTYGUILD_LEADER, name, sd);
 		return; // Not the guild leader
 	}
@@ -1110,16 +1073,16 @@ void bg_queue_join_guild(const char *name, map_session_data *sd)
 			return;
 		}
 
-		auto &g = sd->guild;
+		struct guild* g = sd->guild;
 
-		if (g->guild.connect_member > bg->max_players) {
+		if (g->connect_member > bg->max_players) {
 			clif_bg_queue_apply_result(BG_APPLY_PLAYER_COUNT, name, sd);
 			return; // Too many guild members online
 		}
 
 		std::vector<map_session_data *> list;
 
-		for (const auto &it : g->guild.member) {
+		for (const auto &it : g->member) {
 			if (list.size() == bg->max_players)
 				break;
 
@@ -1172,7 +1135,7 @@ void bg_queue_join_multi(const char *name, map_session_data *sd, std::vector <ma
 			break;
 		}
 
-		bool r = rnd_chance(50, 100);
+		bool r = rnd() % 2 != 0;
 		std::vector<map_session_data *> *team = r ? &queue->teamb_members : &queue->teama_members;
 
 		if (queue->state == QUEUE_STATE_ACTIVE) {

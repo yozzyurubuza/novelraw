@@ -8,9 +8,9 @@
 #include <string>
 #include <vector>
 
-#include <common/cbasetypes.hpp>
-#include <common/database.hpp>
-#include <common/mmo.hpp> // struct party
+#include "../common/cbasetypes.hpp"
+#include "../common/database.hpp"
+#include "../common/mmo.hpp" // struct party
 
 #define MAX_BG_MEMBERS 30
 
@@ -31,7 +31,7 @@ struct s_battleground_data {
 };
 
 struct s_battleground_team {
-	uint16 warp_x, warp_y; ///< Team respawn coordinates
+	int16 warp_x, warp_y; ///< Team respawn coordinates
 	std::string quit_event, ///< Team NPC Event to call on log out events
 		death_event, ///< Team NPC Event to call on death events
 		active_event, ///< Team NPC Event to call on players joining an active battleground
@@ -153,7 +153,7 @@ bool bg_queue_on_ready(const char *name, std::shared_ptr<s_battleground_queue> q
 void bg_queue_on_accept_invite(map_session_data *sd);
 void bg_queue_start_battleground(std::shared_ptr<s_battleground_queue> queue);
 bool bg_member_respawn(map_session_data *sd);
-void bg_send_message(map_session_data *sd, const char *mes, size_t len);
+void bg_send_message(map_session_data *sd, const char *mes, int len);
 
 void do_init_battleground(void);
 void do_final_battleground(void);

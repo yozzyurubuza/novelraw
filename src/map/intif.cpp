@@ -3,15 +3,15 @@
 
 #include "intif.hpp"
 
-#include <cstdlib>
+#include <stdlib.h>
 
-#include <common/malloc.hpp>
-#include <common/mmo.hpp>
-#include <common/nullpo.hpp>
-#include <common/showmsg.hpp>
-#include <common/socket.hpp>
-#include <common/strlib.hpp>
-#include <common/timer.hpp>
+#include "../common/malloc.hpp"
+#include "../common/mmo.hpp"
+#include "../common/nullpo.hpp"
+#include "../common/showmsg.hpp"
+#include "../common/socket.hpp"
+#include "../common/strlib.hpp"
+#include "../common/timer.hpp"
 
 #include "achievement.hpp"
 #include "battle.hpp"
@@ -37,7 +37,7 @@
 static const int packet_len_table[] = {
 	-1,-1,27,-1, -1, 0,37,-1, 10+NAME_LENGTH,-1, 0, 0,  0, 0,  0, 0, //0x3800-0x380f
 	 0, 0, 0, 0,  0, 0, 0, 0, -1,11, 0, 0,  0, 0,  0, 0, //0x3810
-	39,-1,15,15, 15+NAME_LENGTH,17+MAP_NAME_LENGTH_EXT, 7,-1,  0, 0, 0, 0,  0, 0,  0, 0, //0x3820
+	39,-1,15,15, 15+NAME_LENGTH,19, 7,-1,  0, 0, 0, 0,  0, 0,  0, 0, //0x3820
 	10,-1,15, 0, 79,19, 7,-1,  0,-1,-1,-1, 14,67,186,-1, //0x3830
 	-1,10, 0,18,  0, 0, 0, 0, -1,75,-1,11, 11,-1, 38, 0, //0x3840
 	-1,-1, 7, 7,  7,11, 8,-1,  0, 0, 0, 0,  0, 0,  0, 0, //0x3850  Auctions [Zephyrus] itembound[Akinari]
@@ -60,18 +60,18 @@ extern int char_fd; // inter server Fd used for char_fd
  */
 int CheckForCharServer(void)
 {
-	return ((char_fd <= 0) || session[char_fd] == nullptr || session[char_fd]->wdata == nullptr);
+	return ((char_fd <= 0) || session[char_fd] == NULL || session[char_fd]->wdata == NULL);
 }
 
 /**
  * Get sd from pc_db (map_id2db) or auth_db (in case if parsing packet from inter-server when sd not added to pc_db yet)
  * @param account_id
  * @param char_id
- * @return sd Found sd or nullptr if not found
+ * @return sd Found sd or NULL if not found
  */
 map_session_data *inter_search_sd(uint32 account_id, uint32 char_id)
 {
-	map_session_data *sd = nullptr;
+	map_session_data *sd = NULL;
 	struct auth_node *node = chrif_auth_check(account_id, char_id, ST_LOGIN);
 	if (node)
 		sd = node->sd;
@@ -111,7 +111,7 @@ int intif_create_pet(uint32 account_id,uint32 char_id,short pet_class,short pet_
 	WFIFOW(inter_fd, 24) = hungry;
 	WFIFOB(inter_fd, 26) = rename_flag;
 	WFIFOB(inter_fd, 27) = incubate;
-	safestrncpy(WFIFOCP(inter_fd, 28), pet_name, NAME_LENGTH);
+	memcpy(WFIFOP(inter_fd, 28), pet_name, NAME_LENGTH);
 	WFIFOSET(inter_fd, 28 + NAME_LENGTH);
 
 	return 1;
@@ -192,7 +192,7 @@ int intif_rename(map_session_data *sd, int type, char *name)
 	WFIFOL(inter_fd,2) = sd->status.account_id;
 	WFIFOL(inter_fd,6) = sd->status.char_id;
 	WFIFOB(inter_fd,10) = type;  //Type: 0 - PC, 1 - PET, 2 - HOM
-	safestrncpy(WFIFOCP(inter_fd,11),name, NAME_LENGTH);
+	memcpy(WFIFOP(inter_fd,11),name, NAME_LENGTH);
 	WFIFOSET(inter_fd,NAME_LENGTH+12);
 	return 1;
 }
@@ -204,7 +204,8 @@ int intif_rename(map_session_data *sd, int type, char *name)
  * @param type : Color of msg
  * @return 0=error occured, 1=msg sent
  */
-int intif_broadcast( const char* mes, size_t len, int type ){
+int intif_broadcast(const char* mes, int len, int type)
+{
 	nullpo_ret(mes);
 	if (len < 2)
 		return 0;
@@ -212,7 +213,7 @@ int intif_broadcast( const char* mes, size_t len, int type ){
 	int lp = (type|BC_COLOR_MASK) ? 4 : 0;
 
 	// Send to the local players
-	clif_broadcast(nullptr, mes, len, type, ALL_CLIENT);
+	clif_broadcast(NULL, mes, len, type, ALL_CLIENT);
 
 	if (CheckForCharServer())
 		return 0;
@@ -222,7 +223,7 @@ int intif_broadcast( const char* mes, size_t len, int type ){
 
 	WFIFOHEAD(inter_fd, 16 + lp + len);
 	WFIFOW(inter_fd,0)  = 0x3000;
-	WFIFOW( inter_fd, 2 )  = static_cast<int16>( 16 + lp + len );
+	WFIFOW(inter_fd,2)  = 16 + lp + len;
 	WFIFOL(inter_fd,4)  = 0xFF000000; // 0xFF000000 color signals standard broadcast
 	WFIFOW(inter_fd,8)  = 0; // fontType not used with standard broadcast
 	WFIFOW(inter_fd,10) = 0; // fontSize not used with standard broadcast
@@ -232,7 +233,7 @@ int intif_broadcast( const char* mes, size_t len, int type ){
 		WFIFOL(inter_fd,16) = 0x65756c62; //If there's "blue" at the beginning of the message, game client will display it in blue instead of yellow.
 	else if (type|BC_WOE)
 		WFIFOL(inter_fd,16) = 0x73737373; //If there's "ssss", game client will recognize message as 'WoE broadcast'.
-	safestrncpy(WFIFOCP(inter_fd,16 + lp), mes, len);
+	memcpy(WFIFOP(inter_fd,16 + lp), mes, len);
 	WFIFOSET(inter_fd, WFIFOW(inter_fd,2));
 	return 1;
 }
@@ -248,13 +249,14 @@ int intif_broadcast( const char* mes, size_t len, int type ){
  * @param fontY :
  * @return 0=not send to char-serv, 1=send to char-serv
  */
-int intif_broadcast2( const char* mes, size_t len, unsigned long fontColor, short fontType, short fontSize, short fontAlign, short fontY ){
+int intif_broadcast2(const char* mes, int len, unsigned long fontColor, short fontType, short fontSize, short fontAlign, short fontY)
+{
 	nullpo_ret(mes);
 	if (len < 2)
 		return 0;
 
 	// Send to the local players
-	clif_broadcast2(nullptr, mes, len, fontColor, fontType, fontSize, fontAlign, fontY, ALL_CLIENT);
+	clif_broadcast2(NULL, mes, len, fontColor, fontType, fontSize, fontAlign, fontY, ALL_CLIENT);
 
 	if (CheckForCharServer())
 		return 0;
@@ -264,13 +266,13 @@ int intif_broadcast2( const char* mes, size_t len, unsigned long fontColor, shor
 
 	WFIFOHEAD(inter_fd, 16 + len);
 	WFIFOW(inter_fd,0)  = 0x3000;
-	WFIFOW( inter_fd, 2 )  = static_cast<int16>( 16 + len );
+	WFIFOW(inter_fd,2)  = 16 + len;
 	WFIFOL(inter_fd,4)  = fontColor;
 	WFIFOW(inter_fd,8)  = fontType;
 	WFIFOW(inter_fd,10) = fontSize;
 	WFIFOW(inter_fd,12) = fontAlign;
 	WFIFOW(inter_fd,14) = fontY;
-	safestrncpy(WFIFOCP(inter_fd,16), mes, len);
+	memcpy(WFIFOP(inter_fd,16), mes, len);
 	WFIFOSET(inter_fd, WFIFOW(inter_fd,2));
 	return 1;
 }
@@ -294,7 +296,7 @@ int intif_main_message(map_session_data* sd, const char* message)
 	intif_broadcast2( output, strlen(output) + 1, 0xFE000000, 0, 0, 0, 0 );
 
 	// log the chat message
-	log_chat( LOG_CHAT_MAINCHAT, 0, sd->status.char_id, sd->status.account_id, mapindex_id2name(sd->mapindex), sd->bl.x, sd->bl.y, nullptr, message );
+	log_chat( LOG_CHAT_MAINCHAT, 0, sd->status.char_id, sd->status.account_id, mapindex_id2name(sd->mapindex), sd->bl.x, sd->bl.y, NULL, message );
 
 	return 1;
 }
@@ -308,7 +310,7 @@ int intif_main_message(map_session_data* sd, const char* message)
  * @param mes_len : Size of message
  * @return 0=Message not send, 1=Message send
  */
-int intif_wis_message(map_session_data *sd, char *nick, char *mes, size_t mes_len)
+int intif_wis_message(map_session_data *sd, char *nick, char *mes, int mes_len)
 {
 	int headersize = 8 + 2 * NAME_LENGTH;
 
@@ -318,13 +320,13 @@ int intif_wis_message(map_session_data *sd, char *nick, char *mes, size_t mes_le
 
 	if (other_mapserver_count < 1)
 	{	//Character not found.
-		clif_wis_end( *sd, ACKWHISPER_TARGET_OFFLINE );
+		clif_wis_end(sd->fd, 1);
 		return 0;
 	}
 
 	WFIFOHEAD(inter_fd,mes_len + headersize);
 	WFIFOW(inter_fd,0) = 0x3001;
-	WFIFOW(inter_fd,2) = static_cast<int16>( mes_len + headersize);
+	WFIFOW(inter_fd,2) = mes_len + headersize;
 	WFIFOL(inter_fd,4) = pc_get_group_level(sd);
 	safestrncpy(WFIFOCP(inter_fd,8), sd->status.name, NAME_LENGTH);
 	safestrncpy(WFIFOCP(inter_fd,8+NAME_LENGTH), nick, NAME_LENGTH);
@@ -368,15 +370,13 @@ int intif_wis_reply(int id, int flag)
  */
 int intif_wis_message_to_gm(char *wisp_name, int permission, char *mes)
 {
+	int mes_len;
 	if (CheckForCharServer())
 		return 0;
-
-	// + null
-	size_t mes_len = strlen( mes ) + 1;
-
+	mes_len = strlen(mes) + 1; // + null
 	WFIFOHEAD(inter_fd, mes_len + 8 + NAME_LENGTH);
 	WFIFOW(inter_fd,0) = 0x3003;
-	WFIFOW( inter_fd, 2 ) = static_cast<int16>( mes_len + 32 );
+	WFIFOW(inter_fd,2) = mes_len + 32;
 	safestrncpy(WFIFOCP(inter_fd,4), wisp_name, NAME_LENGTH);
 	WFIFOL(inter_fd,4+NAME_LENGTH) = permission;
 	safestrncpy(WFIFOCP(inter_fd,8+NAME_LENGTH), mes, mes_len);
@@ -415,8 +415,8 @@ int intif_saveregistry(map_session_data *sd)
 
 	iter = db_iterator(sd->regs.vars);
 	for( data = iter->first(iter,&key); iter->exists(iter); data = iter->next(iter,&key) ) {
-		const char *varname = nullptr;
-		struct script_reg_state *src = nullptr;
+		const char *varname = NULL;
+		struct script_reg_state *src = NULL;
 		bool lValid = false;
 
 		if( data->type != DB_DATA_PTR ) // it's a @number
@@ -444,7 +444,7 @@ int intif_saveregistry(map_session_data *sd)
 		plen += 1;
 
 		safestrncpy(WFIFOCP(inter_fd,plen), varname, len); //the key
-		plen += static_cast<decltype(plen)>( len );
+		plen += len;
 
 		WFIFOL(inter_fd, plen) = script_getvaridx(key.i64);
 		plen += 4;
@@ -468,7 +468,7 @@ int intif_saveregistry(map_session_data *sd)
 				plen += 1;
 
 				safestrncpy(WFIFOCP(inter_fd,plen), p->value, len);
-				plen += static_cast<decltype(plen)>( len );
+				plen += len;
 			} else {
 				script_reg_destroy_single(sd,key.i64,&p->flag);
 			}
@@ -595,7 +595,7 @@ int intif_create_party(struct party_member *member,char *name,int item,int item2
 	WFIFOHEAD(inter_fd, 6+NAME_LENGTH+sizeof(struct party_member));
 	WFIFOW(inter_fd,0) = 0x3020;
 	WFIFOW(inter_fd,2) = 6+NAME_LENGTH+sizeof(struct party_member);
-	safestrncpy(WFIFOCP(inter_fd,4),name, NAME_LENGTH);
+	memcpy(WFIFOP(inter_fd,4),name, NAME_LENGTH);
 	WFIFOB(inter_fd,28)= item;
 	WFIFOB(inter_fd,29)= item2;
 	memcpy(WFIFOP(inter_fd,30), member, sizeof(struct party_member));
@@ -678,7 +678,7 @@ int intif_party_leave(int party_id, uint32 account_id, uint32 char_id, const cha
 	WFIFOL(inter_fd,2) = party_id;
 	WFIFOL(inter_fd,6) = account_id;
 	WFIFOL(inter_fd,10) = char_id;
-	safestrncpy(WFIFOCP(inter_fd,14), name, NAME_LENGTH);
+	memcpy(WFIFOCP(inter_fd,14), name, NAME_LENGTH);
 	WFIFOB(inter_fd,14+NAME_LENGTH) = type;
 	WFIFOSET(inter_fd,15+NAME_LENGTH);
 	return 1;
@@ -709,15 +709,15 @@ int intif_party_changemap(map_session_data *sd,int online)
 	} else
 		mapindex = sd->mapindex;
 
-	WFIFOHEAD( inter_fd, 17 + MAP_NAME_LENGTH_EXT );
+	WFIFOHEAD(inter_fd,19);
 	WFIFOW(inter_fd,0)=0x3025;
 	WFIFOL(inter_fd,2)=sd->status.party_id;
 	WFIFOL(inter_fd,6)=sd->status.account_id;
 	WFIFOL(inter_fd,10)=sd->status.char_id;
-	WFIFOB(inter_fd,14)=online;
-	WFIFOW(inter_fd,15)=sd->status.base_level;
-	safestrncpy( WFIFOCP( inter_fd, 17 ), mapindex_id2name( mapindex ), MAP_NAME_LENGTH_EXT );
-	WFIFOSET( inter_fd, 17 + MAP_NAME_LENGTH_EXT );
+	WFIFOW(inter_fd,14)=mapindex;
+	WFIFOB(inter_fd,16)=online;
+	WFIFOW(inter_fd,17)=sd->status.base_level;
+	WFIFOSET(inter_fd,19);
 	return 1;
 }
 
@@ -748,7 +748,7 @@ int intif_break_party(int party_id)
  * @param len : Size of the message
  * @return 0=error, 1=msg sent
  */
-int intif_party_message(int party_id, uint32 account_id, const char *mes, size_t len)
+int intif_party_message(int party_id,uint32 account_id,const char *mes,int len)
 {
 	if (CheckForCharServer())
 		return 0;
@@ -758,10 +758,10 @@ int intif_party_message(int party_id, uint32 account_id, const char *mes, size_t
 
 	WFIFOHEAD(inter_fd,len + 12);
 	WFIFOW(inter_fd,0)=0x3027;
-	WFIFOW(inter_fd,2)=static_cast<int16>( len + 12 );
+	WFIFOW(inter_fd,2)=len+12;
 	WFIFOL(inter_fd,4)=party_id;
 	WFIFOL(inter_fd,8)=account_id;
-	safestrncpy(WFIFOCP(inter_fd,12),mes,len);
+	memcpy(WFIFOP(inter_fd,12),mes,len);
 	WFIFOSET(inter_fd,len+12);
 	return 1;
 }
@@ -818,7 +818,7 @@ int intif_guild_create(const char *name,const struct guild_member *master)
 	WFIFOW(inter_fd,0)=0x3030;
 	WFIFOW(inter_fd,2)=sizeof(struct guild_member)+(8+NAME_LENGTH);
 	WFIFOL(inter_fd,4)=master->account_id;
-	safestrncpy(WFIFOCP(inter_fd,8),name,NAME_LENGTH);
+	memcpy(WFIFOP(inter_fd,8),name,NAME_LENGTH);
 	memcpy(WFIFOP(inter_fd,8+NAME_LENGTH),master,sizeof(struct guild_member));
 	WFIFOSET(inter_fd,WFIFOW(inter_fd,2));
 	return 1;
@@ -846,14 +846,15 @@ int intif_guild_request_info(int guild_id)
  * @param m : Member to add to the guild
  * @return 0=error, 1=msg_sent
  */
-int intif_guild_addmember( int guild_id, struct guild_member& m ){
+int intif_guild_addmember(int guild_id,struct guild_member *m)
+{
 	if (CheckForCharServer())
 		return 0;
 	WFIFOHEAD(inter_fd,sizeof(struct guild_member)+8);
 	WFIFOW(inter_fd,0) = 0x3032;
 	WFIFOW(inter_fd,2) = sizeof(struct guild_member)+8;
 	WFIFOL(inter_fd,4) = guild_id;
-	memcpy( WFIFOP( inter_fd, 8 ), &m, sizeof( struct guild_member ) );
+	memcpy(WFIFOP(inter_fd,8),m,sizeof(struct guild_member));
 	WFIFOSET(inter_fd,WFIFOW(inter_fd,2));
 	return 1;
 }
@@ -865,16 +866,17 @@ int intif_guild_addmember( int guild_id, struct guild_member& m ){
  * @param len : size of the name
  * @return 0=error, 1=msg_sent
  */
-bool intif_guild_change_gm( int guild_id, const char* name, size_t len ){
+int intif_guild_change_gm(int guild_id, const char* name, int len)
+{
 	if (CheckForCharServer())
-		return false;
+		return 0;
 	WFIFOHEAD(inter_fd, len + 8);
 	WFIFOW(inter_fd, 0)=0x3033;
-	WFIFOW( inter_fd, 2 ) = static_cast<int16>( len + 8 );
+	WFIFOW(inter_fd, 2)=len+8;
 	WFIFOL(inter_fd, 4)=guild_id;
-	safestrncpy(WFIFOCP(inter_fd,8),name,len);
+	memcpy(WFIFOP(inter_fd,8),name,len);
 	WFIFOSET(inter_fd,len+8);
-	return true;
+	return 1;
 }
 
 /**
@@ -886,9 +888,10 @@ bool intif_guild_change_gm( int guild_id, const char* name, size_t len ){
  * @param mes : quitting message (max 40)
  * @return 0=error, 1=msg_sent
  */
-bool intif_guild_leave( int guild_id, uint32 account_id, uint32 char_id, int flag, const char *mes ){
+int intif_guild_leave(int guild_id,uint32 account_id,uint32 char_id,int flag,const char *mes)
+{
 	if (CheckForCharServer())
-		return false;
+		return 0;
 	WFIFOHEAD(inter_fd, 55);
 	WFIFOW(inter_fd, 0) = 0x3034;
 	WFIFOL(inter_fd, 2) = guild_id;
@@ -897,7 +900,7 @@ bool intif_guild_leave( int guild_id, uint32 account_id, uint32 char_id, int fla
 	WFIFOB(inter_fd,14) = flag;
 	safestrncpy(WFIFOCP(inter_fd,15),mes,40);
 	WFIFOSET(inter_fd,55);
-	return true;
+	return 1;
 }
 
 /**
@@ -951,7 +954,7 @@ int intif_guild_break(int guild_id)
  * @param len : Size of the message
  * @return 0=error, 1=msg_sent
  */
-int intif_guild_message(int guild_id, uint32 account_id, const char *mes, size_t len)
+int intif_guild_message(int guild_id,uint32 account_id,const char *mes,int len)
 {
 	if (CheckForCharServer())
 		return 0;
@@ -961,10 +964,10 @@ int intif_guild_message(int guild_id, uint32 account_id, const char *mes, size_t
 
 	WFIFOHEAD(inter_fd, len + 12);
 	WFIFOW(inter_fd,0)=0x3037;
-	WFIFOW(inter_fd,2)=static_cast<int16>( len + 12 );
+	WFIFOW(inter_fd,2)=len+12;
 	WFIFOL(inter_fd,4)=guild_id;
 	WFIFOL(inter_fd,8)=account_id;
-	safestrncpy(WFIFOCP(inter_fd,12),mes,len);
+	memcpy(WFIFOP(inter_fd,12),mes,len);
 	WFIFOSET(inter_fd,len+12);
 
 	return 1;
@@ -1100,8 +1103,8 @@ int intif_guild_notice(int guild_id,const char *mes1,const char *mes2)
 	WFIFOHEAD(inter_fd,186);
 	WFIFOW(inter_fd,0)=0x303e;
 	WFIFOL(inter_fd,2)=guild_id;
-	safestrncpy(WFIFOCP(inter_fd,6),mes1,MAX_GUILDMES1);
-	safestrncpy(WFIFOCP(inter_fd,66),mes2,MAX_GUILDMES2);
+	memcpy(WFIFOP(inter_fd,6),mes1,MAX_GUILDMES1);
+	memcpy(WFIFOP(inter_fd,66),mes2,MAX_GUILDMES2);
 	WFIFOSET(inter_fd,186);
 	return 1;
 }
@@ -1287,7 +1290,7 @@ int intif_parse_WisMessage(int fd)
 
 	safestrncpy(name, RFIFOCP(fd,12+NAME_LENGTH), NAME_LENGTH);
 	sd = map_nick2sd(name,false);
-	if(sd == nullptr || strcmp(sd->status.name, name) != 0)
+	if(sd == NULL || strcmp(sd->status.name, name) != 0)
 	{	//Not found
 		intif_wis_reply(id,1);
 		return 0;
@@ -1320,17 +1323,13 @@ int intif_parse_WisMessage(int fd)
  */
 int intif_parse_WisEnd(int fd)
 {
+	map_session_data* sd;
+
 	if (battle_config.etc_log)
 		ShowInfo("intif_parse_wisend: player: %s, flag: %d\n", RFIFOP(fd,2), RFIFOB(fd,26)); // flag: 0: success to send wisper, 1: target character is not loged in?, 2: ignored by target
-
-	map_session_data* sd = map_nick2sd( RFIFOCP( fd, 2 ), false );
-
-	if (sd != nullptr) {
-		uint8 result = RFIFOB( fd, 26 );
-
-		if ( result >= ACKWHISPER_SUCCESS && result <= ACKWHISPER_ALL_IGNORED )
-			clif_wis_end( *sd, static_cast<e_ack_whisper>(result) );
-	}
+	sd = (map_session_data *)map_nick2sd(RFIFOCP(fd,2),false);
+	if (sd != NULL)
+		clif_wis_end(sd->fd, RFIFOB(fd,26));
 
 	return 1;
 }
@@ -1451,7 +1450,7 @@ void intif_parse_Registers(int fd)
 				safestrncpy(sval, RFIFOCP(fd, cursor + 1), RFIFOB(fd, cursor));
 				cursor += RFIFOB(fd, cursor) + 1;
 
-				set_reg_str( nullptr, sd, reference_uid( add_str( key ), index ), key, sval, nullptr );
+				set_reg_str( NULL, sd, reference_uid( add_str( key ), index ), key, sval, NULL );
 			}
 		/**
 		 * Vessel!
@@ -1471,7 +1470,7 @@ void intif_parse_Registers(int fd)
 				ival = RFIFOQ(fd, cursor);
 				cursor += 8;
 
-				set_reg_num( nullptr, sd, reference_uid( add_str( key ), index ), key, ival, nullptr );
+				set_reg_num( NULL, sd, reference_uid( add_str( key ), index ), key, ival, NULL );
 			}
 		}
 	}
@@ -1500,7 +1499,7 @@ int intif_parse_LoadGuildStorage(int fd)
 
 	sd = map_id2sd( RFIFOL(fd,4) );
 	if (flag){ //If flag != 0, we attach a player and open the storage
-		if(sd == nullptr){
+		if(sd == NULL){
 			ShowError("intif_parse_LoadGuildStorage: user not found (AID: %d)\n",RFIFOL(fd,4));
 			return 0;
 		}
@@ -1629,7 +1628,7 @@ int intif_parse_PartyBroken(int fd)
  */
 int intif_parse_PartyMove(int fd)
 {
-	party_recv_movemap( RFIFOL( fd, 2 ), RFIFOL( fd, 6 ), RFIFOL( fd, 10 ), RFIFOB( fd, 14 ), RFIFOW( fd, 15 ), RFIFOCP( fd, 17 ) );
+	party_recv_movemap(RFIFOL(fd,2),RFIFOL(fd,6),RFIFOL(fd,10),RFIFOW(fd,14),RFIFOB(fd,16),RFIFOW(fd,17));
 	return 1;
 }
 
@@ -1667,9 +1666,9 @@ int intif_parse_GuildInfo(int fd)
 		guild_recv_noinfo(RFIFOL(fd,4));
 		return 0;
 	}
-	if( RFIFOW(fd,2)!=sizeof(struct mmo_guild)+4 )
-		ShowError("intif: guild info : data size error Gid: %d recv size: %d Expected size: %" PRIuPTR "\n",RFIFOL(fd,4),RFIFOW(fd,2),sizeof(struct mmo_guild)+4);
-	guild_recv_info(*(struct mmo_guild *)RFIFOP(fd,4));
+	if( RFIFOW(fd,2)!=sizeof(struct guild)+4 )
+		ShowError("intif: guild info : data size error Gid: %d recv size: %d Expected size: %" PRIuPTR "\n",RFIFOL(fd,4),RFIFOW(fd,2),sizeof(struct guild)+4);
+	guild_recv_info((struct guild *)RFIFOP(fd,4));
 	return 1;
 }
 
@@ -1732,14 +1731,14 @@ int intif_parse_GuildBasicInfoChanged(int fd)
 	int type = RFIFOW(fd,8);
 	//void* data = RFIFOP(fd,10);
 
-	auto g = guild_search(guild_id);
-	if( g == nullptr )
+	struct guild* g = guild_search(guild_id);
+	if( g == NULL )
 		return 0;
 
 	switch(type) {
-	case GBI_EXP:        g->guild.exp = RFIFOQ(fd,10); break;
-	case GBI_GUILDLV:    g->guild.guild_lv = RFIFOW(fd,10); break;
-	case GBI_SKILLPOINT: g->guild.skill_point = RFIFOL(fd,10); break;
+	case GBI_EXP:        g->exp = RFIFOQ(fd,10); break;
+	case GBI_GUILDLV:    g->guild_lv = RFIFOW(fd,10); break;
+	case GBI_SKILLPOINT: g->skill_point = RFIFOL(fd,10); break;
 	}
 
 	return 1;
@@ -1760,24 +1759,25 @@ int intif_parse_GuildMemberInfoChanged(int fd)
 	int type = RFIFOW(fd,16);
 	//void* data = RFIFOP(fd,18);
 
+	struct guild* g;
 	int idx;
 
-	auto g = guild_search(guild_id);
-	if( g == nullptr )
+	g = guild_search(guild_id);
+	if( g == NULL )
 		return 0;
 
-	idx = guild_getindex(g->guild,account_id,char_id);
+	idx = guild_getindex(g,account_id,char_id);
 	if( idx == -1 )
 		return 0;
 
 	switch( type ) {
-	case GMI_POSITION:   g->guild.member[idx].position   = RFIFOW(fd,18); guild_memberposition_changed(g->guild,idx,RFIFOW(fd,18)); break;
-	case GMI_EXP:        g->guild.member[idx].exp        = RFIFOQ(fd,18); break;
-	case GMI_HAIR:       g->guild.member[idx].hair       = RFIFOW(fd,18); break;
-	case GMI_HAIR_COLOR: g->guild.member[idx].hair_color = RFIFOW(fd,18); break;
-	case GMI_GENDER:     g->guild.member[idx].gender     = RFIFOW(fd,18); break;
-	case GMI_CLASS:      g->guild.member[idx].class_     = RFIFOW(fd,18); break;
-	case GMI_LEVEL:      g->guild.member[idx].lv         = RFIFOW(fd,18); break;
+	case GMI_POSITION:   g->member[idx].position   = RFIFOW(fd,18); guild_memberposition_changed(g,idx,RFIFOW(fd,18)); break;
+	case GMI_EXP:        g->member[idx].exp        = RFIFOQ(fd,18); break;
+	case GMI_HAIR:       g->member[idx].hair       = RFIFOW(fd,18); break;
+	case GMI_HAIR_COLOR: g->member[idx].hair_color = RFIFOW(fd,18); break;
+	case GMI_GENDER:     g->member[idx].gender     = RFIFOW(fd,18); break;
+	case GMI_CLASS:      g->member[idx].class_     = RFIFOW(fd,18); break;
+	case GMI_LEVEL:      g->member[idx].lv         = RFIFOW(fd,18); break;
 	}
 	return 1;
 }
@@ -1942,8 +1942,8 @@ int intif_parse_DeletePetOk(int fd)
  */
 int intif_parse_ChangeNameOk(int fd)
 {
-	map_session_data *sd = nullptr;
-	if((sd=map_id2sd(RFIFOL(fd,2)))==nullptr ||
+	map_session_data *sd = NULL;
+	if((sd=map_id2sd(RFIFOL(fd,2)))==NULL ||
 		sd->status.char_id != RFIFOL(fd,6))
 		return 0;
 
@@ -2065,7 +2065,7 @@ void intif_parse_questlog(int fd)
 	if(num_received == 0) {
 		if(sd->quest_log) {
 			aFree(sd->quest_log);
-			sd->quest_log = nullptr;
+			sd->quest_log = NULL;
 		}
 	} else {
 		struct quest *received = (struct quest *)RFIFOP(fd,8);
@@ -2172,7 +2172,7 @@ void intif_parse_achievements(int fd)
 	if (num_received == 0) {
 		if (sd->achievement_data.achievements) {
 			aFree(sd->achievement_data.achievements);
-			sd->achievement_data.achievements = nullptr;
+			sd->achievement_data.achievements = NULL;
 			sd->achievement_data.incompleteCount = 0;
 			sd->achievement_data.count = 0;
 		}
@@ -2216,7 +2216,7 @@ void intif_parse_achievements(int fd)
 
 	achievement_level(sd, false); // Calculate level info but don't give any AG_GOAL_ACHIEVE achievements
 	achievement_get_titles(sd->status.char_id); // Populate the title list for completed achievements
-	clif_achievement_update(sd, nullptr, 0);
+	clif_achievement_update(sd, NULL, 0);
 	clif_achievement_list_all(sd);
 }
 
@@ -2339,7 +2339,7 @@ int intif_parse_Mail_inboxreceived(int fd)
 
 	sd = map_charid2sd(RFIFOL(fd,4));
 
-	if (sd == nullptr)
+	if (sd == NULL)
 	{
 		ShowError("intif_parse_Mail_inboxreceived: char not found %d\n",RFIFOL(fd,4));
 		return 0;
@@ -2357,7 +2357,7 @@ int intif_parse_Mail_inboxreceived(int fd)
 
 #if PACKETVER >= 20150513
 	// Refresh top right icon
-	clif_Mail_new(sd, 0, nullptr, nullptr);
+	clif_Mail_new(sd, 0, NULL, NULL);
 #endif
 
 	if (flag){
@@ -2429,7 +2429,7 @@ int intif_parse_Mail_getattach(int fd)
 
 	sd = map_charid2sd( RFIFOL(fd,4) );
 
-	if (sd == nullptr)
+	if (sd == NULL)
 	{
 		ShowError("intif_parse_Mail_getattach: char not found %d\n",RFIFOL(fd,4));
 		return 0;
@@ -2481,7 +2481,7 @@ int intif_parse_Mail_delete(int fd)
 	bool failed = RFIFOB(fd,10) > 0;
 
 	map_session_data *sd = map_charid2sd(char_id);
-	if (sd == nullptr)
+	if (sd == NULL)
 	{
 		ShowError("intif_parse_Mail_delete: char not found %d\n", char_id);
 		return 0;
@@ -2541,7 +2541,7 @@ int intif_parse_Mail_return(int fd)
 	int mail_id = RFIFOL(fd,6);
 	short fail = RFIFOB(fd,10);
 
-	if( sd == nullptr )
+	if( sd == NULL )
 	{
 		ShowError("intif_parse_Mail_return: char not found %d\n",RFIFOL(fd,2));
 		return 1;
@@ -2614,7 +2614,7 @@ static void intif_parse_Mail_send(int fd)
 
 	// notify sender
 	sd = map_charid2sd(msg.send_id);
-	if( sd != nullptr )
+	if( sd != NULL )
 	{
 		if( fail )
 			mail_deliveryfail(sd, &msg);
@@ -2638,7 +2638,7 @@ static void intif_parse_Mail_new(int fd)
 	const char* sender_name = RFIFOCP(fd,10);
 	const char* title = RFIFOCP(fd,34);
 
-	if( sd == nullptr )
+	if( sd == NULL )
 		return;
 	sd->mail.changed = true;
 	sd->mail.inbox.unread++;
@@ -2657,7 +2657,6 @@ static void intif_parse_Mail_receiver( int fd ){
 	// Only f the player is online
 	if( sd ){
 		clif_Mail_Receiver_Ack( sd, RFIFOL( fd, 6 ), RFIFOW( fd, 10 ), RFIFOW( fd, 12 ), RFIFOCP( fd, 14 ) );
-		sd->mail.dest_id = RFIFOL(fd, 6);
 	}
 }
 
@@ -2665,12 +2664,10 @@ bool intif_mail_checkreceiver( map_session_data* sd, char* name ){
 	map_session_data *tsd;
 
 	tsd = map_nick2sd( name, false );
-	sd->mail.dest_id = 0;
 
 	// If the target player is online on this map-server
-	if( tsd != nullptr ){
+	if( tsd != NULL ){
 		clif_Mail_Receiver_Ack( sd, tsd->status.char_id, tsd->status.class_, tsd->status.base_level, name );
-		sd->mail.dest_id = tsd->status.char_id;
 		return true;
 	}
 
@@ -2714,7 +2711,7 @@ int intif_Auction_requestlist(uint32 char_id, short type, int price, const char*
 	WFIFOW(inter_fd,8) = type;
 	WFIFOL(inter_fd,10) = price; //min price for search
 	WFIFOW(inter_fd,14) = page;
-	safestrncpy(WFIFOCP(inter_fd,16), searchtext, NAME_LENGTH);
+	memcpy(WFIFOP(inter_fd,16), searchtext, NAME_LENGTH);
 	WFIFOSET(inter_fd,len);
 
 	return 1;
@@ -2731,7 +2728,7 @@ static void intif_parse_Auction_results(int fd)
 	short pages = RFIFOW(fd,10);
 	uint8* data = RFIFOP(fd,12);
 
-	if( sd == nullptr )
+	if( sd == NULL )
 		return;
 
 	clif_Auction_results(sd, count, pages, data);
@@ -2774,7 +2771,7 @@ static void intif_parse_Auction_register(int fd)
 	}
 
 	memcpy(&auction, RFIFOP(fd,4), sizeof(struct auction_data));
-	if( (sd = map_charid2sd(auction.seller_id)) == nullptr )
+	if( (sd = map_charid2sd(auction.seller_id)) == NULL )
 		return;
 
 	if( auction.auction_id > 0 )
@@ -2790,7 +2787,7 @@ static void intif_parse_Auction_register(int fd)
 		clif_Auction_message(sd->fd, 4);
 		pc_additem(sd, &auction.item, auction.item.amount, LOG_TYPE_AUCTION);
 
-		pc_getzeny(sd, zeny, LOG_TYPE_AUCTION);
+		pc_getzeny(sd, zeny, LOG_TYPE_AUCTION, NULL);
 	}
 }
 
@@ -2823,7 +2820,7 @@ static void intif_parse_Auction_cancel(int fd)
 	map_session_data *sd = map_charid2sd(RFIFOL(fd,2));
 	int result = RFIFOB(fd,6);
 
-	if( sd == nullptr )
+	if( sd == NULL )
 		return;
 
 	switch( result )
@@ -2864,7 +2861,7 @@ static void intif_parse_Auction_close(int fd)
 	map_session_data *sd = map_charid2sd(RFIFOL(fd,2));
 	unsigned char result = RFIFOB(fd,6);
 
-	if( sd == nullptr )
+	if( sd == NULL )
 		return;
 
 	clif_Auction_close(sd->fd, result);
@@ -2897,7 +2894,7 @@ int intif_Auction_bid(uint32 char_id, const char* name, unsigned int auction_id,
 	WFIFOL(inter_fd,4) = char_id;
 	WFIFOL(inter_fd,8) = auction_id;
 	WFIFOL(inter_fd,12) = bid;
-	safestrncpy(WFIFOCP(inter_fd,16), name, NAME_LENGTH);
+	memcpy(WFIFOP(inter_fd,16), name, NAME_LENGTH);
 	WFIFOSET(inter_fd,len);
 
 	return 1;
@@ -2914,13 +2911,13 @@ static void intif_parse_Auction_bid(int fd)
 	int bid = RFIFOL(fd,6);
 	unsigned char result = RFIFOB(fd,10);
 
-	if( sd == nullptr )
+	if( sd == NULL )
 		return;
 
 	clif_Auction_message(sd->fd, result);
 	if( bid > 0 )
 	{
-		pc_getzeny(sd, bid, LOG_TYPE_AUCTION);
+		pc_getzeny(sd, bid, LOG_TYPE_AUCTION,NULL);
 	}
 	if( result == 1 )
 	{ // To update the list, display your buy list
@@ -2938,7 +2935,7 @@ static void intif_parse_Auction_message(int fd)
 	map_session_data *sd = map_charid2sd(RFIFOL(fd,2));
 	unsigned char result = RFIFOB(fd,6);
 
-	if( sd == nullptr )
+	if( sd == NULL )
 		return;
 
 	clif_Auction_message(sd->fd, result);
@@ -3517,11 +3514,7 @@ static bool intif_parse_StorageReceived(int fd)
 			}else if( sd->state.prevend ){
 				clif_clearcart(sd->fd);
 				clif_cartlist(sd);
-				// Only open the vending UI, if it has not been opened already
-				if (sd->state.pending_vending_ui) {
-					clif_openvendingreq( *sd, sd->vend_skill_lv + 2 );
-					sd->state.pending_vending_ui = false;
-				}
+				clif_openvendingreq(sd, sd->vend_skill_lv+2);
 			}
 			break;
 
@@ -3684,7 +3677,7 @@ void intif_parse_clans( int fd ){
 	clan_load_clandata( ( RFIFOW(fd, 2) - 4 ) / sizeof( struct clan ), (struct clan*)RFIFOP(fd,4) );
 }
 
-int intif_clan_message( int clan_id, uint32 account_id, const char *mes, size_t len ){
+int intif_clan_message(int clan_id,uint32 account_id,const char *mes,int len){
 	if (CheckForCharServer())
 		return 0;
 
@@ -3693,10 +3686,10 @@ int intif_clan_message( int clan_id, uint32 account_id, const char *mes, size_t 
 
 	WFIFOHEAD(inter_fd, len + 12);
 	WFIFOW(inter_fd,0)=0x30A1;
-	WFIFOW( inter_fd, 2 ) = static_cast<uint16>( len + 12 );
+	WFIFOW(inter_fd,2)=len+12;
 	WFIFOL(inter_fd,4)=clan_id;
 	WFIFOL(inter_fd,8)=account_id;
-	safestrncpy(WFIFOCP(inter_fd,12),mes,len);
+	memcpy(WFIFOP(inter_fd,12),mes,len);
 	WFIFOSET(inter_fd,len+12);
 
 	return 1;
@@ -3741,13 +3734,13 @@ int intif_clan_member_joined( int clan_id ){
 int intif_parse_clan_onlinecount( int fd ){
 	struct clan* clan = clan_search(RFIFOL(fd,2));
 
-	if( clan == nullptr ){
+	if( clan == NULL ){
 		return 0;
 	}
 
 	clan->connect_member = RFIFOW(fd,6);
 
-	clif_clan_onlinecount( *clan );
+	clif_clan_onlinecount(clan);
 
 	return 1;
 }
@@ -3785,9 +3778,9 @@ int intif_parse(int fd)
 	switch(cmd){
 	case 0x3800:
 		if (RFIFOL(fd,4) == 0xFF000000) //Normal announce.
-			clif_broadcast(nullptr, RFIFOCP(fd,16), packet_len-16, BC_DEFAULT, ALL_CLIENT);
+			clif_broadcast(NULL, RFIFOCP(fd,16), packet_len-16, BC_DEFAULT, ALL_CLIENT);
 		else //Color announce.
-			clif_broadcast2(nullptr, RFIFOCP(fd,16), packet_len-16, RFIFOL(fd,4), RFIFOW(fd,8), RFIFOW(fd,10), RFIFOW(fd,12), RFIFOW(fd,14), ALL_CLIENT);
+			clif_broadcast2(NULL, RFIFOCP(fd,16), packet_len-16, RFIFOL(fd,4), RFIFOW(fd,8), RFIFOW(fd,10), RFIFOW(fd,12), RFIFOW(fd,14), ALL_CLIENT);
 		break;
 	case 0x3801:	intif_parse_WisMessage(fd); break;
 	case 0x3802:	intif_parse_WisEnd(fd); break;

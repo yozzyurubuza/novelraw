@@ -6,7 +6,6 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - master
@@ -31,14 +30,10 @@ jobs:
           # Available: ubuntu-22.04, ubuntu-20.04
           os: [ubuntu-latest]
           # Older versions of GCC are not available via unaltered aptitude repo lists.
-          gcc: ['9', '10', '11', '12']
-          # GCC 13 was removed from 22.04, include it as a separate job
-          include:
-            - os: ubuntu-24.04
-              gcc: 13
+          gcc: ['9', '10', '11']
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v2
 
       - name: Update & Install packages
         # Ubuntu runners already have most of the packages rAthena requires to build.
@@ -49,10 +44,8 @@ jobs:
 
       - name: Command - configure
         env:
-            CONFIGURE_FLAGS: 'CC=gcc-${{ matrix.gcc }} CXX=g++-${{ matrix.gcc }}'
-        # -Werror: to treat all warnings as errors
-        # -Wno-error=builtin-declaration-mismatch: otherwise ./configure checks fail
-        run: ./configure $CONFIGURE_FLAGS --enable-buildbot=yes CXXFLAGS='-Werror -Wno-error=builtin-declaration-mismatch'
+            CONFIGURE_FLAGS: 'CC=gcc-${{ matrix.gcc }} CXX=g++-${{ matrix.gcc }} --enable-buildbot=yes'
+        run: ./configure $CONFIGURE_FLAGS
       
       - name: Command - make clean
         run: make clean

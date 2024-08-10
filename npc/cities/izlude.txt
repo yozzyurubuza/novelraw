@@ -118,7 +118,7 @@
 		mes "The people who've seen the underwater view say it is so fantastic that they've kept dreaming of it ever since.";
 		next;
 		mes "[Charfri]";
-		mes "But unfortunately, the monsters are too strong for ordinary people to merely go sightseeing there. Still, just once, I'd like to go down there...";
+		mes "But unfortunately, the monsters are too strong for ordinary people to merely go sight seeing there. Still, just once, I'd like to go down there...";
 		close;
 	}
 }
@@ -511,7 +511,7 @@ izlu2dun,108,27,0	script	Sailor#2izlude	100,{
 		if(checkre(0))
 			warp "izlude",197,210;
 		else
-			warp "izlude",197,210;
+			warp "izlude",176,182;
 		end;
 	}
 	close;

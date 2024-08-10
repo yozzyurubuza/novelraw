@@ -1,4 +1,3 @@
-#include <algorithm>
 #include <iomanip>
 #include <sstream>
 
@@ -9,8 +8,8 @@
 #include "regeximpl.h"
 #include "stringsource.h"
 #include "yaml-cpp/binary.h"  // IWYU pragma: keep
-#include "yaml-cpp/null.h"
 #include "yaml-cpp/ostream_wrapper.h"
+#include "yaml-cpp/null.h"
 
 namespace YAML {
 namespace Utils {
@@ -135,12 +134,12 @@ void WriteCodePoint(ostream_wrapper& out, int codePoint) {
   if (codePoint < 0 || codePoint > 0x10FFFF) {
     codePoint = REPLACEMENT_CHARACTER;
   }
-  if (codePoint <= 0x7F) {
+  if (codePoint < 0x7F) {
     out << static_cast<char>(codePoint);
-  } else if (codePoint <= 0x7FF) {
+  } else if (codePoint < 0x7FF) {
     out << static_cast<char>(0xC0 | (codePoint >> 6))
         << static_cast<char>(0x80 | (codePoint & 0x3F));
-  } else if (codePoint <= 0xFFFF) {
+  } else if (codePoint < 0xFFFF) {
     out << static_cast<char>(0xE0 | (codePoint >> 12))
         << static_cast<char>(0x80 | ((codePoint >> 6) & 0x3F))
         << static_cast<char>(0x80 | (codePoint & 0x3F));
@@ -174,13 +173,13 @@ bool IsValidPlainScalar(const std::string& str, FlowType::value flowType,
 
   // then check until something is disallowed
   static const RegEx& disallowed_flow =
-      Exp::EndScalarInFlow() | (Exp::BlankOrBreak() + Exp::Comment()) |
-      Exp::NotPrintable() | Exp::Utf8_ByteOrderMark() | Exp::Break() |
-      Exp::Tab() | Exp::Ampersand();
+      Exp::EndScalarInFlow() || (Exp::BlankOrBreak() + Exp::Comment()) ||
+      Exp::NotPrintable() || Exp::Utf8_ByteOrderMark() || Exp::Break() ||
+      Exp::Tab();
   static const RegEx& disallowed_block =
-      Exp::EndScalar() | (Exp::BlankOrBreak() + Exp::Comment()) |
-      Exp::NotPrintable() | Exp::Utf8_ByteOrderMark() | Exp::Break() |
-      Exp::Tab() | Exp::Ampersand();
+      Exp::EndScalar() || (Exp::BlankOrBreak() + Exp::Comment()) ||
+      Exp::NotPrintable() || Exp::Utf8_ByteOrderMark() || Exp::Break() ||
+      Exp::Tab();
   const RegEx& disallowed =
       flowType == FlowType::Flow ? disallowed_flow : disallowed_block;
 
@@ -200,10 +199,15 @@ bool IsValidPlainScalar(const std::string& str, FlowType::value flowType,
 
 bool IsValidSingleQuotedScalar(const std::string& str, bool escapeNonAscii) {
   // TODO: check for non-printable characters?
-  return std::none_of(str.begin(), str.end(), [=](char ch) {
-    return (escapeNonAscii && (0x80 <= static_cast<unsigned char>(ch))) ||
-           (ch == '\n');
-  });
+  for (std::size_t i = 0; i < str.size(); i++) {
+    if (escapeNonAscii && (0x80 <= static_cast<unsigned char>(str[i]))) {
+      return false;
+    }
+    if (str[i] == '\n') {
+      return false;
+    }
+  }
+  return true;
 }
 
 bool IsValidLiteralScalar(const std::string& str, FlowType::value flowType,
@@ -213,9 +217,12 @@ bool IsValidLiteralScalar(const std::string& str, FlowType::value flowType,
   }
 
   // TODO: check for non-printable characters?
-  return std::none_of(str.begin(), str.end(), [=](char ch) {
-    return (escapeNonAscii && (0x80 <= static_cast<unsigned char>(ch)));
-  });
+  for (std::size_t i = 0; i < str.size(); i++) {
+    if (escapeNonAscii && (0x80 <= static_cast<unsigned char>(str[i]))) {
+      return false;
+    }
+  }
+  return true;
 }
 
 std::pair<uint16_t, uint16_t> EncodeUTF16SurrogatePair(int codePoint) {
@@ -227,24 +234,24 @@ std::pair<uint16_t, uint16_t> EncodeUTF16SurrogatePair(int codePoint) {
   };
 }
 
-void WriteDoubleQuoteEscapeSequence(ostream_wrapper& out, int codePoint, StringEscaping::value stringEscapingStyle) {
+void WriteDoubleQuoteEscapeSequence(ostream_wrapper& out, int codePoint, bool escapeAsJson) {
   static const char hexDigits[] = "0123456789abcdef";
 
   out << "\\";
   int digits = 8;
-  if (codePoint < 0xFF && stringEscapingStyle != StringEscaping::JSON) {
+  if (codePoint < 0xFF && !escapeAsJson) {
     out << "x";
     digits = 2;
   } else if (codePoint < 0xFFFF) {
     out << "u";
     digits = 4;
-  } else if (stringEscapingStyle != StringEscaping::JSON) {
+  } else if (!escapeAsJson) {
     out << "U";
     digits = 8;
   } else {
     auto surrogatePair = EncodeUTF16SurrogatePair(codePoint);
-    WriteDoubleQuoteEscapeSequence(out, surrogatePair.first, stringEscapingStyle);
-    WriteDoubleQuoteEscapeSequence(out, surrogatePair.second, stringEscapingStyle);
+    WriteDoubleQuoteEscapeSequence(out, surrogatePair.first, true);
+    WriteDoubleQuoteEscapeSequence(out, surrogatePair.second, true);
     return;
   }
 
@@ -265,7 +272,7 @@ bool WriteAliasName(ostream_wrapper& out, const std::string& str) {
   }
   return true;
 }
-}  // namespace
+}
 
 StringFormat::value ComputeStringFormat(const std::string& str,
                                         EMITTER_MANIP strFormat,
@@ -348,12 +355,12 @@ bool WriteDoubleQuotedString(ostream_wrapper& out, const std::string& str,
         if (codePoint < 0x20 ||
             (codePoint >= 0x80 &&
              codePoint <= 0xA0)) {  // Control characters and non-breaking space
-          WriteDoubleQuoteEscapeSequence(out, codePoint, stringEscaping);
+          WriteDoubleQuoteEscapeSequence(out, codePoint, stringEscaping == StringEscaping::JSON);
         } else if (codePoint == 0xFEFF) {  // Byte order marks (ZWNS) should be
                                            // escaped (YAML 1.2, sec. 5.2)
-          WriteDoubleQuoteEscapeSequence(out, codePoint, stringEscaping);
+          WriteDoubleQuoteEscapeSequence(out, codePoint, stringEscaping == StringEscaping::JSON);
         } else if (stringEscaping == StringEscaping::NonAscii && codePoint > 0x7E) {
-          WriteDoubleQuoteEscapeSequence(out, codePoint, stringEscaping);
+          WriteDoubleQuoteEscapeSequence(out, codePoint, false);
         } else {
           WriteCodePoint(out, codePoint);
         }
@@ -366,41 +373,41 @@ bool WriteDoubleQuotedString(ostream_wrapper& out, const std::string& str,
 bool WriteLiteralString(ostream_wrapper& out, const std::string& str,
                         std::size_t indent) {
   out << "|\n";
+  out << IndentTo(indent);
   int codePoint;
   for (std::string::const_iterator i = str.begin();
        GetNextCodePointAndAdvance(codePoint, i, str.end());) {
     if (codePoint == '\n') {
-      out << "\n";
+      out << "\n" << IndentTo(indent);
     } else {
-      out<< IndentTo(indent);
       WriteCodePoint(out, codePoint);
     }
   }
   return true;
 }
 
-bool WriteChar(ostream_wrapper& out, char ch, StringEscaping::value stringEscapingStyle) {
+bool WriteChar(ostream_wrapper& out, char ch, bool escapeAsJson) {
   if (('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'Z')) {
     out << ch;
   } else if (ch == '\"') {
-    out << R"("\"")";
+    out << "\"\\\"\"";
   } else if (ch == '\t') {
-    out << R"("\t")";
+    out << "\"\\t\"";
   } else if (ch == '\n') {
-    out << R"("\n")";
+    out << "\"\\n\"";
   } else if (ch == '\b') {
-    out << R"("\b")";
+    out << "\"\\b\"";
   } else if (ch == '\r') {
-    out << R"("\r")";
+    out << "\"\\r\"";
   } else if (ch == '\f') {
-    out << R"("\f")";
+    out << "\"\\f\"";
   } else if (ch == '\\') {
-    out << R"("\\")";
-  } else if (0x20 <= ch && ch <= 0x7e) {
+    out << "\"\\\\\"";
+  } else if ((0x20 <= ch && ch <= 0x7e) || ch == ' ') {
     out << "\"" << ch << "\"";
   } else {
     out << "\"";
-    WriteDoubleQuoteEscapeSequence(out, ch, stringEscapingStyle);
+    WriteDoubleQuoteEscapeSequence(out, ch, escapeAsJson);
     out << "\"";
   }
   return true;
@@ -415,8 +422,8 @@ bool WriteComment(ostream_wrapper& out, const std::string& str,
   for (std::string::const_iterator i = str.begin();
        GetNextCodePointAndAdvance(codePoint, i, str.end());) {
     if (codePoint == '\n') {
-      out << "\n"
-          << IndentTo(curIndent) << "#" << Indentation(postCommentIndent);
+      out << "\n" << IndentTo(curIndent) << "#"
+          << Indentation(postCommentIndent);
       out.set_comment();
     } else {
       WriteCodePoint(out, codePoint);
@@ -493,5 +500,5 @@ bool WriteBinary(ostream_wrapper& out, const Binary& binary) {
                           StringEscaping::None);
   return true;
 }
-}  // namespace Utils
-}  // namespace YAML
+}
+}

@@ -8,8 +8,8 @@
 #include <map>
 #include <vector>
 
-#include <common/cbasetypes.hpp>
-#include <common/database.hpp>
+#include "../common/cbasetypes.hpp"
+#include "../common/database.hpp"
 
 // Forward declaration from atcommands.hpp
 enum AtCommandType : uint8;
@@ -50,7 +50,6 @@ enum e_pc_permission : uint32 {
 	PC_PERM_ATTENDANCE,
 	PC_PERM_MACRO_DETECT,
 	PC_PERM_MACRO_REGISTER,
-	PC_PERM_TRADE_UNCONDITIONAL,
 	//.. add other here
 	PC_PERM_MAX,
 };
@@ -89,7 +88,6 @@ static const struct s_pcg_permission_name {
 	{ "attendance",PC_PERM_ATTENDANCE },
 	{ "macro_detect",PC_PERM_MACRO_DETECT },
 	{ "macro_register",PC_PERM_MACRO_REGISTER },
-	{ "trade_unconditional",PC_PERM_TRADE_UNCONDITIONAL },
 };
 
 struct s_player_group{

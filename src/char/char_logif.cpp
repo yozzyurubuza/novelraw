@@ -3,25 +3,21 @@
 
 #include "char_logif.hpp"
 
-#include <cstdlib>
-#include <cstring>
-#include <memory>
+#include <stdlib.h>
+#include <string.h>
 
-#include <common/showmsg.hpp>
-#include <common/socket.hpp>
-#include <common/sql.hpp>
-#include <common/strlib.hpp>
-#include <common/timer.hpp>
-#include <common/utilities.hpp>
-#include <common/utils.hpp>
+#include "../common/showmsg.hpp"
+#include "../common/socket.hpp"
+#include "../common/sql.hpp"
+#include "../common/strlib.hpp"
+#include "../common/timer.hpp"
+#include "../common/utils.hpp"
 
 #include "char.hpp"
 #include "char_clif.hpp"
 #include "char_mapif.hpp"
 #include "inter.hpp"
 #include "int_guild.hpp"
-
-using namespace rathena;
 
 //early declaration
 void chlogif_on_ready(void);
@@ -62,10 +58,11 @@ void chlogif_pincode_start(int fd, struct char_session_data* sd){
 			}
 		}else{
 			if( !(charserv_config.pincode_config.pincode_changetime)
-			|| ( sd->pincode_change + charserv_config.pincode_config.pincode_changetime ) > time(nullptr) ){
-				std::shared_ptr<struct online_char_data> node = util::umap_find( char_get_onlinedb(), sd->account_id );
+			|| ( sd->pincode_change + charserv_config.pincode_config.pincode_changetime ) > time(NULL) ){
+				DBMap*  online_char_db = char_get_onlinedb();
+				struct online_char_data* node = (struct online_char_data*)idb_get( online_char_db, sd->account_id );
 
-				if( node != nullptr && node->pincode_success ){
+				if( node != NULL && node->pincode_success ){
 					// User has already passed the check
 					chclif_pincode_sendstate( fd, sd, PINCODE_PASSED );
 				}else{
@@ -86,29 +83,38 @@ void chlogif_pincode_start(int fd, struct char_session_data* sd){
 #endif
 
 /**
+ * Load this character's account id into the 'online accounts' packet
+ * @see DBApply
+ */
+int chlogif_send_acc_tologin_sub(DBKey key, DBData *data, va_list ap) {
+	struct online_char_data* character = (struct online_char_data*)db_data2ptr(data);
+	int* i = va_arg(ap, int*);
+	if(character->server > -1) {
+		WFIFOL(login_fd,8+(*i)*4) = character->account_id;
+		(*i)++;
+		return 1;
+	}
+	return 0;
+}
+
+/**
  * Timered function to send all account_id connected to login-serv
  * @param tid : Timer id
  * @param tick : Scheduled tick
  * @param id : GID linked to that timered call
  * @param data : data transmited for delayed function
- * @return
+ * @return 
  */
 TIMER_FUNC(chlogif_send_acc_tologin){
 	if ( chlogif_isconnected() ){
+		DBMap*  online_char_db = char_get_onlinedb();
 		// send account list to login server
-		size_t users = char_get_onlinedb().size();
+		int users = online_char_db->size(online_char_db);
 		int i = 0;
 
 		WFIFOHEAD(login_fd,8+users*4);
 		WFIFOW(login_fd,0) = 0x272d;
-		for( const auto& pair : char_get_onlinedb() ){
-			std::shared_ptr<struct online_char_data> character = pair.second;
-
-			if( character->server > -1 ){
-				WFIFOL( login_fd, 8 + i * 4 ) = character->account_id;
-				i++;
-			}
-		}
+		online_char_db->foreach(online_char_db, chlogif_send_acc_tologin_sub, &i, users);
 		WFIFOW(login_fd,2) = 8+ i*4;
 		WFIFOL(login_fd,4) = i;
 		WFIFOSET(login_fd,WFIFOW(login_fd,2));
@@ -176,7 +182,7 @@ void chlogif_send_global_accreg(const char *key, unsigned int index, int64 int_v
 	if (!chlogif_isconnected())
 		return;
 
-	int16 nlen = WFIFOW( login_fd, 2 );
+	int nlen = WFIFOW(login_fd, 2);
 	size_t len;
 
 	len = strlen(key)+1;
@@ -185,7 +191,7 @@ void chlogif_send_global_accreg(const char *key, unsigned int index, int64 int_v
 	nlen += 1;
 
 	safestrncpy(WFIFOCP(login_fd,nlen), key, len);
-	nlen += static_cast<decltype(nlen)>( len );
+	nlen += len;
 
 	WFIFOL(login_fd, nlen) = index;
 	nlen += 4;
@@ -201,7 +207,7 @@ void chlogif_send_global_accreg(const char *key, unsigned int index, int64 int_v
 			nlen += 1;
 
 			safestrncpy(WFIFOCP(login_fd,nlen), string_value, len);
-			nlen += static_cast<decltype(nlen)>( len );
+			nlen += len;
 		}
 	} else {
 		WFIFOB(login_fd, nlen) = int_value ? 0 : 1;
@@ -391,70 +397,27 @@ int chlogif_parse_keepalive(int fd){
  */
 void chlogif_parse_change_sex_sub(int sex, int acc, int char_id, int class_, int guild_id)
 {
-	// job modification
-	switch (class_)
-	{
-	case JOB_BARD:
-		class_ = JOB_DANCER;
-		break;
-	case JOB_DANCER:
-		class_ = JOB_BARD;
-		break;
-	case JOB_CLOWN:
-		class_ = JOB_GYPSY;
-		break;
-	case JOB_GYPSY:
-		class_ = JOB_CLOWN;
-		break;
-	case JOB_BABY_BARD:
-		class_ = JOB_BABY_DANCER;
-		break;
-	case JOB_BABY_DANCER:
-		class_ = JOB_BABY_BARD;
-		break;
-	case JOB_MINSTREL:
-		class_ = JOB_WANDERER;
-		break;
-	case JOB_WANDERER:
-		class_ = JOB_MINSTREL;
-		break;
-	case JOB_MINSTREL_T:
-		class_ = JOB_WANDERER_T;
-		break;
-	case JOB_WANDERER_T:
-		class_ = JOB_MINSTREL_T;
-		break;
-	case JOB_BABY_MINSTREL:
-		class_ = JOB_BABY_WANDERER;
-		break;
-	case JOB_BABY_WANDERER:
-		class_ = JOB_BABY_MINSTREL;
-		break;
-	case JOB_KAGEROU:
-		class_ = JOB_OBORO;
-		break;
-	case JOB_OBORO:
-		class_ = JOB_KAGEROU;
-		break;
-	case JOB_BABY_KAGEROU:
-		class_ = JOB_BABY_OBORO;
-		break;
-	case JOB_BABY_OBORO:
-		class_ = JOB_BABY_KAGEROU;
-		break;
-	case JOB_TROUBADOUR:
-		class_ = JOB_TROUVERE;
-		break;
-	case JOB_TROUVERE:
-		class_ = JOB_TROUBADOUR;
-		break;
-	case JOB_SHINKIRO:
-		class_ = JOB_SHIRANUI;
-		break;
-	case JOB_SHIRANUI:
-		class_ = JOB_SHINKIRO;
-		break;
-	}
+	// job modification //@TODO switch would be faster
+	if (class_ == JOB_BARD || class_ == JOB_DANCER)
+		class_ = (sex == SEX_MALE ? JOB_BARD : JOB_DANCER);
+	else if (class_ == JOB_CLOWN || class_ == JOB_GYPSY)
+		class_ = (sex == SEX_MALE ? JOB_CLOWN : JOB_GYPSY);
+	else if (class_ == JOB_BABY_BARD || class_ == JOB_BABY_DANCER)
+		class_ = (sex == SEX_MALE ? JOB_BABY_BARD : JOB_BABY_DANCER);
+	else if (class_ == JOB_MINSTREL || class_ == JOB_WANDERER)
+		class_ = (sex == SEX_MALE ? JOB_MINSTREL : JOB_WANDERER);
+	else if (class_ == JOB_MINSTREL_T || class_ == JOB_WANDERER_T)
+		class_ = (sex == SEX_MALE ? JOB_MINSTREL_T : JOB_WANDERER_T);
+	else if (class_ == JOB_BABY_MINSTREL || class_ == JOB_BABY_WANDERER)
+		class_ = (sex == SEX_MALE ? JOB_BABY_MINSTREL : JOB_BABY_WANDERER);
+	else if (class_ == JOB_KAGEROU || class_ == JOB_OBORO)
+		class_ = (sex == SEX_MALE ? JOB_KAGEROU : JOB_OBORO);
+	else if (class_ == JOB_BABY_KAGEROU || class_ == JOB_BABY_OBORO)
+		class_ = (sex == SEX_MALE ? JOB_BABY_KAGEROU : JOB_BABY_OBORO);
+	else if (class_ == JOB_TROUBADOUR || class_ == JOB_TROUVERE)
+		class_ = (sex == SEX_MALE ? JOB_TROUBADOUR : JOB_TROUVERE);
+	else if (class_ == JOB_SHINKIRO || class_ == JOB_SHIRANUI)
+		class_ = (sex == SEX_MALE ? JOB_SHINKIRO : JOB_SHIRANUI);
 
 	if (SQL_ERROR == Sql_Query(sql_handle, "UPDATE `%s` SET `equip` = '0' WHERE `char_id` = '%d'", schema_config.inventory_db, char_id))
 		Sql_ShowDebug(sql_handle);
@@ -471,17 +434,18 @@ int chlogif_parse_ackchangesex(int fd)
 		return 0;
 	else {
 		unsigned char buf[7];
-		uint32 acc = RFIFOL(fd,2);
+		int acc = RFIFOL(fd,2);
 		int sex = RFIFOB(fd,6);
 		RFIFOSKIP(fd,7);
 
 		if (acc > 0) { // TODO: Is this even possible?
 			unsigned char i;
 			int char_id = 0, class_ = 0, guild_id = 0;
-			std::shared_ptr<struct auth_node> node = util::umap_find( char_get_authdb(), acc );
+			DBMap* auth_db = char_get_authdb();
+			struct auth_node* node = (struct auth_node*)idb_get(auth_db, acc);
 			SqlStmt *stmt;
 
-			if (node != nullptr)
+			if (node != NULL)
 				node->sex = sex;
 
 			// get characters
@@ -491,9 +455,9 @@ int chlogif_parse_ackchangesex(int fd)
 				SqlStmt_Free(stmt);
 			}
 
-			SqlStmt_BindColumn(stmt, 0, SQLDT_INT,   &char_id,  0, nullptr, nullptr);
-			SqlStmt_BindColumn(stmt, 1, SQLDT_SHORT, &class_,   0, nullptr, nullptr);
-			SqlStmt_BindColumn(stmt, 2, SQLDT_INT,   &guild_id, 0, nullptr, nullptr);
+			SqlStmt_BindColumn(stmt, 0, SQLDT_INT,   &char_id,  0, NULL, NULL);
+			SqlStmt_BindColumn(stmt, 1, SQLDT_SHORT, &class_,   0, NULL, NULL);
+			SqlStmt_BindColumn(stmt, 2, SQLDT_INT,   &guild_id, 0, NULL, NULL);
 
 			for (i = 0; i < MAX_CHARS && SQL_SUCCESS == SqlStmt_NextRow(stmt); ++i) {
 				chlogif_parse_change_sex_sub(sex, acc, char_id, class_, guild_id);
@@ -536,9 +500,9 @@ int chlogif_parse_ackchangecharsex(int char_id, int sex)
 		return 1;
 	}
 
-	Sql_GetData(sql_handle, 0, &data, nullptr); account_id = atoi(data);
-	Sql_GetData(sql_handle, 1, &data, nullptr); class_ = atoi(data);
-	Sql_GetData(sql_handle, 2, &data, nullptr); guild_id = atoi(data);
+	Sql_GetData(sql_handle, 0, &data, NULL); account_id = atoi(data);
+	Sql_GetData(sql_handle, 1, &data, NULL); class_ = atoi(data);
+	Sql_GetData(sql_handle, 2, &data, NULL); guild_id = atoi(data);
 	Sql_FreeResult(sql_handle);
 
 	chlogif_parse_change_sex_sub(sex, account_id, char_id, class_, guild_id);
@@ -586,13 +550,13 @@ int chlogif_parse_askkick(int fd){
 	if (RFIFOREST(fd) < 6)
 		return 0;
 	else {
-		uint32 aid = RFIFOL(fd,2);
+		DBMap*  online_char_db = char_get_onlinedb();
+		DBMap*  auth_db = char_get_authdb();
+		int aid = RFIFOL(fd,2);
+		struct online_char_data* character = (struct online_char_data*)idb_get(online_char_db, aid);
 		RFIFOSKIP(fd,6);
-
-		std::shared_ptr<struct online_char_data> character = util::umap_find( char_get_onlinedb(), aid );
-
-		// account is already marked as online!
-		if( character != nullptr ){
+		if( character != NULL )
+		{// account is already marked as online!
 			if( character->server > -1 )
 			{	//Kick it from the map server it is on.
 				mapif_disconnectplayer(map_server[character->server].fd, character->account_id, character->char_id, 2);
@@ -613,9 +577,7 @@ int chlogif_parse_askkick(int fd){
 					char_set_char_offline(-1, aid);
 			}
 		}
-
-		// reject auth attempts from map-server
-		char_get_authdb().erase( aid );
+		idb_remove(auth_db, aid);// reject auth attempts from map-server
 	}
 	return 1;
 }
@@ -722,7 +684,7 @@ int chlogif_parse_AccInfoAck(int fd) {
 	else {
 		int8 type = RFIFOB(fd, 18);
 		if (type == 0 || RFIFOREST(fd) < 122+NAME_LENGTH) {
-			mapif_accinfo_ack(false, RFIFOL(fd,2), RFIFOL(fd,6), RFIFOL(fd,10), RFIFOL(fd,14), 0, -1, 0, 0, nullptr, nullptr, nullptr, nullptr, nullptr);
+			mapif_accinfo_ack(false, RFIFOL(fd,2), RFIFOL(fd,6), RFIFOL(fd,10), RFIFOL(fd,14), 0, -1, 0, 0, NULL, NULL, NULL, NULL, NULL);
 			RFIFOSKIP(fd,19);
 			return 1;
 		}
@@ -865,7 +827,7 @@ void chlogif_on_ready(void)
 	chlogif_send_acc_tologin(INVALID_TIMER, gettick(), 0, 0);
 
 	// if no map-server already connected, display a message...
-	ARR_FIND( 0, ARRAYLENGTH(map_server), i, session_isValid(map_server[i].fd) && !map_server[i].maps.empty() );
+	ARR_FIND( 0, ARRAYLENGTH(map_server), i, session_isValid(map_server[i].fd) && !map_server[i].map.empty() );
 	if( i == ARRAYLENGTH(map_server) )
 		ShowStatus("Awaiting maps from map-server.\n");
 }

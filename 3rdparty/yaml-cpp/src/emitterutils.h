@@ -39,8 +39,7 @@ bool WriteDoubleQuotedString(ostream_wrapper& out, const std::string& str,
                              StringEscaping::value stringEscaping);
 bool WriteLiteralString(ostream_wrapper& out, const std::string& str,
                         std::size_t indent);
-bool WriteChar(ostream_wrapper& out, char ch,
-               StringEscaping::value stringEscapingStyle);
+bool WriteChar(ostream_wrapper& out, char ch, bool escapeAsJson);
 bool WriteComment(ostream_wrapper& out, const std::string& str,
                   std::size_t postCommentIndent);
 bool WriteAlias(ostream_wrapper& out, const std::string& str);

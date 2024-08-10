@@ -16,6 +16,11 @@ moc_ruins,113,181,4	duplicate(William)	William#moc	89
 // ============================================================
 moc_ruins,118,176,4	duplicate(Alchemist)	Alchemist#moc	64
 
+// Resurrection of Satan Morocc
+// ============================================================
+
+morocc,176,103,3	duplicate(Continental Official)	Continental Official#mor	754
+
 // Succession of the Prince
 // ============================================================
 prontera,153,353,4	script	Messenger#prince1	105,{

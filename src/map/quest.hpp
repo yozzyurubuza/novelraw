@@ -6,9 +6,9 @@
 
 #include <string>
 
-#include <common/cbasetypes.hpp>
-#include <common/database.hpp>
-#include <common/strlib.hpp>
+#include "../common/cbasetypes.hpp"
+#include "../common/database.hpp"
+#include "../common/strlib.hpp"
 
 #include "map.hpp"
 
@@ -42,7 +42,6 @@ struct s_quest_db {
 	int32 id;
 	time_t time;
 	bool time_at;
-	int32 time_week;
 	std::vector<std::shared_ptr<s_quest_objective>> objectives;
 	std::vector<std::shared_ptr<s_quest_dropitem>> dropitem;
 	std::string name;

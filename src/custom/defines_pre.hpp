@@ -2,7 +2,7 @@
 // For more information, see LICENCE in the main folder
 
 #ifndef CONFIG_CUSTOM_DEFINES_PRE_HPP
-#define PACKETVER 20220331
+#define CONFIG_CUSTOM_DEFINES_PRE_HPP
 
 /**
  * rAthena configuration file (http://rathena.org)

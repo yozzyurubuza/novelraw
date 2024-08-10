@@ -3,9 +3,9 @@
 
 #include "nullpo.hpp"
 
-#include <cstdio>
-#include <cstdarg>
-#include <cstring>
+#include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
 
 #include "showmsg.hpp"
 
@@ -20,7 +20,7 @@ int nullpo_chk_f(const char *file, int line, const char *func, const void *targe
 {
 	va_list ap;
 	
-	if (target != nullptr)
+	if (target != NULL)
 		return 0;
 	
 	va_start(ap, fmt);
@@ -31,7 +31,7 @@ int nullpo_chk_f(const char *file, int line, const char *func, const void *targe
 
 int nullpo_chk(const char *file, int line, const char *func, const void *target)
 {
- 	if (target != nullptr)
+ 	if (target != NULL)
 		return 0;
 	nullpo_info_core_(file, line, func);
 	return 1;
@@ -57,11 +57,11 @@ void nullpo_info(const char *file, int line, const char *func)
 }
 
 static void nullpo_info_core_(const char *file, int line, const char *func){
-	if (file == nullptr)
+	if (file == NULL)
 		file = "??";
 	
 	func =
-		func == nullptr    ? "unknown":
+		func == NULL    ? "unknown":
 		func[0] == '\0' ? "unknown":
 		                  func;
 	
@@ -76,7 +76,7 @@ static void nullpo_info_core(const char *file, int line, const char *func,
                              const char *fmt, va_list ap)
 {
 	nullpo_info_core_(file,line,func);
-	if (fmt != nullptr)
+	if (fmt != NULL)
 	{
 		if (fmt[0] != '\0')
 		{

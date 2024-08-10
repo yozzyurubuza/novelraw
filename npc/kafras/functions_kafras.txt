@@ -316,9 +316,9 @@ function	script	F_KafTele	{
 	else if (@wrpD$[.@j] == "Geffen") warp "geffen", 120, 39;
 	else if (@wrpD$[.@j] == "Izlude") {
 		if (checkre(0) == true)
-			warp "izlude", 128, 95;
+			warp "izlude", 128, 98;
 		else
-			warp "izlude", 128, 124;
+			warp "izlude", 91, 105;
 	}
 	else if (@wrpD$[.@j] == "Juno") warp "yuno", 158, 125;
 	else if (@wrpD$[.@j] == "Mjolnir Dead Pit") warp "mjolnir_02", 99, 351;
@@ -327,9 +327,6 @@ function	script	F_KafTele	{
 	else if (@wrpD$[.@j] == "Payon") warp "payon", 161, 58;
 	else if (@wrpD$[.@j] == "Prontera") warp "prontera", 116, 72;
 	else if (@wrpD$[.@j] == "Umbala") warp "umbala", 100, 154;
-
-	//NovelRaw Custom
-	else if (@wrpD$[.@j] == "Izlude Academy") warp "iz_ac01", 100, 35;
 	end;
 }
 
@@ -406,10 +403,8 @@ function	script	F_KafInfo	{
 		setarray .@menu$[0], "Check Special Reserve Points.", "", "", "Cancel";
 	else if (.@block)
 		setarray .@menu$[0], "Check Special Reserve Points.", "", "Kafra Employee Locations", "Cancel";
-	else if (getarg(0) == 3)// Izlude, Izlude Academy
-		setarray .@menu$[0], "Check Special Reserve Points.", "Storage Password Service", "", "Cancel"; 
 	else
-		setarray .@menu$[0], "Check Special Reserve Points.", "Storage Password Service", "Kafra Employee Locations", "Cancel"; 
+		setarray .@menu$[0], "Check Special Reserve Points.", "Storage Password Service", "Kafra Employee Locations", "Cancel";
 	.@menu_list$ = implode(.@menu$,":");
 	while (true) {
 		.@j = select(.@menu_list$) - 1;
@@ -640,8 +635,8 @@ function	script	F_KafSet	{
 		setarray @viewpX[0], 120, 203;
 		setarray @viewpY[0], 62, 123;
 	} else if (.@map$ == "izlude") {
-		setarray @wrpD$[0], "Izlude Academy", "Prontera", "Geffen", "Payon", "Morocc", "Al De Baran";
-		setarray @wrpP[0], 600, 900, 1200, 1200, 1200, 1800;
+		setarray @wrpD$[0], "Geffen", "Payon", "Morocc", "Al De Baran";
+		setarray @wrpP[0], 1200, 1200, 1200, 1800;
 	} else if (.@map$ == "morocc") {
 		setarray @wrpD$[0], "Prontera", "Payon", "Alberta", "Comodo", "Comodo Pharos Beacon";
 		setarray @wrpP[0], 1200, 1200, 1800, 1800, 1200;
@@ -661,12 +656,6 @@ function	script	F_KafSet	{
 	} else if (.@map$ == "job3_rune01") {
 		setarray @wrpD$[0], "Izlude", "Geffen", "Payon", "Morocc", "Alberta";
 		setarray @wrpP[0], 600, 1200, 1200, 1200, 1800;
-	}
-
-	// NovelRaw Custom Warp values
-	else if (.@map$ == "iz_ac01"){
-		setarray @wrpD$[0], "Izlude", "Prontera";
-		setarray @wrpP[0], 600, 900;
 	}
 
 	.@warp_size = getarraysize(@wrpD$);

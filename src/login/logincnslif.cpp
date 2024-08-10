@@ -3,15 +3,15 @@
 
 #include "logincnslif.hpp"
 
-#include <cstdlib>
-#include <cstring>
+#include <stdlib.h>
+#include <string.h>
 
-#include <common/cli.hpp>
-#include <common/md5calc.hpp>
-#include <common/mmo.hpp> //cbasetype + NAME_LENGTH
-#include <common/showmsg.hpp> //show notice
-#include <common/strlib.hpp>
-#include <common/timer.hpp>
+#include "../common/cli.hpp"
+#include "../common/md5calc.hpp"
+#include "../common/mmo.hpp" //cbasetype + NAME_LENGTH
+#include "../common/showmsg.hpp" //show notice
+#include "../common/strlib.hpp"
+#include "../common/timer.hpp"
 
 #include "login.hpp"
 
