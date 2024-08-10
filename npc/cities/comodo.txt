@@ -356,7 +356,7 @@ cmd_fild07,299,83,4	script	Zain#cmd	100,{
 		if(checkre(0))
 			warp "izlude",195,212;
 		else
-			warp "izlude",195,212;
+			warp "izlude",176,182;
 		end;
 	case 3:
 		mes .@n$;

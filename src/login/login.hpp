@@ -6,11 +6,11 @@
 
 #include <memory>
 
-#include <common/cbasetypes.hpp>
-#include <common/core.hpp>
-#include <common/mmo.hpp> // NAME_LENGTH,SEX_*
-#include <common/timer.hpp>
-#include <config/core.hpp>
+#include "../common/cbasetypes.hpp"
+#include "../common/core.hpp"
+#include "../common/mmo.hpp" // NAME_LENGTH,SEX_*
+#include "../common/timer.hpp"
+#include "../config/core.hpp"
 
 #include "account.hpp"
 
@@ -39,8 +39,8 @@ namespace rathena{
 ///Struct of 1 client connected to login-serv
 struct login_session_data {
 	uint32 account_id;			///also GID
-	uint32 login_id1;
-	uint32 login_id2;
+	long login_id1;
+	long login_id2;
 	char sex;			/// 'F','M','S'
 
 	char userid[NAME_LENGTH];	/// account name
@@ -88,9 +88,7 @@ struct Login_Config {
 	bool log_login;                                 /// whether to log login server actions or not
 	char date_format[32];                           /// date format used in messages
 	bool console;                                   /// console input system enabled?
-	bool new_account_flag;                          /// autoregistration via _M/_F ?
-	uint8 acc_name_min_length;                      /// minimum account name length
-	uint8 password_min_length;                      /// minimum password length
+	bool new_account_flag,new_acc_length_limit;     /// autoregistration via _M/_F ? / if yes minimum length is 4?
 	int start_limited_time;                         /// new account expiration time (-1: unlimited)
 	bool use_md5_passwds;                           /// work with password hashes instead of plaintext passwords?
 	int group_id_to_connect;                        /// required group id to connect

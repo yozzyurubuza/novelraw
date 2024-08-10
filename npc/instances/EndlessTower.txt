@@ -37,7 +37,8 @@
 //= 2.3 Added some missing announcements. [Euphy]
 //= 2.4 Added GM management function. [Euphy]
 //============================================================ 
--	script	Captain Janssen::CaptainJanssenEndless	709,{
+
+alberta,214,77,6	script	Captain Janssen	709,{
 	if (checkweight(1201,1) == 0) {
 		mes "^008800Wait here!!";
 		mes "You're carrying too much stuff. Why don't you put some of it away, and then come back.^000000";

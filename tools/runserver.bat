@@ -27,6 +27,8 @@ if "%target%" == "status" (
  call :Watch
 ) else if "%target%" == "stop" (
  call :Stop
+) else if "%target%" == "stop" (
+ call :Stop
 ) else if "%target%" == "start" (
  call :Start
 )
@@ -67,7 +69,7 @@ call :getCharStatus
 call :getWebStatus
 call :getMapStatus
 
-if "%login_running%" == "false" ( echo "login_serv is not running"
+if "%login_running%" == "false" ( echo "login_serv is not running" 
 ) else echo "login_serv is running pid=%LoginServPID%"
 if "%char_running%" == "false" ( echo "char_serv is not running"
 ) else echo "char_serv is running pid=%CharServPID%"
@@ -109,13 +111,13 @@ REM start sub targets
 :startLogin
 call :getLoginStatus
 if "%login_running%" == "false" ( start cmd /k logserv.bat %restart_mode%
-) else echo "Login serv is already running pid=%LoginServPID%"
+) else echo "Login serv is already running pid=%LoginServPID%" 
 goto :EOF
 
 :startChar
 call :getCharStatus
 if "%char_running%" == "false" ( start cmd /k charserv.bat %restart_mode%
-) else echo "Char serv is already running, pid=%CharServPID%"
+) else echo "Char serv is already running, pid=%CharServPID%" 
 goto :EOF
 
 :startWeb
@@ -127,8 +129,8 @@ goto :EOF
 :startMap
 call :getMapStatus
 if "%map_running%" == "false" ( start cmd /k mapserv.bat %restart_mode%
-) else echo "Map serv is already running, pid=%MapServPID%"
-goto :EOF
+) else echo "Map serv is already running, pid=%MapServPID%" 
+goto :EOF  
 
 REM status sub targets
 

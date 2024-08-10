@@ -14,11 +14,10 @@
 
 namespace YAML {
 const std::string TokenNames[] = {
-    "DIRECTIVE",        "DOC_START",      "DOC_END",       "BLOCK_SEQ_START",
-    "BLOCK_MAP_START",  "BLOCK_SEQ_END",  "BLOCK_MAP_END", "BLOCK_ENTRY",
-    "FLOW_SEQ_START",   "FLOW_MAP_START", "FLOW_SEQ_END",  "FLOW_MAP_END",
-    "FLOW_MAP_COMPACT", "FLOW_ENTRY",     "KEY",           "VALUE",
-    "ANCHOR",           "ALIAS",          "TAG",           "SCALAR"};
+    "DIRECTIVE", "DOC_START", "DOC_END", "BLOCK_SEQ_START", "BLOCK_MAP_START",
+    "BLOCK_SEQ_END", "BLOCK_MAP_END", "BLOCK_ENTRY", "FLOW_SEQ_START",
+    "FLOW_MAP_START", "FLOW_SEQ_END", "FLOW_MAP_END", "FLOW_MAP_COMPACT",
+    "FLOW_ENTRY", "KEY", "VALUE", "ANCHOR", "ALIAS", "TAG", "SCALAR"};
 
 struct Token {
   // enums
@@ -49,12 +48,12 @@ struct Token {
 
   // data
   Token(TYPE type_, const Mark& mark_)
-      : status(VALID), type(type_), mark(mark_), value{}, params{}, data(0) {}
+      : status(VALID), type(type_), mark(mark_), data(0) {}
 
   friend std::ostream& operator<<(std::ostream& out, const Token& token) {
     out << TokenNames[token.type] << std::string(": ") << token.value;
-    for (const std::string& param : token.params)
-      out << std::string(" ") << param;
+    for (std::size_t i = 0; i < token.params.size(); i++)
+      out << std::string(" ") << token.params[i];
     return out;
   }
 
@@ -65,6 +64,6 @@ struct Token {
   std::vector<std::string> params;
   int data;
 };
-}  // namespace YAML
+}
 
 #endif  // TOKEN_H_62B23520_7C8E_11DE_8A39_0800200C9A66

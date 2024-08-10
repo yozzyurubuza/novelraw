@@ -15,12 +15,10 @@ class Parser;
 
 // GraphBuilderInterface
 // . Abstraction of node creation
-// . pParentNode is always nullptr or the return value of one of the NewXXX()
+// . pParentNode is always NULL or the return value of one of the NewXXX()
 //   functions.
 class GraphBuilderInterface {
  public:
-  virtual ~GraphBuilderInterface() = 0;
-
   // Create and return a new node with a null value.
   virtual void *NewNull(const Mark &mark, void *pParentNode) = 0;
 
@@ -73,9 +71,9 @@ class GraphBuilder : public GraphBuilderInterface {
   typedef typename Impl::Map Map;
 
   GraphBuilder(Impl &impl) : m_impl(impl) {
-    Map *pMap = nullptr;
-    Sequence *pSeq = nullptr;
-    Node *pNode = nullptr;
+    Map *pMap = NULL;
+    Sequence *pSeq = NULL;
+    Node *pNode = NULL;
 
     // Type consistency checks
     pNode = pMap;

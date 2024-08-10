@@ -61,7 +61,7 @@
 			mes "cooking when Novices";
 			mes "like yourself are running";
 			mes "around here like children.";
-			close3;
+			close;
 		}
 		cutin "orleans_1",0;
 		mes "[Charles Orleans]";

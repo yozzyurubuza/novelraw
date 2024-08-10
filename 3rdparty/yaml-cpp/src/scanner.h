@@ -9,7 +9,9 @@
 
 #include <cstddef>
 #include <ios>
+#include <map>
 #include <queue>
+#include <set>
 #include <stack>
 #include <string>
 
@@ -47,7 +49,7 @@ class Scanner {
     enum INDENT_TYPE { MAP, SEQ, NONE };
     enum STATUS { VALID, INVALID, UNKNOWN };
     IndentMarker(int column_, INDENT_TYPE type_)
-        : column(column_), type(type_), status(VALID), pStartToken(nullptr) {}
+        : column(column_), type(type_), status(VALID), pStartToken(0) {}
 
     int column;
     INDENT_TYPE type;

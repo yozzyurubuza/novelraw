@@ -8,11 +8,11 @@
 #include <memory>
 #include <vector>
 
-#include <common/cbasetypes.hpp>
-#include <common/database.hpp>
-#include <common/mmo.hpp> // JOB_*, MAX_FAME_LIST, struct fame_list, struct mmo_charstatus
-#include <common/strlib.hpp>// StringBuf
-#include <common/timer.hpp>
+#include "../common/cbasetypes.hpp"
+#include "../common/database.hpp"
+#include "../common/mmo.hpp" // JOB_*, MAX_FAME_LIST, struct fame_list, struct mmo_charstatus
+#include "../common/strlib.hpp"// StringBuf
+#include "../common/timer.hpp"
 
 #include "battleground.hpp"
 #include "buyingstore.hpp" // struct s_buyingstore
@@ -32,8 +32,6 @@ enum e_instance_mode : uint8;
 //enum e_log_chat_type : uint8;
 enum e_log_pick_type : uint32;
 enum sc_type : int16;
-
-class MapGuild;
 
 #define MAX_PC_BONUS 50 /// Max bonus, usually used by item bonus
 #define MAX_PC_FEELHATE 3 /// Max feel hate info
@@ -427,7 +425,6 @@ public:
 		unsigned int autolooting : 1; //performance-saver, autolooting state for @alootid
 		unsigned int gmaster_flag : 1;
 		unsigned int prevend : 1;//used to flag wheather you've spent 40sp to open the vending or not.
-		bool pending_vending_ui; // flag whether the vending packet should still be sent to this player or not
 		unsigned int warping : 1;//states whether you're in the middle of a warp processing
 		unsigned int permanent_speed : 1; // When 1, speed cannot be changed through status_calc_pc().
 		bool hold_recalc;
@@ -446,8 +443,7 @@ public:
 		bool barter_open;
 		bool barter_extended_open;
 		bool enchantgrade_open; // Whether the enchantgrade window is open or not
-		// Bitmask of e_pcblock_action_flag values
-		uint16 block_action;
+		unsigned int block_action : 10;
 		bool refineui_open;
 		t_itemid inventory_expansion_confirmation;
 		uint16 inventory_expansion_amount;
@@ -597,8 +593,6 @@ public:
 		int dropaddrace[RC_MAX];
 		int dropaddclass[CLASS_MAX];
 		int magic_subdefele[ELE_MAX];
-		int ignore_res_by_race[RC_MAX];
-		int ignore_mres_by_race[RC_MAX];
 	} indexed_bonus;
 	// zeroed arrays end here.
 
@@ -719,7 +713,7 @@ public:
 	int party_invite, party_invite_account; // for handling party invitation (holds party id and account id)
 	int adopt_invite; // Adoption
 
-	std::shared_ptr<MapGuild> guild; // [Ind] speed everything up
+	struct guild *guild; // [Ind] speed everything up
 	int guild_invite,guild_invite_account;
 	int guild_emblem_id,guild_alliance,guild_alliance_account;
 	short guild_x,guild_y; // For guildmate position display. [Skotlex] should be short [zzo]
@@ -792,7 +786,6 @@ public:
 		uint32 pending_weight;
 		uint32 pending_zeny;
 		uint16 pending_slots;
-		uint32 dest_id;
 	} mail;
 
 	//Quest log system
@@ -922,6 +915,10 @@ public:
 	e_instance_mode instance_mode; ///< Mode of instance player last leaves from (used for instance destruction button)
 
 	short setlook_head_top, setlook_head_mid, setlook_head_bottom, setlook_robe; ///< Stores 'setlook' script command values.
+
+#if PACKETVER_MAIN_NUM >= 20150507 || PACKETVER_RE_NUM >= 20150429 || defined(PACKETVER_ZERO)
+	std::vector<int16> hatEffects;
+#endif
 
 	struct{
 		int tid;
@@ -1171,7 +1168,7 @@ static bool pc_cant_act( map_session_data* sd ){
 #define pc_is90overweight(sd) ( (sd)->weight * 10 >= (sd)->max_weight * 9 )
 
 static inline bool pc_hasprogress(map_session_data *sd, enum e_wip_block progress) {
-	return sd == nullptr || (sd->state.workinprogress&progress) == progress;
+	return sd == NULL || (sd->state.workinprogress&progress) == progress;
 }
 
 uint16 pc_maxparameter(map_session_data *sd, e_params param);
@@ -1236,7 +1233,7 @@ enum e_mado_type : uint16 {
 	#define pc_leftside_def(sd) ((sd)->battle_status.def)
 	#define pc_rightside_def(sd) ((sd)->battle_status.def2)
 	#define pc_leftside_mdef(sd) ((sd)->battle_status.mdef)
-	#define pc_rightside_mdef(sd) ( (sd)->battle_status.mdef2 - ((sd)->battle_status.vit / 2) )
+	#define pc_rightside_mdef(sd) ( (sd)->battle_status.mdef2 - ((sd)->battle_status.vit>>1) )
 #define pc_leftside_matk(sd) \
     (\
     ((sd)->sc.getSCE(SC_MAGICPOWER) && (sd)->sc.getSCE(SC_MAGICPOWER)->val4) \
@@ -1410,7 +1407,6 @@ enum e_setpos{
 };
 
 enum e_setpos pc_setpos(map_session_data* sd, unsigned short mapindex, int x, int y, clr_type clrtype);
-enum e_setpos pc_setpos_savepoint( map_session_data& sd, clr_type clrtype = CLR_TELEPORT );
 void pc_setsavepoint(map_session_data *sd, short mapindex,int x,int y);
 char pc_randomwarp(map_session_data *sd,clr_type type,bool ignore_mapflag = false);
 bool pc_memo(map_session_data* sd, int pos);
@@ -1418,9 +1414,9 @@ bool pc_memo(map_session_data* sd, int pos);
 char pc_checkadditem(map_session_data *sd, t_itemid nameid, int amount);
 uint8 pc_inventoryblank(map_session_data *sd);
 short pc_search_inventory(map_session_data *sd, t_itemid nameid);
-char pc_payzeny(map_session_data *sd, int zeny, enum e_log_pick_type type, uint32 log_charid = 0);
+char pc_payzeny(map_session_data *sd, int zeny, enum e_log_pick_type type, map_session_data *tsd);
 enum e_additem_result pc_additem(map_session_data *sd, struct item *item, int amount, e_log_pick_type log_type);
-char pc_getzeny(map_session_data *sd, int zeny, enum e_log_pick_type type, uint32 log_charid = 0);
+char pc_getzeny(map_session_data *sd, int zeny, enum e_log_pick_type type, map_session_data *tsd);
 char pc_delitem(map_session_data *sd, int n, int amount, int type, short reason, e_log_pick_type log_type);
 
 uint64 pc_generate_unique_id(map_session_data *sd);
@@ -1435,7 +1431,7 @@ int pc_getcash( map_session_data *sd, int cash, int points, e_log_pick_type type
 enum e_additem_result pc_cart_additem(map_session_data *sd,struct item *item_data,int amount,e_log_pick_type log_type);
 void pc_cart_delitem(map_session_data *sd,int n,int amount,int type,e_log_pick_type log_type);
 void pc_putitemtocart(map_session_data *sd,int idx,int amount);
-bool pc_getitemfromcart(map_session_data *sd,int idx,int amount);
+void pc_getitemfromcart(map_session_data *sd,int idx,int amount);
 int pc_cartitem_amount(map_session_data *sd,int idx,int amount);
 
 bool pc_takeitem(map_session_data *sd,struct flooritem_data *fitem);
@@ -1733,12 +1729,12 @@ void pc_attendance_claim_reward( map_session_data* sd );
 void pc_jail(map_session_data &sd, int32 duration = INT_MAX);
 
 // Captcha Register
-void pc_macro_captcha_register(map_session_data &sd, uint16 image_size, const char captcha_answer[CAPTCHA_ANSWER_SIZE]);
-void pc_macro_captcha_register_upload(map_session_data & sd, uint16 upload_size, const char *upload_data);
+void pc_macro_captcha_register(map_session_data &sd, uint16 image_size, char captcha_answer[CAPTCHA_ANSWER_SIZE]);
+void pc_macro_captcha_register_upload(map_session_data & sd, uint16 upload_size, char *upload_data);
 
 // Macro Detector
 TIMER_FUNC(pc_macro_detector_timeout);
-void pc_macro_detector_process_answer(map_session_data &sd, const char captcha_answer[CAPTCHA_ANSWER_SIZE]);
+void pc_macro_detector_process_answer(map_session_data &sd, char captcha_answer[CAPTCHA_ANSWER_SIZE]);
 void pc_macro_detector_disconnect(map_session_data &sd);
 
 // Macro Reporter

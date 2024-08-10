@@ -13,6 +13,7 @@
 
 #include "yaml-cpp/anchor.h"
 #include "yaml-cpp/contrib/anchordict.h"
+#include "yaml-cpp/contrib/graphbuilder.h"
 #include "yaml-cpp/emitterstyle.h"
 #include "yaml-cpp/eventhandler.h"
 
@@ -25,15 +26,7 @@ namespace YAML {
 class GraphBuilderAdapter : public EventHandler {
  public:
   GraphBuilderAdapter(GraphBuilderInterface& builder)
-      : m_builder(builder),
-        m_containers{},
-        m_anchors{},
-        m_pRootNode(nullptr),
-        m_pKeyNode(nullptr) {}
-  GraphBuilderAdapter(const GraphBuilderAdapter&) = delete;
-  GraphBuilderAdapter(GraphBuilderAdapter&&) = delete;
-  GraphBuilderAdapter& operator=(const GraphBuilderAdapter&) = delete;
-  GraphBuilderAdapter& operator=(GraphBuilderAdapter&&) = delete;
+      : m_builder(builder), m_pRootNode(NULL), m_pKeyNode(NULL) {}
 
   virtual void OnDocumentStart(const Mark& mark) { (void)mark; }
   virtual void OnDocumentEnd() {}
@@ -57,8 +50,8 @@ class GraphBuilderAdapter : public EventHandler {
   struct ContainerFrame {
     ContainerFrame(void* pSequence)
         : pContainer(pSequence), pPrevKeyNode(&sequenceMarker) {}
-    ContainerFrame(void* pMap, void* pPreviousKeyNode)
-        : pContainer(pMap), pPrevKeyNode(pPreviousKeyNode) {}
+    ContainerFrame(void* pMap, void* pPrevKeyNode_)
+        : pContainer(pMap), pPrevKeyNode(pPrevKeyNode_) {}
 
     void* pContainer;
     void* pPrevKeyNode;
@@ -81,6 +74,6 @@ class GraphBuilderAdapter : public EventHandler {
   void RegisterAnchor(anchor_t anchor, void* pNode);
   void DispositionNode(void* pNode);
 };
-}  // namespace YAML
+}
 
 #endif  // GRAPHBUILDERADAPTER_H_62B23520_7C8E_11DE_8A39_0800200C9A66

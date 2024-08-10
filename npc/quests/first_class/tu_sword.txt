@@ -1083,7 +1083,7 @@ geffen,154,143,3	script	Dequ'ee	734,{
 		if (checkre(0))
 			warp "izlude",127,100;
 		else
-			warp "izlude",127,100;
+			warp "izlude",35,78;
 		end;
 	}
 	if(tu_swordman == 19){
@@ -2202,7 +2202,7 @@ geffen,154,143,3	script	Dequ'ee	734,{
 					if (checkre(0))
 						warp "izlude",127,100;
 					else
-						warp "izlude",127,100;
+						warp "izlude",35,78;
 					close;
 				}
 			case 2:

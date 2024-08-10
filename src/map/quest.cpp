@@ -3,17 +3,17 @@
 
 #include "quest.hpp"
 
-#include <cstdlib>
+#include <stdlib.h>
 
-#include <common/cbasetypes.hpp>
-#include <common/malloc.hpp>
-#include <common/nullpo.hpp>
-#include <common/random.hpp>
-#include <common/showmsg.hpp>
-#include <common/socket.hpp>
-#include <common/strlib.hpp>
-#include <common/utilities.hpp>
-#include <common/utils.hpp>
+#include "../common/cbasetypes.hpp"
+#include "../common/malloc.hpp"
+#include "../common/nullpo.hpp"
+#include "../common/random.hpp"
+#include "../common/showmsg.hpp"
+#include "../common/socket.hpp"
+#include "../common/strlib.hpp"
+#include "../common/utilities.hpp"
+#include "../common/utils.hpp"
 
 #include "battle.hpp"
 #include "chrif.hpp"
@@ -28,7 +28,7 @@
 
 using namespace rathena;
 
-static int split_exact_quest_time(char* modif_p, int* week, int* day, int* hour, int* minute, int *second);
+static int split_exact_quest_time(char* modif_p, int* day, int* hour, int* minute, int *second);
 
 const std::string QuestDatabase::getDefaultLocation() {
 	return std::string(db_path) + "/quest_db.yml";
@@ -81,25 +81,20 @@ uint64 QuestDatabase::parseBodyNode(const ryml::NodeRef& node) {
 			quest->time = static_cast<time_t>(timediff);
 		}
 		else {// '+' not found, set to specific time
-			int32 day, hour, minute, second, week;
+			int32 day, hour, minute, second;
 
-			if (split_exact_quest_time(const_cast<char *>(time.c_str()), &week, &day, &hour, &minute, &second) == 0) {
+			if (split_exact_quest_time(const_cast<char *>(time.c_str()), &day, &hour, &minute, &second) == 0) {
 				this->invalidWarning(node["TimeLimit"], "Incorrect TimeLimit format %s given, skipping.\n", time.c_str());
 				return 0;
 			}
-			if (week > 0)
-				quest->time = hour * 3600 + minute * 60 + second;
-			else
-				quest->time = day * 86400 + hour * 3600 + minute * 60 + second;
+			quest->time = day * 86400 + hour * 3600 + minute * 60 + second;
 			quest->time_at = true;
-			quest->time_week = week;
 		}
 
 	} else {
 		if (!exists) {
 			quest->time = 0;
 			quest->time_at = false;
-			quest->time_week = -1;
 		}
 	}
 
@@ -446,8 +441,8 @@ uint64 QuestDatabase::parseBodyNode(const ryml::NodeRef& node) {
 }
 
 
-static int split_exact_quest_time(char* modif_p, int* week, int* day, int* hour, int* minute, int *second) {
-	int w = -1, d = -1, h = -1, mn = -1, s = -1;
+static int split_exact_quest_time(char* modif_p, int* day, int* hour, int* minute, int *second) {
+	int d = -1, h = -1, mn = -1, s = -1;
 
 	nullpo_retr(0, modif_p);
 
@@ -458,28 +453,7 @@ static int split_exact_quest_time(char* modif_p, int* week, int* day, int* hour,
 			modif_p++;
 		while (modif_p[0] >= '0' && modif_p[0] <= '9')
 			modif_p++;
-		if (strncasecmp(modif_p, "SUNDAY", 6) == 0) {
-			w = 0;
-			modif_p = modif_p + 6;
-		} else if (strncasecmp(modif_p, "MONDAY", 6) == 0) {
-			w = 1;
-			modif_p = modif_p + 6;
-		} else if (strncasecmp(modif_p, "TUESDAY", 7) == 0) {
-			w = 2;
-			modif_p = modif_p + 7;
-		} else if (strncasecmp(modif_p, "WEDNESDAY", 9) == 0) {
-			w = 3;
-			modif_p = modif_p + 9;
-		} else if (strncasecmp(modif_p, "THURSDAY", 8) == 0) {
-			w = 4;
-			modif_p = modif_p + 8;
-		} else if (strncasecmp(modif_p, "FRIDAY", 6) == 0) {
-			w = 5;
-			modif_p = modif_p + 6;
-		} else if (strncasecmp(modif_p, "SATURDAY", 8) == 0) {
-			w = 6;
-			modif_p = modif_p + 8;
-		} else if (modif_p[0] == 's') {
+		if (modif_p[0] == 's') {
 			s = value;
 			modif_p++;
 		} else if (modif_p[0] == 'm' && modif_p[1] == 'n') {
@@ -499,7 +473,6 @@ static int split_exact_quest_time(char* modif_p, int* week, int* day, int* hour,
 	if (h < 0 || h > 23 || mn > 59 || s > 59)	// hour is required
 		return 0;
 
-	*week = w;
 	*day = max(0,d);
 	*hour = h;
 	*minute = max(0,mn);
@@ -563,18 +536,10 @@ static time_t quest_time(std::shared_ptr<s_quest_db> qi)
 		struct tm *lt = localtime(&t);
 		uint32 time_today = lt->tm_hour * 3600 + lt->tm_min * 60 + lt->tm_sec;
 
-		int32 day_shift = 0;
-
-		if (time_today >= (qi->time % 86400)) // Carry over to the next day
-			day_shift = 1;
-
-		if (qi->time_week > -1) {
-			if (qi->time_week < (lt->tm_wday + day_shift))
-				day_shift = qi->time_week + 7 - lt->tm_wday;
-			else
-				day_shift = qi->time_week - lt->tm_wday;
-		}
-		return static_cast<time_t>(t + (day_shift * 86400) + qi->time - time_today);
+		if (time_today < (qi->time % 86400))
+			return static_cast<time_t>(t + qi->time - time_today);
+		else // Carry over to the next day
+			return static_cast<time_t>(t + 86400 + qi->time - time_today);
 	}
 
 	return 0;
@@ -701,7 +666,7 @@ int quest_delete(map_session_data *sd, int quest_id)
 
 	if (sd->num_quests == 0) {
 		aFree(sd->quest_log);
-		sd->quest_log = nullptr;
+		sd->quest_log = NULL;
 	} else
 		RECREATE(sd->quest_log, struct quest, sd->num_quests);
 
@@ -810,7 +775,7 @@ void quest_update_objective(map_session_data *sd, struct mob_data* md)
 		for (const auto &it : qi->dropitem) {
 			if (it->mob_id != 0 && it->mob_id != md->mob_id)
 				continue;
-			if (it->rate < 10000 && !rnd_chance<uint16>(it->rate, 10000))
+			if (it->rate < 10000 && rnd()%10000 >= it->rate)
 				continue; // TODO: Should this be affected by server rates?
 			if (!item_db.exists(it->nameid))
 				continue;

@@ -142,7 +142,7 @@ Body:
             Item: Hunting_Arrow
             Amount: 500
       - Index: 15
-        Item: Poi_Arrow_Container
+        Item: Poison_Arrow_Container
         RequiredItems:
           - Index: 0
             Item: Poison_Arrow
@@ -199,7 +199,7 @@ Body:
         Item: Bullet_Case_Lighting
         RequiredItems:
           - Index: 0
-            Item: Lighting_Bullet
+            Item: Lightning_Bullet
             Amount: 500
       - Index: 4
         Item: Bullet_Case_Ice
@@ -262,19 +262,19 @@ Body:
             Item: Sanctified_Bullet
             Amount: 500
       - Index: 14
-        Item: Bullet_Case_Full
+        Item: aegis_100195
         RequiredItems:
           - Index: 0
             Item: Full_Metal_Jacket
             Amount: 500
       - Index: 15
-        Item: Bullet_Case_Tail
+        Item: aegis_100197
         RequiredItems:
           - Index: 0
             Item: Dragon_Tail_Missile
             Amount: 500
       - Index: 16
-        Item: Bullet_Case_Mine
+        Item: aegis_100196
         RequiredItems:
           - Index: 0
             Item: Shooting_Mine
@@ -466,7 +466,7 @@ Body:
             Item: Holy_Cannon_Ball
             Amount: 500
       - Index: 5
-        Item: Cannon_Box_6
+        Item: aegis_100178
         RequiredItems:
           - Index: 0
             Item: Liquid_Condensed_Bullet

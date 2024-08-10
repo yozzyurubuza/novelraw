@@ -3,12 +3,12 @@
 
 #include "duel.hpp"
 
-#include <cstdio>
-#include <cstring>
+#include <stdio.h>
+#include <string.h>
 #include <unordered_map>
 
-#include <common/cbasetypes.hpp>
-#include <common/timer.hpp>
+#include "../common/cbasetypes.hpp"
+#include "../common/timer.hpp"
 
 #include "atcommand.hpp"  // msg_txt
 #include "battle.hpp"

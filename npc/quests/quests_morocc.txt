@@ -891,7 +891,7 @@ que_job01,70,84,1	script	Girl#moc_ex002	882,{
 
 // Resurrection of Satan Morocc
 // ============================================================
--	script	Continental Guard#01::MocConGuard	707,3,3,{
+moc_fild20,354,183,3	script	Continental Guard#01::MocConGuard	707,3,3,{
 	if ((rebirth_moc_edq == 0) && (rebirth_moc_edq < 4)) {
 		mes "[Continental Guard]";
 		mes "No commoners are allowed in the area beyond this point.";
@@ -1102,6 +1102,14 @@ OnTouch:
 	end;
 }
 
+moc_fild20,354,174,3	duplicate(MocConGuard)	Continental Guard#02	707,3,3
+moc_fild20,38,174,5	duplicate(MocConGuard)	Continental Guard#03	707,3,3
+moc_fild20,38,183,5	duplicate(MocConGuard)	Continental Guard#04	707,3,3
+moc_fild20,189,21,7	duplicate(MocConGuard)	Continental Guard#05	707,3,3
+moc_fild20,200,21,7	duplicate(MocConGuard)	Continental Guard#06	707,3,3
+moc_fild20,203,336,5	duplicate(MocConGuard)	Continental Guard#07	707,3,3
+moc_fild20,215,336,3	duplicate(MocConGuard)	Continental Guard#08	707,3,3
+
 -	script	Continental Messenger#00::ConMessenger	997,3,3,{
 	set .@area$,strnpcinfo(2);
 	if (.@area$ == "01") { set .@area$,"Prontera"; }
@@ -1187,6 +1195,12 @@ OnTouch_:
 	end;
 }
 
+prontera,164,304,3	duplicate(ConMessenger)	Continental Messenger#01	997,3,3
+geffen,128,90,3	duplicate(ConMessenger)	Continental Messenger#02	997,3,3
+payon,200,113,3	duplicate(ConMessenger)	Continental Messenger#03	997,3,3
+alberta,127,64,3	duplicate(ConMessenger)	Continental Messenger#04	998,3,3
+aldebaran,135,128,3	duplicate(ConMessenger)	Continental Messenger#05	998,3,3
+
 -	script	Continental Official	-1,{
 	if (rebirth_moc_edq > 3) {
 		mes "[Continental Guard Official]";
@@ -1261,7 +1275,7 @@ OnTouch_:
 	}
 }
 
--	script	Chief Balrog::ChiefBalrog	752,{
+morocc,159,113,3	script	Chief Balrog	752,{
 	if (rebirth_moc_edq == 0) {
 		mes "[Chief Balrog]";
 		mes "You've come here at a bad time, but it's nice to meet you. I'm Continental Guard Chief Balrog. We've been dispatched to Morocc in order to suppress Satan Morocc... We'll need all the strength and luck we can gather.";
@@ -1837,11 +1851,11 @@ OnTouch_:
 	}
 }
 
--	script	Morocc Timer#edq::MoroccTimer	-1,6,6,{
-OnInit:
-	set $@re_moc,0;
-	set $@re_moc_time$,"";
-	end;
+moc_fild21,38,193,0	script	Morocc Timer#edq	-1,6,6,{
+//OnInit:
+//	set $@re_moc,0;
+//	set $@re_moc_time$,"";
+//	end;
 
 OnTouch_:
 	if ($@re_moc == 0) {
@@ -1851,9 +1865,9 @@ OnTouch_:
 	end;
 }
 
--	script	Satan Broadcast#edq::SatanBroadcast	844,{
+moc_fild21,1,1,0	script	Satan Broadcast#edq	844,{
 OnInit:
-	// disablenpc "Satan Broadcast#edq";
+	disablenpc "Satan Broadcast#edq";
 	end;
 
 OnEnable:
@@ -1876,11 +1890,11 @@ OnTimer25000:
 
 OnDisable:
 	stopnpctimer;
-	// disablenpc "Satan Broadcast#edq";
+	disablenpc "Satan Broadcast#edq";
 	end;
 }
 
--	script	Group of Evil#edq::GroupEvil	844,1,1,{
+moc_fild21,178,239,0	script	Group of Evil#edq	844,1,1,{
 	if (((rebirth_moc_edq == 4) || (rebirth_moc_edq == 7)) && ($@re_moc == 1)) {
 		mes "Awed by the time-space gap where darkness is given life, you instinctively step back.";
 		next;
@@ -1992,7 +2006,7 @@ OnTimer5415000:
 	end;
 }
 
--	script	Morocc GlobalVar Admin::MoroccAdmin_sec	971,{
+sec_in02,14,43,5	script	Morocc GlobalVar Admin::MoroccAdmin_sec	971,{
 	callfunc "F_GM_NPC";
 	mes "[Helper]";
 	mes "Please enter the password and # button.";
@@ -2068,6 +2082,7 @@ OnTimer5415000:
 		}
 	}
 }
+moc_fild21,5,5,5	duplicate(MoroccAdmin_sec)	Morocc GlobalVar Admin::MoroccAdmin_moc	971
 
 // The Crow of the Fate
 // ============================================================
@@ -4259,7 +4274,7 @@ cave,113,74,5	script	Cave Settler#f_cave4	401,{
 	close;
 }
 
-cave,76,39,5	shop	Cave Girl#f_cave5	62,744:-1
+cave,76,39,5	shop	Cave Girl#f_cave5	62,712:-1
 
 cave,108,34,3	script	Cave Settler#f_cave6	979,{
 	mes "[Cave Settler]";

@@ -35,7 +35,7 @@
 
 // Entrance
 //============================================================
--	script	Dimensional Gorge Piece::DimensionalGorgePiece	406,{
+gef_fild10,242,202,0	script	Dimensional Gorge Piece	406,{
 
 	set .@party_id,getcharid(1);
 	set .@md_name$,"Orc's Memory";
@@ -83,7 +83,7 @@
 	}
 	mes "In order to generate a dungeon you must be the Party Leader and have at least 2 members in the party.";
 	close;
-	L_Enter:
+L_Enter:
 	switch(instance_enter("Orc's Memory")) {
 	case IE_OTHER:
 		mes "An unknown error has occurred.";
@@ -105,7 +105,7 @@
 
 }
 
--	script	Mad Scientist::MadScientist	865,{
+gef_fild10,238,202,6	script	Mad Scientist#orc	865,{
 	if (BaseLevel < 50) {
 		mes "The Mad Scientist doesn't seem to notice you and keeps mumbling to himself...";
 		close;
@@ -163,9 +163,6 @@
 		end;
 	}
 }
-
-//gef_fild10,242,202,0	duplicate(DimensionalGorgePiece)	Dimensional Gorge Piece	406
-//gef_fild10,238,202,6	duplicate(MadScientist)	Mad Scientist#orc	865
 
 // Orc's Memory Floor 1
 //============================================================

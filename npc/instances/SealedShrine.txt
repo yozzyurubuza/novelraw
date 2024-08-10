@@ -31,7 +31,7 @@
 
 // Sealed Catacomb Entrance
 //============================================================
--	script	Friar Patrick::FriarPatrick	412,{
+monk_test,309,146,3	script	Friar Patrick#edq	412,{
 	cutin "ins_cata_pri_n",2;
 	mes "[Friar Patrick]";
 	mes "The peace of this world cannot last forever... The hands of Evil are reaching into the world again...";
@@ -201,7 +201,7 @@
 	end;
 }
 
--	script	Grave of Baphomet#edq::GraveofBaphomet	111,{
+monk_test,306,151,3	script	Grave of Baphomet#edq	111,{
 	if (countitem(6002)) delitem 6002,countitem(6002); //Token_Of_Apostle
 	mes "This gravestone has a carving of a wicked devil with large horns. It arouses an ominous feeling.";
 	next;
@@ -209,7 +209,7 @@
 		close;
 
 	// 12 hour cooldown
-	set .@ins_bapho_check,checkquest(3040,PLAYTIMES);
+	set .@ins_bapho_check,checkquest(3040,PLAYTIME);
 	// Two hour play limit
 	//set .@ins_bapho_check2,checkquest(3045,PLAYTIME);
 

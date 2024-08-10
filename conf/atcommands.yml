@@ -365,10 +365,6 @@ Body:
     Help: |
       Params: [<item type>]
       Throws all your possession on the ground. No type specified will drop all items.
-  - Command: stockall
-    Help: |
-      Params: [<item type>]
-      Transfer items from cart to your inventory. No type specified will transfer all items.
   - Command: storeall
     Help: |
       Puts all your possessions in storage.
@@ -689,20 +685,20 @@ Body:
       Gives you the desired item.
   - Command: pvpon
     Help: |
-      Enables PvP on the current map
+      Turns pvp on on the current map
   - Command: pvpoff
     Help: |
-      Disables PvP on the current map
+      Turns pvp off on the current map
   - Command: gvgon
     Aliases:
       - gpvpon
     Help: |
-      Enables GvG on the current map
+      Turns gvg on on the current map
   - Command: gvgoff
     Aliases:
       - gpvpoff
     Help: |
-      Disables GvG on the current map
+      Turns gvg off on the current map
   - Command: agitstart
     Help: |
       Starts War of Emperium
@@ -918,11 +914,6 @@ Body:
   - Command: reloadbattleconf
     Help: |
       Reload battle settings.
-  - Command: reloadcashdb
-    Aliases:
-      - reloadcashshop
-    Help: |
-      Reload cash shop database.
   - Command: reloadinstancedb
     Help: |
       Reload instance database.
@@ -961,7 +952,6 @@ Body:
       atcommand       battleconf     statusdb
       pcdb                    motd             script
       questdb              msgconf       packetdb
-      cashdb
   - Command: langtype
     Help: |
       Params: <language>
@@ -1029,9 +1019,6 @@ Body:
   - Command: roulette
     Help: |
       Opens the roulette UI.
-  - Command: setcard 
-    Help: |
-      Adds a card or enchant to the specific slot of the equipment.
 
 Footer:
   Imports:

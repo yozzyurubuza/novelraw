@@ -6,7 +6,6 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - master
@@ -18,8 +17,6 @@ on:
       # This workflow should run when a file in a source directory has been modified.
       - 'src/**'
       - '3rdparty/**'
-      # This workflow should run whenever a CMake related file has been modified
-      - '**/CMakeLists.txt'
 
 jobs:
   build:
@@ -34,7 +31,7 @@ jobs:
           os: [ubuntu-latest]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v2
 
       # Install latest CMake.
       - uses: lukka/get-cmake@latest

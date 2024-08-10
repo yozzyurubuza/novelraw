@@ -6,7 +6,6 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - master
@@ -34,7 +33,7 @@ jobs:
           clang: ['6.0', '7', '8', '9', '10', '11'] #, '12', '13']
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v2
 
       - name: Set up Clang
         uses: egor-tensin/setup-clang@v1

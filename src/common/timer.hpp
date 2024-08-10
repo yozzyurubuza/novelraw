@@ -4,7 +4,7 @@
 #ifndef TIMER_HPP
 #define TIMER_HPP
 
-#include <ctime>
+#include <time.h>
 
 #include "cbasetypes.hpp"
 

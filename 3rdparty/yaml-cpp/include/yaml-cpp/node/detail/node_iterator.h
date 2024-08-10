@@ -19,16 +19,16 @@
 namespace YAML {
 namespace detail {
 struct iterator_type {
-  enum value { NoneType, Sequence, Map };
+  enum value { None, Sequence, Map };
 };
 
 template <typename V>
 struct node_iterator_value : public std::pair<V*, V*> {
-  using kv = std::pair<V*, V*>;
+  typedef std::pair<V*, V*> kv;
 
-  node_iterator_value() : kv(), pNode(nullptr) {}
+  node_iterator_value() : kv(), pNode(0) {}
   explicit node_iterator_value(V& rhs) : kv(), pNode(&rhs) {}
-  explicit node_iterator_value(V& key, V& value) : kv(&key, &value), pNode(nullptr) {}
+  explicit node_iterator_value(V& key, V& value) : kv(&key, &value), pNode(0) {}
 
   V& operator*() const { return *pNode; }
   V& operator->() const { return *pNode; }
@@ -36,23 +36,26 @@ struct node_iterator_value : public std::pair<V*, V*> {
   V* pNode;
 };
 
-using node_seq = std::vector<node *>;
-using node_map = std::vector<std::pair<node*, node*>>;
+typedef std::vector<node*> node_seq;
+typedef std::vector<std::pair<node*, node*>> node_map;
 
 template <typename V>
 struct node_iterator_type {
-  using seq = node_seq::iterator;
-  using map = node_map::iterator;
+  typedef node_seq::iterator seq;
+  typedef node_map::iterator map;
 };
 
 template <typename V>
 struct node_iterator_type<const V> {
-  using seq = node_seq::const_iterator;
-  using map = node_map::const_iterator;
+  typedef node_seq::const_iterator seq;
+  typedef node_map::const_iterator map;
 };
 
 template <typename V>
-class node_iterator_base {
+class node_iterator_base
+    : public std::iterator<std::forward_iterator_tag, node_iterator_value<V>,
+                           std::ptrdiff_t, node_iterator_value<V>*,
+                           node_iterator_value<V>> {
  private:
   struct enabler {};
 
@@ -65,16 +68,12 @@ class node_iterator_base {
   };
 
  public:
-  using iterator_category = std::forward_iterator_tag;
-  using value_type = node_iterator_value<V>;
-  using difference_type = std::ptrdiff_t;
-  using pointer = node_iterator_value<V>*;
-  using reference = node_iterator_value<V>;
-  using SeqIter = typename node_iterator_type<V>::seq;
-  using MapIter = typename node_iterator_type<V>::map;
+  typedef typename node_iterator_type<V>::seq SeqIter;
+  typedef typename node_iterator_type<V>::map MapIter;
+  typedef node_iterator_value<V> value_type;
 
   node_iterator_base()
-      : m_type(iterator_type::NoneType), m_seqIt(), m_mapIt(), m_mapEnd() {}
+      : m_type(iterator_type::None), m_seqIt(), m_mapIt(), m_mapEnd() {}
   explicit node_iterator_base(SeqIter seqIt)
       : m_type(iterator_type::Sequence),
         m_seqIt(seqIt),
@@ -106,7 +105,7 @@ class node_iterator_base {
       return false;
 
     switch (m_type) {
-      case iterator_type::NoneType:
+      case iterator_type::None:
         return true;
       case iterator_type::Sequence:
         return m_seqIt == rhs.m_seqIt;
@@ -123,7 +122,7 @@ class node_iterator_base {
 
   node_iterator_base<V>& operator++() {
     switch (m_type) {
-      case iterator_type::NoneType:
+      case iterator_type::None:
         break;
       case iterator_type::Sequence:
         ++m_seqIt;
@@ -144,7 +143,7 @@ class node_iterator_base {
 
   value_type operator*() const {
     switch (m_type) {
-      case iterator_type::NoneType:
+      case iterator_type::None:
         return value_type();
       case iterator_type::Sequence:
         return value_type(**m_seqIt);
@@ -173,8 +172,8 @@ class node_iterator_base {
   MapIter m_mapIt, m_mapEnd;
 };
 
-using node_iterator = node_iterator_base<node>;
-using const_node_iterator = node_iterator_base<const node>;
+typedef node_iterator_base<node> node_iterator;
+typedef node_iterator_base<const node> const_node_iterator;
 }
 }
 
