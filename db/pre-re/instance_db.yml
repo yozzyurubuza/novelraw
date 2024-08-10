@@ -81,3 +81,11 @@ Body:
       Y: 36
     AdditionalMaps:
       2@nyd: true
+  - Id: 5
+    Name: Planting Area
+    TimeLimit: 7200
+    Enter:
+      Map: 1@exds
+      X: 120
+      Y: 154
+

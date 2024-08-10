@@ -33,7 +33,7 @@
 
 // Onward to the New World :: ep13_gogo
 //============================================================ 
-function	script	Promotional_Staff	{
+-	script	Promotional Staff#prt::Promotional Staff_prt	100,{
 	mes "[Promotional Staff]";
 	mes "We are looking for adventurers who are super curious and extremely brave.";
 	mes "Join us for a wonderful adventure!";
@@ -81,11 +81,6 @@ function	script	Promotional_Staff	{
 		mes "Huh, I thought you were a real adventurer. You're missing a big opportunity. You're definitely not brave. Absolutely not!";
 		close;
 	}
-}
-
-prontera,163,53,3	script	Promotional Staff#prt	100,{
-	callfunc "Promotional_Staff";
-	end;
 }
 
 -	script	Alliance Manager#prt_	-1,{
@@ -354,7 +349,7 @@ prontera,163,53,3	script	Promotional Staff#prt	100,{
 	}
 }
 
-aldebaran,127,138,3	script	Promotional Staff#alde	100,{
+-	script	Promotional Staff#alde::Promotional Staff_alde	100,{
 	if (ep13_ryu > 3) {
 		mes "[Promotional Staff]";
 		mes "Did you try out for the test, or are you already enjoying your adventures?";
@@ -454,7 +449,7 @@ aldebaran,127,138,3	script	Promotional Staff#alde	100,{
 	end;
 }
 
-geffen,90,67,3	script	Promotional Staff#gef	100,{
+-	script	Promotional Staff#gef::Promotional Staff_gef	100,{
 	if (ep13_ryu > 6) {
 		mes "[Promotional Staff]";
 		mes "Did you take the test?";
@@ -1592,7 +1587,7 @@ lhz_in01,30,24,5	script	Officer B	109,{
 	close;
 }
 
-moc_fild20,349,179,3	script	Rift Guard#1	707,{
+-	script	Rift Guard#1::RiftG	707,{
 	if (ep13_ryu > 19) {
 		mes "[Guard]";
 		mes "Ah, you are a member of the alliance that discovered the dimensional rift? Welcome. Everything is prepared. Just enter and find the camp when you pass through the rift.";
@@ -1623,7 +1618,7 @@ moc_fild20,349,179,3	script	Rift Guard#1	707,{
 	close;
 }
 
-moc_fild22b,37,196,5	script	Rift Guard#2	707,{
+-	script	Rift Guard#2::RiftG2	707,{
 	mes "[Guard]";
 	mes "Are you the new adventurer?";
 	mes "If you're going to the other side of the rift, the head of the alliance will guide you there.";
@@ -1649,7 +1644,7 @@ moc_fild22b,37,196,5	script	Rift Guard#2	707,{
 	}
 }
 
-moc_fild22b,330,154,3	script	Rift Guard#3	707,{
+-	script	Rift Guard#3::RiftG3	707,{
 	mes "[Guard]";
 	mes "Are you new here?";
 	mes "You look like you need to find the head of the alliance. You can find him near the center of the dimensional rift.";
@@ -1838,7 +1833,7 @@ OnTimer900000:
 	end;
 }
 
-mid_camp,213,286,3	script	Rift Guard#4	707,{
+-	script	Rift Guard#4::RiftG4	707,{
 	mes "[Guard]";
 	mes "Are you the new adventurer?";
 	mes "If you're going to the other side of the rift, the head of the alliance will guide you there.";
@@ -2720,7 +2715,7 @@ mid_camp,123,290,4	script	Otto#ep13bs	967,{
 		mes "- Currently you're carrying -";
 		mes "- too many items with you. -";
 		mes "- Please try again -";
-		mes "- after you loose some weight. -";
+		mes "- after you lose some weight. -";
 		close;
 	}
 	if (ep13_newbs == 23) {
@@ -3049,7 +3044,7 @@ mid_campin,106,122,4	script	Receptionist Brink#ep13b	89,{
 			mes "- Currently you're carrying -";
 			mes "- too many items with you. -";
 			mes "- Please try again -";
-			mes "- after you loose some weight. -";
+			mes "- after you lose some weight. -";
 			close;
 		}
 		else {
@@ -3448,7 +3443,7 @@ spl_fild02,348,76,0	script	Tree#ep13bs1::ep13tree	111,{
 		mes "- Currently you're carrying -";
 		mes "- too many items with you. -";
 		mes "- Please try again -";
-		mes "- after you loose some weight. -";
+		mes "- after you lose some weight. -";
 		close;
 	}
 	if (ep13_newbs == 6) {
@@ -9263,7 +9258,7 @@ mid_campin,94,118,3	script	Staff Officer Abidal	755,{
 			mes "As a last resort, they had to select Commander Agip since he's unaffiliated with any of those countries, but is talented enough to lead the expedition.";
 			next;
 			mes "[Staff Officer Abidal]";
-			mes "We, the commander, Igrid, and I aren't used to the the leadership role. We're having trouble taking care of everything that's happening. *Sigh*";
+			mes "We, the commanders, Igrid, and I aren't used to the leadership role. We're having trouble taking care of everything that's happening. *Sigh*";
 			next;
 			mes "[Staff Officer Abidal]";
 			mes "The members of the Midgard Expedition are conducting various kinds of research about the Ash-Vacuum searching for possible living creatures and studying what might be beneficial for the development of the mainland.";

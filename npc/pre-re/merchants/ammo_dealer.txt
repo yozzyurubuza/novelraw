@@ -117,4 +117,5 @@ S_BulletTrade:
 }
 
 que_ng,187,156,3	duplicate(bdt)	Bullet Dealer Tony#ng	86
-izlude,171,133,3	duplicate(bdt)	Bullet Dealer Tony#iz	86
+//izlude,171,133,3	duplicate(bdt)	Bullet Dealer Tony#iz	86
+izlude,152,135,3	duplicate(bdt)	Bullet Dealer Tony#iz	86

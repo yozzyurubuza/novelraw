@@ -93,3 +93,8 @@ Footer:
   - Path: db/pre-re/item_db_usable.yml
   - Path: db/pre-re/item_db_equip.yml
   - Path: db/pre-re/item_db_etc.yml
+  # Novelraw Space
+  - Path: db/pre-re/novelraw/item_db_usable-nro.yml
+  - Path: db/pre-re/novelraw/item_db_etc-nro.yml
+  - Path: db/pre-re/novelraw/item_db_equip-nro.yml
+  - Path: db/pre-re/novelraw/item_db_equip_migrate.yml

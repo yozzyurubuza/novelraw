@@ -2613,7 +2613,7 @@ Body:
     Flags:
       BuyingStore: true
     Script: |
-      sc_start SC_SlowDown,5000,0;
+      sc_start SC_SLOWDOWN,5000,100;
   - Id: 12018
     AegisName: Fire_Cracker
     Name: Firecracker
@@ -3801,7 +3801,8 @@ Body:
     AegisName: Fantastic_Cooking_Kits
     Name: Fantastic Cooking Kit
     Type: Usable
-    Buy: 10000
+    Buy: 1000
+    Sell: 500
     Weight: 70
     Flags:
       BuyingStore: true
@@ -8637,21 +8638,21 @@ Body:
     Type: Usable
     Weight: 10
     Script: |
-      searchstores 10,0;
+      searchstores 10, SEARCHSTORE_EFFECT_NORMAL;
   - Id: 12581
     AegisName: Vending_Search_Scroll2
     Name: Universal Catalog Gold
     Type: Usable
     Weight: 10
     Script: |
-      searchstores 10,1;
+      searchstores 10, SEARCHSTORE_EFFECT_REMOTE;
   - Id: 12591
     AegisName: Uni_Catalog_Bz
     Name: Universal Catalog Bronze
     Type: Usable
     Weight: 10
     Script: |
-      searchstores 10,1;
+      searchstores 10, SEARCHSTORE_EFFECT_REMOTE;
   - Id: 12609
     AegisName: Old_Ore_Box
     Name: Old Ore Box
@@ -9475,16 +9476,6 @@ Body:
       Third: true
       Third_Upper: true
       Third_Baby: true
-  - Id: 12848
-    AegisName: Falcon_Flute
-    Name: Falcon Flute
-    Type: Delayconsume
-    Weight: 10
-    Script: |
-      if (getskilllv("HT_FALCON")) {
-         if (!checkoption(Option_Wug) && !checkoption(Option_Wugrider))
-            setfalcon (!checkfalcon());
-      }
   - Id: 12900
     AegisName: Battle_Manual_Box
     Name: Battle Manual Box
