@@ -4201,9 +4201,9 @@ Body:
           - Index: 286
             Item: Anopheles_Card
             Rate: 3
-          - Index: 287
-            Item: Hill_Wind_Card
-            Rate: 3
+          # - Index: 287
+          #   Item: Hill_Wind_Card
+          #   Rate: 3
           - Index: 288
             Item: Ygnizem_Card
             Rate: 1
@@ -4294,9 +4294,9 @@ Body:
           - Index: 317
             Item: Ancient_Mimic_Card
             Rate: 1
-          - Index: 318
-            Item: Deathword_Card
-            Rate: 3
+          # - Index: 318
+          #   Item: Deathword_Card
+          #   Rate: 3
           - Index: 319
             Item: Plasma_Card
             Rate: 1
@@ -4423,9 +4423,9 @@ Body:
           # - Index: 360
           #  Item: Flame_Skull_Card
           #   Rate: 1
-          - Index: 361
-            Item: Necromancer_Card
-            Rate: 1
+          # - Index: 361
+          #   Item: Necromancer_Card
+          #   Rate: 1
   - Group: CASH_FOOD
     SubGroups:
       - SubGroup: 1
