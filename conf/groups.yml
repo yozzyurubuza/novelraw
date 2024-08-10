@@ -92,7 +92,7 @@ Body:
       channel: true
       langtype: true
     Permissions:
-      attendance: false
+      attendance: true
   - Id: 2
     Name: Support
     Inherit:
@@ -240,6 +240,7 @@ Body:
       bypass_stat_onclone: true
       bypass_max_stat: true
       macro_register: true
+      trade_unconditional: true
       #all_permission: true
 
 Footer:

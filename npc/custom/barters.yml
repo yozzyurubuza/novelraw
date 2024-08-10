@@ -44,3 +44,10 @@
 Header:
   Type: BARTER_DB
   Version: 1
+
+Footer:
+  Imports:
+  - Path: npc/custom/novelraw/barters/iz_craft/headgear_crafting_r1.yml
+  - Path: npc/custom/novelraw/barters/iz_craft/headgear_crafting_r2.yml
+  - Path: npc/custom/novelraw/barters/iz_craft/headgear_crafting_r3.yml
+  - Path: npc/custom/novelraw/barters/iz_craft/headgear_crafting_r4.yml

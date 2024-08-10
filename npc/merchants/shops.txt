@@ -163,7 +163,7 @@ yuno_in03,176,22,3	shop	Scroll Merchant#yuno03	89,7433:-1	//Temp shop in Juno th
 // Lighthalzen
 //=======================================================
 lighthalzen,69,75,5	shop	Fruit Gardener#lhz	102,512:-1,513:-1
-lighthalzen,112,44,0	shop	Flower Girl#lhz	90,712:-1,744:-1,748:-1
+lighthalzen,112,44,0	shop	Flower Girl#lhz	90,744:-1,748:-1
 lighthalzen,124,129,0	shop	Vegetable Gardener#lhz	91,515:-1,516:-1,535:-1
 lighthalzen,220,122,3	shop	Vendor from Milk Ranch#l	90,519:-1
 lighthalzen,222,191,4	shop	Pet Groomer#lhz	125,537:-1,643:-1,10013:-1,10014:-1,554:-1,6113:-1,6114:-1,6115:-1
@@ -247,8 +247,8 @@ payon,177,131,4	shop	Pet Groomer#pay	124,537:-1,643:-1,10013:-1,10014:-1,554:-1,
 prontera,73,134,0	shop	Vendor from Milk Ranch#p	90,519:-1
 prontera,104,49,0	shop	Fruit Gardener#prt	102,512:-1,513:-1
 prontera,64,125,0	shop	Butcher#prt	87,517:-1,528:-1
-prontera,58,182,0	shop	Flower Girl#prt	96,712:-1,744:-1
-prontera,113,42,0	shop	Flower Lady#prt	90,712:-1,744:-1
+prontera,58,182,0	shop	Flower Girl#prt	96,744:-1
+prontera,113,42,0	shop	Flower Lady#prt	90,744:-1
 prontera,105,87,0	shop	Gift Merchant#prt	91,734:-1,735:-1,736:-1,737:-1,746:-1
 prontera,218,211,4	shop	Pet Groomer#prt	125,537:-1,643:-1,10013:-1,10014:-1,554:-1,6114:-1,6113:-1,6110:-1,6115:-1,6100:-1,6098:-1,6112:-1,6104:-1,6108:-1,6111:-1,6095:-1,6099:-1,6096:-1,6097:-1,6094:-1
 prontera,248,153,0	shop	Doll Supplier#prt	85,740:-1,741:-1,742:-1

@@ -15,6 +15,11 @@
 //============================================================
 
 //============================================================
+// NovelRaw Custom Maps
+//============================================================
+iz_craft	mapflag	nomemo
+
+//============================================================
 // Municipality (Cities/Towns/Villages)
 //============================================================
 ayo_in01	mapflag	nomemo
@@ -652,6 +657,11 @@ turbo_e_8	mapflag	nomemo
 turbo_e_16	mapflag	nomemo
 
 //============================================================
+// Planting Area
+//============================================================
+1@exds	mapflag	nomemo
+
+//============================================================
 // Monster Races
 //============================================================
 p_track01	mapflag	nomemo
@@ -730,6 +740,13 @@ splendide	mapflag	nomemo
 spl_fild01	mapflag	nomemo
 spl_in01	mapflag	nomemo
 spl_in02	mapflag	nomemo
+
+//============================================================
+// Brasilis
+//============================================================
+bra_in01	mapflag	nomemo
+bra_dun01	mapflag	nomemo
+bra_dun02	mapflag	nomemo
 
 //evt_zombie	mapflag	nomemo
 

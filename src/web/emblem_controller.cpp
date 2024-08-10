@@ -7,8 +7,8 @@
 #include <iostream>
 #include <ostream>
 
-#include "../common/showmsg.hpp"
-#include "../common/socket.hpp"
+#include <common/showmsg.hpp>
+#include <common/socket.hpp>
 
 #include "auth.hpp"
 #include "http.hpp"
@@ -246,7 +246,7 @@ HANDLER_FUNC(emblem_upload) {
 	uint32 version = START_VERSION;
 
 	if (SqlStmt_NumRows(stmt) > 0) {
-		if (SQL_SUCCESS != SqlStmt_BindColumn(stmt, 0, SQLDT_UINT32, &version, sizeof(version), NULL, NULL)
+		if (SQL_SUCCESS != SqlStmt_BindColumn(stmt, 0, SQLDT_UINT32, &version, sizeof(version), nullptr, nullptr)
 			|| SQL_SUCCESS != SqlStmt_NextRow(stmt)
 		) {
 			SqlStmt_ShowDebug(stmt);

@@ -7,11 +7,11 @@
 #include <array>
 #include <bitset>
 
-#include "../common/cbasetypes.hpp"
-#include "../common/database.hpp"
-#include "../common/db.hpp"
-#include "../common/mmo.hpp" // MAX_SKILL, struct square
-#include "../common/timer.hpp"
+#include <common/cbasetypes.hpp>
+#include <common/database.hpp>
+#include <common/db.hpp>
+#include <common/mmo.hpp> // MAX_SKILL, struct square
+#include <common/timer.hpp>
 
 #include "map.hpp" // struct block_list
 
@@ -39,6 +39,11 @@ class status_change;
 /// Used with tracking the hitcount of Earthquake for skills that can avoid the first attack
 #define NPC_EARTHQUAKE_FLAG 0x800
 
+/// To control alternative skill scalings
+#define SKILL_ALTDMG_FLAG 0x10
+/// Make skill ignore requirement consumption [Muh]
+#define SKILL_NOCONSUME_REQ 0x20
+
 /// Constants to identify a skill's nk value (damage properties)
 /// The NK value applies only to non INF_GROUND_SKILL skills
 /// when determining skill castend function to invoke.
@@ -53,6 +58,7 @@ enum e_skill_nk : uint8 {
 	NK_IGNOREDEFCARD,
 	NK_CRITICAL,
 	NK_IGNORELONGCARD,
+	NK_SIMPLEDEFENSE,
 	NK_MAX,
 };
 
@@ -176,10 +182,6 @@ enum e_skill_unit_flag : uint8 {
 	UF_HIDDENTRAP,	// Hidden trap [Cydh]
 	UF_MAX,
 };
-
-/// Walk intervals at which chase-skills are attempted to be triggered.
-/// If you change this, make sure it's an odd value (for icewall block behavior).
-#define WALK_SKILL_INTERVAL 5
 
 /// Time that's added to canact delay on castbegin and substracted on castend
 /// This is to prevent hackers from sending a skill packet after cast but before a timer triggers castend
@@ -533,7 +535,6 @@ int skill_get_hp( uint16 skill_id ,uint16 skill_lv );
 int skill_get_mhp( uint16 skill_id ,uint16 skill_lv );
 int skill_get_sp( uint16 skill_id ,uint16 skill_lv );
 int skill_get_ap( uint16 skill_id, uint16 skill_lv );
-int skill_get_status_count( uint16 skill_id );
 int skill_get_hp_rate( uint16 skill_id, uint16 skill_lv );
 int skill_get_sp_rate( uint16 skill_id, uint16 skill_lv );
 int skill_get_ap_rate( uint16 skill_id, uint16 skill_lv );
@@ -542,7 +543,7 @@ int skill_get_weapontype( uint16 skill_id );
 int skill_get_ammotype( uint16 skill_id );
 int skill_get_ammo_qty( uint16 skill_id, uint16 skill_lv );
 int skill_get_state(uint16 skill_id);
-int skill_get_status_count( uint16 skill_id );
+size_t skill_get_status_count( uint16 skill_id );
 int skill_get_spiritball( uint16 skill_id, uint16 skill_lv );
 unsigned short skill_dummy2skill_id(unsigned short skill_id);
 
@@ -587,10 +588,12 @@ int skill_vfcastfix(struct block_list *bl, double time, uint16 skill_id, uint16 
 #endif
 int skill_delayfix(struct block_list *bl, uint16 skill_id, uint16 skill_lv);
 void skill_toggle_magicpower(struct block_list *bl, uint16 skill_id);
+//Check sc of bl [Muh]
+int skill_check_bl_sc(struct block_list *target, va_list ap);
 
 // Skill conditions check and remove [Inkfish]
-bool skill_check_condition_castbegin(map_session_data *sd, uint16 skill_id, uint16 skill_lv);
-bool skill_check_condition_castend(map_session_data *sd, uint16 skill_id, uint16 skill_lv);
+bool skill_check_condition_castbegin( map_session_data& sd, uint16 skill_id, uint16 skill_lv );
+bool skill_check_condition_castend( map_session_data& sd, uint16 skill_id, uint16 skill_lv );
 int skill_check_condition_char_sub (struct block_list *bl, va_list ap);
 void skill_consume_requirement(map_session_data *sd, uint16 skill_id, uint16 skill_lv, short type);
 struct s_skill_condition skill_get_requirement(map_session_data *sd, uint16 skill_id, uint16 skill_lv);
@@ -603,9 +606,9 @@ void skill_unit_move_unit_group( std::shared_ptr<s_skill_unit_group> group, int1
 void skill_unit_move_unit(struct block_list *bl, int dx, int dy);
 
 int skill_sit(map_session_data *sd, bool sitting);
-void skill_repairweapon(map_session_data *sd, int idx);
+void skill_repairweapon( map_session_data& sd, int idx );
 void skill_identify(map_session_data *sd,int idx);
-void skill_weaponrefine(map_session_data *sd,int idx); // [Celest]
+void skill_weaponrefine( map_session_data& sd, int idx ); // [Celest]
 int skill_autospell(map_session_data *md,uint16 skill_id);
 
 int skill_calc_heal(struct block_list *src, struct block_list *target, uint16 skill_id, uint16 skill_lv, bool heal);
@@ -614,9 +617,9 @@ bool skill_check_cloaking(struct block_list *bl, struct status_change_entry *sce
 int8 skill_isCopyable(map_session_data *sd, uint16 skill_id);
 
 // Abnormal status
-bool skill_isNotOk(uint16 skill_id, map_session_data *sd);
+bool skill_isNotOk( uint16 skill_id, map_session_data& sd );
 bool skill_isNotOk_hom(struct homun_data *hd, uint16 skill_id, uint16 skill_lv);
-bool skill_isNotOk_mercenary(uint16 skill_id, s_mercenary_data *md);
+bool skill_isNotOk_mercenary( uint16 skill_id, s_mercenary_data& md);
 
 bool skill_isNotOk_npcRange(struct block_list *src, uint16 skill_id, uint16 skill_lv, int pos_x, int pos_y);
 
@@ -1470,6 +1473,34 @@ enum e_skill {
 	NPC_DAMAGE_HEAL,
 	NPC_IMMUNE_PROPERTY,
 	NPC_MOVE_COORDINATE,
+	NPC_WIDEBLEEDING2,
+	NPC_WIDESILENCE2,
+	NPC_WIDESTUN2,
+	NPC_WIDESTONE2,
+	NPC_WIDESLEEP2,
+	NPC_WIDECURSE2,
+	NPC_WIDECONFUSE2,
+	NPC_WIDEFREEZE2,
+	NPC_BLEEDING2,
+	NPC_ICEBREATH2,
+	NPC_ACIDBREATH2,
+	NPC_EVILLAND2,
+	NPC_HELLJUDGEMENT2,
+	NPC_RAINOFMETEOR,
+	NPC_GROUNDDRIVE,
+	NPC_RELIEVE_ON,
+	NPC_RELIEVE_OFF,
+	NPC_LOCKON_LASER,
+	NPC_LOCKON_LASER_ATK,
+	NPC_SEEDTRAP,
+	NPC_DEADLYCURSE,
+	NPC_RANDOMBREAK,
+	NPC_STRIP_SHADOW,
+	NPC_DEADLYCURSE2,
+	NPC_CANE_OF_EVIL_EYE,
+	NPC_CURSE_OF_RED_CUBE,
+	NPC_CURSE_OF_BLUE_CUBE,
+	NPC_KILLING_AURA,	// 783
 
 	KN_CHARGEATK = 1001,
 	CR_SHRINK,
@@ -1913,6 +1944,9 @@ enum e_skill {
 	ECLAGE_RECALL,
 
 	ALL_PRONTERA_RECALL = 3042,
+	ALL_GLASTHEIM_RECALL,
+	ALL_THANATOS_RECALL,
+	ALL_LIGHTHALZEN_RECALL,
 
 	GC_DARKCROW = 5001,
 	RA_UNLIMIT,
@@ -2298,6 +2332,13 @@ enum e_skill {
 	NW_THE_VIGILANTE_AT_NIGHT_GUN_SHOTGUN,
 	SS_FUUMAKOUCHIKU_BLASTING,
 
+	DK_DRAGONIC_BREATH = 6001,
+	MT_SPARK_BLASTER,
+	MT_TRIPLE_LASER,
+	MT_MIGHTY_SMASH,
+	BO_EXPLOSIVE_POWDER,
+	BO_MAYHEMIC_THORNS,
+
 	HLIF_HEAL = 8001,
 	HLIF_AVOID,
 	HLIF_BRAIN,
@@ -2341,6 +2382,22 @@ enum e_skill {
 	MH_LAVA_SLIDE,
 	MH_PYROCLASTIC,
 	MH_VOLCANIC_ASH,
+	MH_BLAST_FORGE,
+	MH_TEMPERING,
+	MH_CLASSY_FLUTTER,
+	MH_TWISTER_CUTTER,
+	MH_ABSOLUTE_ZEPHYR,
+	MH_BRUSHUP_CLAW,
+	MH_BLAZING_AND_FURIOUS,
+	MH_THE_ONE_FIGHTER_RISES,
+	MH_POLISHING_NEEDLE,
+	MH_TOXIN_OF_MANDARA,
+	MH_NEEDLE_STINGER,
+	MH_LICHT_GEHORN,
+	MH_GLANZEN_SPIES,
+	MH_HEILIGE_PFERD,
+	MH_GOLDENE_TONE,
+	MH_BLAZING_LAVA,
 
 	MS_BASH = 8201,
 	MS_MAGNUM,
@@ -2714,19 +2771,19 @@ bool skill_check_camouflage(struct block_list *bl, struct status_change_entry *s
 /**
  * Mechanic
  **/
-int skill_magicdecoy(map_session_data *sd, t_itemid nameid);
+void skill_magicdecoy( map_session_data& sd, t_itemid nameid );
 
 /**
  * Guiltoine Cross
  **/
-int skill_poisoningweapon( map_session_data *sd, t_itemid nameid);
+void skill_poisoningweapon( map_session_data& sd, t_itemid nameid );
 
 /**
  * Auto Shadow Spell (Shadow Chaser)
  **/
-int skill_select_menu(map_session_data *sd,uint16 skill_id);
+void skill_select_menu( map_session_data& sd, uint16 skill_id );
 
-int skill_elementalanalysis(map_session_data *sd, int n, uint16 skill_lv, unsigned short *item_list); // Sorcerer Four Elemental Analisys.
+int skill_elementalanalysis( map_session_data& sd, int n, uint16 skill_lv, unsigned short *item_list ); // Sorcerer Four Elemental Analisys.
 int skill_changematerial(map_session_data *sd, int n, unsigned short *item_list);	// Genetic Change Material.
 int skill_get_elemental_type(uint16 skill_id, uint16 skill_lv);
 

@@ -1,0 +1,62 @@
+
+// DAILY GIVEAWAY
+izlude,125,148,6	script	Bronya#iz	696,{
+	if (#Bronya == gettime(DT_YYYYMMDD)) {
+		mes "[Bronya Giveaway NPC]";
+		mes "You already claimed your supply today. Try again tomorrow.";
+		close;
+	}
+
+	mes "[Bronya Giveaway NPC]";
+	mes "I can give you 10 Elite Siege Supply Boxes.";
+	mes "Would you like these free items now?";
+	next;
+
+	if (select("Yes, please.:No") == 2) {
+		mes "[Bronya Giveaway NPC]";
+		mes "Have a nice day... >.<";
+		close;
+	}
+
+	getitem 14003, 10; // Gives 10 Elite Siege Supply Boxes
+	mes "[Bronya Giveaway NPC]";
+	mes "There you go! Enjoy your Elite Siege Supply Boxes! ^_^";
+	set #Bronya, gettime(DT_YYYYMMDD);
+
+	close;
+}
+
+
+
+//Weekly Saturday
+izlude,131,148,6	script	Aria#iz	646,{
+	if (gettime(DT_DAYOFWEEK) != 6) {
+		mes "[Aria Giveaway NPC]";
+		mes "Come back on Saturday to claim the Elite Siege Supply Boxes.";
+		close;
+	}
+
+	if (#Aria == gettime(DT_YYYYMMDD)) {
+		mes "[Aria Giveaway NPC]";
+		mes "You already claimed your supply this week. Try again next Saturday.";
+		close;
+	}
+
+	mes "[Aria Giveaway NPC]";
+	mes "I can give you 10 Elite Siege Supply Boxes.";
+	mes "Would you like these free items now?";
+	next;
+
+	if (select("Yes, please.:No") == 2) {
+		mes "[Aria Giveaway NPC]";
+		mes "Have a nice day... >.<";
+		close;
+	}
+
+	getitem 14003, 10; // Gives 10 Elite Siege Supply Boxes
+	mes "[Aria Giveaway NPC]";
+	mes "There you go! Enjoy your Elite Siege Supply Boxes! (^_^)/";
+	set #Aria, gettime(DT_YYYYMMDD);
+
+	close;
+}

@@ -7,9 +7,9 @@
 #include <map>
 #include <vector>
 
-#include "../common/database.hpp"
-#include "../common/timer.hpp"
-#include "../config/core.hpp"
+#include <common/database.hpp>
+#include <common/timer.hpp>
+#include <config/core.hpp>
 
 #include "clif.hpp" //
 #include "map.hpp" // struct block_list
@@ -91,6 +91,7 @@ struct s_npc_barter_item{
 	uint16 index;
 	t_itemid nameid;
 	bool stockLimited;
+	bool broadcast_transaction;
 	uint32 stock;
 	uint32 price;
 	std::map<uint16, std::shared_ptr<s_npc_barter_requirement>> requirements;
@@ -104,6 +105,9 @@ struct s_npc_barter{
 	uint8 dir;
 	int16 sprite;
 	std::map<uint16, std::shared_ptr<s_npc_barter_item>> items;
+	int32 npcid;
+
+	~s_npc_barter();
 };
 
 class BarterDatabase : public TypesafeYamlDatabase<std::string, s_npc_barter>{
@@ -137,6 +141,20 @@ struct s_questinfo {
 	}
 };
 
+// Status of NPC view.
+enum e_npcv_status : uint8 {
+	NPCVIEW_DISABLE  = 0x01,
+	NPCVIEW_ENABLE   = 0x02,
+	NPCVIEW_HIDEOFF  = 0x04,
+	NPCVIEW_HIDEON   = 0x08,
+	NPCVIEW_CLOAKOFF = 0x10,
+	NPCVIEW_CLOAKON  = 0x20,
+
+	NPCVIEW_VISIBLE   = NPCVIEW_ENABLE | NPCVIEW_HIDEOFF | NPCVIEW_CLOAKOFF,
+	NPCVIEW_INVISIBLE = NPCVIEW_DISABLE | NPCVIEW_HIDEON | NPCVIEW_CLOAKON,
+	NPCVIEW_CLOAK     = NPCVIEW_CLOAKOFF | NPCVIEW_CLOAKON,
+};
+
 struct npc_data {
 	struct block_list bl;
 	struct unit_data ud; //Because they need to be able to move....
@@ -149,6 +167,7 @@ struct npc_data {
 	int chat_id,touching_id;
 	unsigned int next_walktime;
 	int instance_id;
+	e_npcv_status state{NPCVIEW_ENABLE};
 
 	unsigned size : 2;
 
@@ -218,6 +237,7 @@ struct npc_data {
 	struct navi_link navi; // for warps and the src of npcs
 	std::vector<navi_link> links; // for extra links, like warper npc
 #endif
+	bool is_invisible;
 };
 
 struct eri;
@@ -1424,14 +1444,101 @@ enum e_job_types
 	JT_4_RAGFES_16,
 	JT_4_RAGFES_16_M,
 	JT_4_EXJOB_NINJA2,
-
-	JT_ROZ_MQ_LUCIAN = 10510,
+	JT_4_VR_BOOK_FAIRY,
+	JT_ROZ_MQ_LUCIAN,
 	JT_ROZ_MQ_BRITIA,
 	JT_ROZ_MQ_ASSASIN01,
 	JT_STRANGE_B_SMITH1,
 	JT_STRONGER_B_SMTIH,
+	JT_4_VR_BOOK_RED,
+	JT_4_VR_BOOK_BLUE,
+	JT_4_VR_BOOK_YELLOW,
+	JT_4_VR_BOOK_GREEN,
+	JT_4_VR_BOOK_WHITE,
+	JT_4_VR_YGNIZEM,
 
-	JT_NEW_NPC_3RD_END = 19999,
+	JT_4_JP_19TH = 10524,
+	JT_4_KING_PORING,
+	JT_4_VR_SWORDMAN_DEAD,
+	JT_GATE_SKYBLUE,
+	JT_4_CS_RIGEL,
+	JT_4_M_NILLEM,
+	JT_4_LARVA_RED,
+	JT_4_LARVA_YELLOW,
+	JT_4_LARVA_BLACK,
+	JT_4_LARVA_VIOLET,
+	JT_4_HERO_SAUSAGE,
+	JT_4_PRINCESS_SAUSAGE,
+
+	JT_4_EP20_LASGAND = 10536,
+	JT_4_EP20_NYAR,
+	JT_4_EP20_DEVICE_BLUE,
+	JT_4_EP20_DEVICE_RED,
+	JT_4_EP20_DEVICE_BLACK,
+
+	JT_4_GACHA_MACHINE = 10545,
+	JT_4_VR_CHAO,
+	JT_4_RUNESTONE,
+	JT_4_EM_ARDOR,
+	JT_4_EM_DILUVIO,
+	JT_4_EM_PROCELLA,
+	JT_4_EM_TERREMOTUS,
+	JT_4_EM_SERPENS,
+	JT_4_SNOWDOG,
+	JT_1_SHADOW_RED,
+	JT_1_SHADOW_ORANGE,
+	JT_1_SHADOW_YELLOW,
+	JT_1_SHADOW_GREEN,
+	JT_1_SHADOW_BLUE,
+	JT_1_SHADOW_INDIGO,
+	JT_1_SHADOW_VIOLET,
+	JT_4_EVT_LAMMIR,
+	JT_4_EVT_SULKI,
+	JT_4_EVT_KKAT,
+
+	JT_4_EP21_SOLDIER_A = 10564,
+	JT_4_EP21_SOLDIER_B,
+	JT_4_EP21_M_WORKER_A,
+	JT_4_EP21_M_WORKER_B,
+	JT_4_EP21_F_WORKER_A,
+	JT_4_EP21_F_WORKER_B,
+	JT_4_EP21_WORKER_KID_A,
+	JT_4_EP21_WORKER_KID_B,
+	JT_4_EP21_TAN,
+	JT_4_EP21_TRIS,
+	JT_4_EP21_NADOYO,
+	JT_4_EP21_REINHARDT,
+	JT_4_EP21_WILHELM,
+	JT_4_EP21_MARISTELLA,
+	JT_4_EP21_YOHAN,
+	JT_4_EP21_RICHARD,
+	JT_4_EP21_VALDARIS,
+	JT_4_EP21_GUNTER,
+	JT_4_EP21_GALAXIA_A,
+	JT_4_EP21_GALAXIA_B,
+	JT_4_EP21_IVAN,
+	JT_4_EP21_LALAILA,
+	JT_4_EP21_ILSE,
+	JT_4_EP21_HOWELL,
+	JT_4_EP21_EPESTO,
+	JT_4_EP21_HEINE_TAB,
+	JT_4_EP21_IANA,
+	JT_4_EP21_LEE,
+	JT_4_EP21_AURELIE,
+	JT_4_EP21_HOWELL_S,
+	JT_4_EP21_TAN_S,
+
+	JT_4_M_VACATION_MARAM = 10595,
+
+	JT_ROZ_MQ_XAVIER = 13000,
+	JT_ROZ_MQ_MOCLORD,
+	JT_ROZ_MQ_SKULD,
+	
+	JT_C_KHALITZBURG = 20576,
+
+	JT_AB_PRINCESS_1 = 20701,
+
+	JT_NEW_NPC_3RD_END = 21000,
 	NPC_RANGE3_END, // Official: JT_NEW_NPC_3RD_END=19999
 
 	// Unofficial
@@ -1466,19 +1573,6 @@ enum npce_event : uint8 {
 	NPCE_MAX
 };
 
-// Status of NPC view.
-enum e_npcv_status : uint8 {
-	NPCVIEW_DISABLE  = 0x01,
-	NPCVIEW_ENABLE   = 0x02,
-	NPCVIEW_HIDEOFF  = 0x04,
-	NPCVIEW_HIDEON   = 0x08,
-	NPCVIEW_CLOAKOFF = 0x10,
-	NPCVIEW_CLOAKON  = 0x20,
-
-	NPCVIEW_VISIBLE   = 0x16,
-	NPCVIEW_INVISIBLE = 0x29,
-	NPCVIEW_CLOAK     = 0x30,
-};
 struct view_data* npc_get_viewdata(int class_);
 int npc_chat_sub(struct block_list* bl, va_list ap);
 int npc_event_dequeue(map_session_data* sd,bool free_script_stack=true);
@@ -1494,7 +1588,7 @@ struct npc_data* npc_checknear(map_session_data* sd, struct block_list* bl);
 int npc_buysellsel(map_session_data* sd, int id, int type);
 e_purchase_result npc_buylist(map_session_data* sd, std::vector<s_npc_buy_list>& item_list);
 static int npc_buylist_sub(map_session_data* sd, std::vector<s_npc_buy_list>& item_list, struct npc_data* nd);
-uint8 npc_selllist(map_session_data* sd, int list_length, PACKET_CZ_PC_SELL_ITEMLIST_sub* item_list);
+uint8 npc_selllist(map_session_data* sd, int list_length, const PACKET_CZ_PC_SELL_ITEMLIST_sub* item_list);
 e_purchase_result npc_barter_purchase( map_session_data& sd, std::shared_ptr<s_npc_barter> barter, std::vector<s_barter_purchase>& purchases );
 void npc_parse_mob2(struct spawn_data* mob);
 struct npc_data* npc_add_warp(char* name, short from_mapid, short from_x, short from_y, short xs, short ys, unsigned short to_mapindex, short to_x, short to_y);
@@ -1543,7 +1637,7 @@ void npc_unload_duplicates (struct npc_data* nd);
 int npc_unload(struct npc_data* nd, bool single);
 int npc_reload(void);
 void npc_read_event_script(void);
-int npc_script_event(map_session_data* sd, enum npce_event type);
+size_t npc_script_event( map_session_data& sd, enum npce_event type );
 
 int npc_duplicate4instance(struct npc_data *snd, int16 m);
 int npc_instanceinit(struct npc_data* nd);

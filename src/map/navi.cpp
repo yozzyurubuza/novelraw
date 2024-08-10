@@ -1,4 +1,7 @@
-#include "../config/core.hpp"
+// Copyright (c) rAthena Dev Teams - Licensed under GNU GPL
+// For more information, see LICENCE in the main folder
+
+#include <config/core.hpp>
 
 #ifdef MAP_GENERATOR
 
@@ -11,10 +14,10 @@
 #include <queue>
 #include <vector>
 
-#include "../common/db.hpp"
-#include "../common/malloc.hpp"
-#include "../common/showmsg.hpp"
-#include "../common/utils.hpp"
+#include <common/db.hpp>
+#include <common/malloc.hpp>
+#include <common/showmsg.hpp>
+#include <common/utils.hpp>
 #include "map.hpp"
 #include "mob.hpp"
 #include "navi.hpp"
@@ -75,13 +78,11 @@ static enum directions walk_choices [3][3] =
 /// Pushes path_node to the binary node_heap.
 /// Ensures there is enough space in array to store new element.
 
-#define swap_ptrcast_pathnode(a, b) swap_ptrcast(struct path_node *, a, b)
-
 static void heap_push_node(struct node_heap *heap, struct path_node *node)
 {
 #ifndef __clang_analyzer__ // TODO: Figure out why clang's static analyzer doesn't like this
 	BHEAP_ENSURE2(*heap, 1, 256, struct path_node **);
-	BHEAP_PUSH2(*heap, node, NODE_MINTOPCMP, swap_ptrcast_pathnode);
+	BHEAP_PUSH2(*heap, node, NODE_MINTOPCMP);
 #endif // __clang_analyzer__
 }
 
@@ -94,7 +95,7 @@ static int heap_update_node(struct node_heap *heap, struct path_node *node)
 		ShowError("heap_update_node: node not found\n");
 		return 1;
 	}
-	BHEAP_UPDATE(*heap, i, NODE_MINTOPCMP, swap_ptrcast_pathnode);
+	BHEAP_UPDATE(*heap, i, NODE_MINTOPCMP);
 	return 0;
 }
 // end 1:1 copy of definitions from path.cpp
@@ -151,11 +152,11 @@ static int add_path(struct node_heap *heap, int16 x, int16 y, int g_cost, struct
  * Note: uses global g_open_set, therefore this method can't be called in parallel or recursivly.
  *------------------------------------------*/
 bool navi_path_search(struct navi_walkpath_data *wpd, const struct navi_pos *from, const struct navi_pos *dest, cell_chk cell) {
-	register int i, x, y, dx = 0, dy = 0;
+	int i, x, y, dx = 0, dy = 0;
 	struct map_data *mapdata = map_getmapdata(from->m);
 	struct navi_walkpath_data s_wpd;
 
-	if (wpd == NULL)
+	if (wpd == nullptr)
 		wpd = &s_wpd; // use dummy output variable
 
 	if (from->m != dest->m)
@@ -194,7 +195,7 @@ bool navi_path_search(struct navi_walkpath_data *wpd, const struct navi_pos *fro
 
 	// Start node
 	i = calc_index(from->x, from->y);
-	tp[i].parent = NULL;
+	tp[i].parent = nullptr;
 	tp[i].x = from->x;
 	tp[i].y = from->y;
 	tp[i].g_cost = 0;
@@ -222,7 +223,7 @@ bool navi_path_search(struct navi_walkpath_data *wpd, const struct navi_pos *fro
 		}
 
 		current = BHEAP_PEEK(g_open_set); // Look for the lowest f_cost node in the 'open' set
-		BHEAP_POP2(g_open_set, NODE_MINTOPCMP, swap_ptrcast_pathnode); // Remove it from 'open' set
+		BHEAP_POP2(g_open_set, NODE_MINTOPCMP); // Remove it from 'open' set
 
 		x = current->x;
 		y = current->y;
@@ -263,7 +264,7 @@ bool navi_path_search(struct navi_walkpath_data *wpd, const struct navi_pos *fro
 		}
 	}
 
-	for (it = current; it->parent != NULL; it = it->parent, len++);
+	for (it = current; it->parent != nullptr; it = it->parent, len++);
 	if (len > sizeof(wpd->path)) {
 		return false;
 	}
@@ -548,6 +549,9 @@ void write_npc_distances() {
 
 	for (int mapid = 0; mapid < map_num; mapid++) {
 		auto m = map_getmapdata(mapid);
+#ifdef DETAILED_LOADING_OUTPUT
+		ShowStatus("Loading [%i/%i]" CL_CLL "\r", mapid, map_num);
+#endif
 		if (m->navi.npcs.size() == 0) {
 			// ShowStatus("Skipped %s NPC distance table, no NPCs in map (%d/%d)\n", map[m].name, m, map_num);
 			continue;

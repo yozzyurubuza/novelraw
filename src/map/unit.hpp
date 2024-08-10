@@ -4,8 +4,8 @@
 #ifndef UNIT_HPP
 #define UNIT_HPP
 
-#include "../common/cbasetypes.hpp"
-#include "../common/timer.hpp"
+#include <common/cbasetypes.hpp>
+#include <common/timer.hpp>
 
 #include "path.hpp" // struct walkpath_data
 #include "skill.hpp" // struct skill_timerskill, struct skill_unit_group, struct skill_unit_group_tickset
@@ -27,6 +27,7 @@ struct unit_data {
 	struct skill_unit_group_tickset skillunittick[MAX_SKILLUNITGROUPTICKSET];
 	short attacktarget_lv;
 	short to_x, to_y;
+	uint8 sx, sy; // Subtile position (0-15, with 8 being center of cell)
 	short skillx, skilly;
 	uint16 skill_id, skill_lv;
 	int skilltarget;
@@ -44,7 +45,6 @@ struct unit_data {
 	t_tick canmove_tick;
 	bool immune_attack; ///< Whether the unit is immune to attacks
 	uint8 dir;
-	unsigned char walk_count;
 	unsigned char target_count;
 	struct s_udState {
 		unsigned change_walk_target : 1 ;
@@ -53,7 +53,6 @@ struct unit_data {
 		unsigned step_attack : 1;
 		unsigned walk_easy : 1 ;
 		unsigned running : 1;
-		unsigned speed_changed : 1;
 		unsigned walk_script : 1;
 		unsigned blockedmove : 1;
 		unsigned blockedskill : 1;
@@ -65,6 +64,9 @@ struct unit_data {
 	int32 group_id;
 
 	std::vector<int> shadow_scar_timer;
+#if PACKETVER_MAIN_NUM >= 20150507 || PACKETVER_RE_NUM >= 20150429 || defined(PACKETVER_ZERO)
+	std::vector<int16> hatEffects;
+#endif
 };
 
 struct view_data {
@@ -115,14 +117,17 @@ bool unit_run(struct block_list *bl, map_session_data *sd, enum sc_type type);
 int unit_calc_pos(struct block_list *bl, int tx, int ty, uint8 dir);
 TIMER_FUNC(unit_delay_walktoxy_timer);
 TIMER_FUNC(unit_delay_walktobl_timer);
+void unit_hateffect(struct block_list* bl, int16 effectID, bool enable, bool send);
 
+void unit_stop_walking_soon(struct block_list& bl);
 // Causes the target object to stop moving.
 int unit_stop_walking(struct block_list *bl,int type);
 bool unit_can_move(struct block_list *bl);
 int unit_is_walking(struct block_list *bl);
 int unit_set_walkdelay(struct block_list *bl, t_tick tick, t_tick delay, int type);
 
-int unit_escape(struct block_list *bl, struct block_list *target, short dist, uint8 flag = 0);
+t_tick unit_get_walkpath_time(struct block_list& bl);
+t_tick unit_escape(struct block_list *bl, struct block_list *target, short dist, uint8 flag = 0);
 
 // Instant unit changes
 bool unit_movepos(struct block_list *bl, short dst_x, short dst_y, int easy, bool checkpath);
@@ -146,8 +151,8 @@ bool unit_can_attack(struct block_list *bl, int target_id);
 // Cast on a unit
 int unit_skilluse_id(struct block_list *src, int target_id, uint16 skill_id, uint16 skill_lv);
 int unit_skilluse_pos(struct block_list *src, short skill_x, short skill_y, uint16 skill_id, uint16 skill_lv);
-int unit_skilluse_id2(struct block_list *src, int target_id, uint16 skill_id, uint16 skill_lv, int casttime, int castcancel);
-int unit_skilluse_pos2( struct block_list *src, short skill_x, short skill_y, uint16 skill_id, uint16 skill_lv, int casttime, int castcancel);
+int unit_skilluse_id2(struct block_list *src, int target_id, uint16 skill_id, uint16 skill_lv, int casttime, int castcancel, bool ignore_range = false);
+int unit_skilluse_pos2( struct block_list *src, short skill_x, short skill_y, uint16 skill_id, uint16 skill_lv, int casttime, int castcancel, bool ignore_range = false);
 
 // Step timer used for delayed attack and skill use
 TIMER_FUNC(unit_step_timer);

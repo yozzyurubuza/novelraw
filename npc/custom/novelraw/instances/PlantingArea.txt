@@ -1,0 +1,352 @@
+/*
+This script creates an instanced map for player to use to spawn black and red mushrooms
+The skill Plant Cultivation usage is disabled, but this NPC will require a Creator to have the skill to use its service
+*/
+
+//Instance Generator
+izlude,109,140,5	script	Shiitake	-1,{
+	callsub OnClick;
+	end;
+
+	OnInit:
+		callfunc("customizeNPCSprite", 4304, SEX_MALE, 0, 26, 1730, 1116, 1729, 0, HAT_EF_MANYSTARS);
+		end;
+
+	OnClick:
+		set .@party_id, getcharid(1);
+		set .@md_name$, "Planting Area";
+
+		set .@plantArea_timer,checkquest(690000,PLAYTIME); // 2 days
+		set .@plantArea_timer2,checkquest(690001,PLAYTIME); // 2 hours
+
+		getpartymember .@party_id;
+		if ($@partymembercount < 2) {
+			mes "[Shiitake]";
+			mes "Make or join a party with more than 1 member and try again.";
+			close;
+		}
+
+		if (is_party_leader() && Class != JOB_CREATOR) {
+			mes "[Shiitake]";
+			mes "The party leader should be a ";
+			mes "^FF0000Creator / Biochemist^000000 to access the Planting Area.";
+			close;
+		}
+
+		switch(.@plantArea_timer) {
+		case -1:
+			if (is_party_leader() == true && Class == JOB_CREATOR) {
+				mes "[Shiitake]";
+				mes "Confirmed the party has been made. Would you like to reserve entrance to the ^32CD32"+.@md_name$+"^000000?";
+				next;
+				switch(select("Generate dungeon ^32CD32"+.@md_name$+"^000000:Enter the dungeon:Return to Izlude:Cancel")) {
+				case 1:
+					if (instance_create(.@md_name$) < 0) {
+						mes "Party Name: "+ getpartyname(.@party_id);
+						mes "Party Leader: "+strcharinfo(0);
+						mes "^32CD32"+.@md_name$+"^000000- Reservation Failed!";
+						close;
+					}
+					mes "^32CD32"+.@md_name$+"^000000 - Try to reserve";
+					mes "After making a reservation, you have to talk to NPC behind and select the menu 'Enter the Dungeon' to enter the dungeon.";
+					close;
+				case 2:
+					callsub L_Enter,0,1;
+				case 3:
+					mes "[Shiitake]";
+					mes "I will move you to Izlude.";
+					close2;
+					warp "izlude",127,143;
+					end;
+				case 4:
+					close;
+				}
+			}
+			mes "[Shiitake]";
+			mes "If you have the dungeon generated already, you can enter it. ";
+			next;
+			switch(select("Enter the ^32CD32"+.@md_name$+"^000000:Return to Izlude:Cancel")) {
+			case 1:
+				callsub L_Enter,1,1;
+			case 2:
+				mes "[Shiitake]";
+				mes "I will move you to Izlude.";
+				close2;
+				warp "izlude",127,143;
+				end;
+			case 3:
+				end;
+			}
+		case 0:
+		case 1:
+			if (.@plantArea_timer2 < 2 && getcharid(1) == plantArea_partyid) {
+				mes "[Shiitake]";
+				mes "If you have the dungeon generated already, you can enter it. ";
+				next;
+				switch(select("Enter the ^32CD32"+.@md_name$+"^000000:Return to Izlude:Cancel")) {
+				case 1:
+					callsub L_Enter,0,0;
+				case 2:
+					mes "[Shiitake]";
+					mes "I will move you to Izlude.";
+					close2;
+					warp "izlude",127,143;
+					end;
+				case 3:
+					close;
+				}
+			} else {
+
+				set .@dun_lim_time,plantArea_timer+172800; // 2 days
+				set .@dun_cur_time,gettimetick(2);
+				set .@dun_ent_t,(.@dun_lim_time - .@dun_cur_time);
+				set .@dun_h,(.@dun_ent_t / 3600);
+				set .@dun_m,(.@dun_ent_t - (.@dun_h * 3600)) / 60;
+				set .@dun_s,.@dun_ent_t - ((.@dun_h * 3600) + (.@dun_m * 60));
+
+				mes "[Shiitake]";
+				mes "Due to the ^32CD32Planting Area's^000000 aftereffects, you cannot enter the dungeon right now, " + .@dun_h + "hours " + .@dun_m + "minutes " + .@dun_s + "seconds left to enter the next dungeon.";
+				close;
+			}
+		case 2:
+			set plantArea_timer,0;
+			erasequest 690000;
+			erasequest 690001;
+			mes "[Shiitake]";
+			mes "^0000ffThe records and after effects related to the "+.@md_name$+" have been removed. You can generate and enter the "+.@md_name$+" again.^000000";
+			close;
+		}
+
+	L_Enter:
+		set .@md_name$,"Planting Area";
+		switch(instance_enter(.@md_name$)) {
+		case IE_OTHER:
+			mes "An unknown error has occurred.";
+			close;
+		case IE_NOINSTANCE:
+			mes "The memorial dungeon "+.@md_name$+" does not exist.";
+			mes "The party leader did not generate the dungeon yet.";
+			close;
+		case IE_NOMEMBER:
+			mes "You can enter the dungeon after making the party.";
+			close;
+		case IE_OK:
+			mapannounce "izlude", strcharinfo(0) +" of the party, "+ getpartyname( getcharid(1) ) +", is entering the dungeon, "+.@md_name$+".",bc_map,"0x00ff99",FW_NORMAL,12;
+			if (getarg(1)) {
+				set plantArea_timer,gettimetick(2);
+				set plantArea_partyid, getcharid(1);
+				setquest 690000;
+				setquest 690001;
+			}
+			if (getarg(0) == 0) close;
+			else end;
+		}		
+
+}
+
+//NPC that will dictate Sapphire Enoki whether mushroom or plant
+1@exds,128,168,5	script	Sapphire Enoki	-1,{
+	callsub OnClick;
+	end;
+
+	OnInstanceInit:
+		callfunc("customizeNPCSprite", JOB_BIOLO, SEX_FEMALE, 0, 0, 2108, 1818, 1817, 19);
+		end;
+
+	OnClick:
+		//Certain restrictions needed to talk to Sapphire Enoki
+		if (Class != JOB_CREATOR){
+			mes "[Sapphire Enoki]";
+			mes "Only a Creator touches my skin (>w<)";
+			close;
+		}
+
+		if (getskilllv(491) != 2){
+			mes "[Sapphire Enoki]";
+			mes "Oh dear, you need to study harder for ^32CD32Level 2 Plant Cultivation.^000000";
+			close;
+		}
+
+		if (!is_party_leader()){
+			mes "[Sapphire Enoki]";
+			mes "You need to be the party leader to select what to plant and summon.";
+			mes "(^  v  ^)";
+			close;
+		}
+
+		mes "[Sapphire Enoki]";
+		mes "Welcome to Planting Area!";
+		mes "What would you like to plant?";
+		next;
+
+		set .quantity, 20;
+		switch(select("Mushrooms", "Plants")) {
+			case 1:
+				// List of requirements:
+				set .@itemid, 921;
+				// Count of the item in the player's inventory
+				set .count, countitem(.@itemId);
+				// Set a variable for Sepia Enoki to read
+				set planting_choice, 1;
+				mes "[Sapphire Enoki]";
+				mes "Mushrooms, huh? Interesting!";
+				mes "";
+				mes "";
+				mes "To proceed, you need the following:";
+				callsub Reqs, .@itemid;
+				callsub SummonerMes;
+				close;
+				break;
+
+			case 2:
+				// List of requirements:
+				set .@itemid, 712;
+				// Count of the item in the player's inventory
+				set .count, countitem(.@itemId);
+				// Set a variable for Sepia Enoki to read
+				set planting_choice, 2;
+				mes "[Sapphire Enoki]";
+				mes "Ah, plants! Excellent choice.";
+				mes "";
+				mes "";
+				mes "To proceed, you need the following:";
+				callsub Reqs, .@itemid;
+				callsub SummonerMes;
+				close;
+				break;
+
+			default:
+				close;
+				break;
+		}
+		
+	
+	Reqs:
+		// Diplay the item requirement BLUE when >= and RED when <
+		mes "> " + mesitemlink(getarg(0)) + "\t" + " " 
+		+ (.count >= .quantity ? "(^0000FF" : "(^FF0000") + .count + "/" + .quantity + "^000000)";
+		return;
+
+	SummonerMes:
+		set .charSummoner$, strcharinfo(0); // Only this player will be allowed to summon
+		next;
+		mes "[Sapphire Enoki]";
+		mes "Then, I'll register you ^0000FF" + .charSummoner$ + "^000000 as the plant summoner.";
+		mes "Only you will be allowed to talk to ^B75000Sepia Enoki^000000.";
+		return;
+
+}
+
+//Inside the Instance:
+// //NPC that will spawn mushroom or plant
+1@exds,135,166,4	script	Sepia Enoki	-1,{
+	callsub OnClick;
+	end;
+
+	OnInstanceInit:
+		callfunc("customizeNPCSprite", JOB_BIOLO, SEX_MALE, 6, 27, 1727, 1747, 2022, 138);
+		end;
+
+	OnClick:
+		//Set variables for item and amount needed
+		set .@catalyst_id, (planting_choice == 1 ? 921 : 712);
+		set .@catalyst_count, countitem((planting_choice == 1 ? 921 : 712));
+		set .@quantity, 20;
+		//Get player ID
+		set .@playerID, getcharid(3);
+		//Get the Name of the party leader
+		set .@partyLeadName$, strcharinfo(0, getpartyleader(getcharid(1), 2));
+		// List of mobs
+		setarray .mob_ids[0], 1084, 1085,	// Mushroom 
+		1080, 1078, 1080, 1078, 1080,  // 5 elements
+		1081, 1078, 1083, 1082, 1080,  // 10 elements
+		1079, 1081, 1078, 1082, 1080,  // 15 elements
+		1081, 1079, 1082, 1080, 1081;  // 20 elements
+
+		// Party leader is offline
+		if (!is_party_leader() && .@partyLeadName$ == ""){
+			mes "[Sepia Enoki]";
+			mes "Your party leader is offline.";
+			close;
+		}
+
+		// Player talking to the NPC is not the party leader
+		if (!is_party_leader()){
+			mes "[Sepia Enoki]";
+			mes "Only ^0000FF" + .@partyLeadName$ + "^000000 can initiate the summoning of plants.";
+			close;
+		}
+
+		// Plant Cultivation skill is not level 2
+		if (getskilllv(491) != 2){
+			mes "[Sepia Enoki]";
+			mes "Hmmm...";
+			mes "I see what you did there!";
+			mes "You need ^32CD32Level 2 Plant Cultivation^000000!";
+			close;
+		}
+
+		// Player hasn't selected plant/mushroom
+		if (!planting_choice) {
+			mes "[Sepia Enoki]";
+			mes "Talk to Sapphire Enoki first and select what to plant.";
+			close;
+		}
+
+		// Player does not have enough items
+		if (countitem(.@catalyst_id) < .@quantity){
+			mes "[Sepia Enoki]";
+			mes "You don't have enough: ";
+			mes "> " + mesitemlink(.@catalyst_id, false, getitemname(.@catalyst_id) + " " 
+			+"(" + .@catalyst_count + "/" + .@quantity + ")");
+			close;
+		}
+
+		// Check if player selected mushrooms or plants, then call the function SummonPlants
+		if (planting_choice == 1 && countitem(.@catalyst_id) >= .@quantity){
+			callsub SummonPlants, 0, 1, .@catalyst_id, .@quantity, .@playerID;
+		}
+
+		if (planting_choice == 2 && countitem(.@catalyst_id) >= .@quantity){
+			callsub SummonPlants, 2, getarraysize(.mob_ids)-1, .@catalyst_id, .@quantity, .@playerID;
+		}
+		
+SummonPlants:
+	// Get the map name where Sepia Enoki is
+	// Count the mobs in the map based on the Event Label
+	.map$ = strnpcinfo(4); 
+	set .total_monsters, mobcount(.map$, "Sepia Enoki::OnSummonedMobs");
+
+	if (.total_monsters != 0){
+		showscript "Kill all summoned monters first!", getnpcid(0);
+		return;
+	}
+
+	// Set random mushroom count
+	set .numSummonMobs, rand(7, 15);
+	// 2 seconds before summon
+	progressbar "ffff00", 2;
+
+	for (.@mobCount = 0; .@mobCount < .numSummonMobs; .@mobCount++) {
+		//Get Random Index based from .mob_ids[]
+		set .@randomIndex, rand(getarg(0), getarg(1));
+		//Set Random Generated Number
+		set .@randomID, .mob_ids[.@randomIndex];
+		areamonster "this", 132, 164, 138, 159, getmonsterinfo(.@randomID, MOB_NAME), .@randomID, 1, "Sepia Enoki::OnSummonedMobs";
+	}
+
+	delitem getarg(2), getarg(3), getarg(4);
+	
+OnSummonedMobs:
+	// Check and get the current summoned mobs
+	set .total_monsters, mobcount(.map$, "Sepia Enoki::OnSummonedMobs");
+
+	if (.total_monsters == .numSummonMobs){
+		dispbottom "Monster spawned: " + .numSummonMobs;
+		end;
+	}
+
+	dispbottom "Remaning Monsters: " + .total_monsters;
+	.total_monsters--;
+}
+
